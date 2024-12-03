@@ -79,10 +79,14 @@ var WildRydes = window.WildRydes || {};
 
         var cognitoUser = createCognitoUser(email);
         cognitoUser.authenticateUser(authenticationDetails, {
-            onSuccess: onSuccess,
+            onSuccess: function authenticateSuccess(result) {
+                console.log('Authentication successful');
+                onSuccess(cognitoUser); // CognitoUser 객체를 반환
+            },
             onFailure: onFailure
         });
     }
+
 
     function verify(email, code, onSuccess, onFailure) {
         createCognitoUser(email).confirmRegistration(code, true, function confirmCallback(err, result) {
@@ -114,19 +118,16 @@ var WildRydes = window.WildRydes || {};
         $('#registrationForm').submit(handleRegister);
         $('#verifyForm').submit(handleVerify);
     });
-
+    
     function handleSignin(event) {
         var email = $('#emailInputSignin').val();
         var password = $('#passwordInputSignin').val();
-        var errorMessageDiv = $('#errorMessage'); // 오류 메시지를 보여줄 div (HTML에 추가해야 함)
+        var errorMessageDiv = $('#errorMessage'); // 오류 메시지를 보여줄 div
         event.preventDefault();
     
         // 로그인 시도
         signin(email, password,
             function signinSuccess(cognitoUser) {
-                console.log('Successfully Logged In');
-    
-                // 세션 가져오기
                 cognitoUser.getSession(function (err, session) {
                     if (err) {
                         console.error('Error getting session:', err);
@@ -142,13 +143,14 @@ var WildRydes = window.WildRydes || {};
                         window.location.href = 'student.html'; // 학생 페이지로 리디렉션
                     } else if (role === 'admin') {
                         window.location.href = 'admin.html'; // 관리자 페이지로 리디렉션
+                    } else {
+                        console.warn('Unknown role. Redirecting to default page.');
+                        window.location.href = 'default.html'; // 알 수 없는 역할 시 기본 페이지
                     }
                 });
             },
             function signinError(err) {
                 console.error('Sign-in failed:', err);
-    
-                // 오류 메시지 표시
                 errorMessageDiv.text('Sign-in failed: ' + err.message).show();
             }
         );
