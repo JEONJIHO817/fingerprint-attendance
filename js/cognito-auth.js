@@ -118,27 +118,42 @@ var WildRydes = window.WildRydes || {};
     function handleSignin(event) {
         var email = $('#emailInputSignin').val();
         var password = $('#passwordInputSignin').val();
+        var errorMessageDiv = $('#errorMessage'); // 오류 메시지를 보여줄 div (HTML에 추가해야 함)
         event.preventDefault();
+    
+        // 로그인 시도
         signin(email, password,
-            function signinSuccess(result) {
+            function signinSuccess(cognitoUser) {
                 console.log('Successfully Logged In');
-                
-                // 사용자 역할 확인
-                var cognitoUser = result.user;
-                var session = cognitoUser.getSignInUserSession();
-                var role = session.getIdToken().payload['custom:role']; // 역할 가져오기
-
-                if (role === 'student') {
-                    window.location.href = 'student.html'; // 학생 페이지로 리디렉션
-                } else if (role === 'admin') {
-                    window.location.href = 'admin.html'; // 관리자 페이지로 리디렉션
-                }
+    
+                // 세션 가져오기
+                cognitoUser.getSession(function (err, session) {
+                    if (err) {
+                        console.error('Error getting session:', err);
+                        errorMessageDiv.text('Failed to retrieve session: ' + err.message).show();
+                        return;
+                    }
+    
+                    // 사용자 역할 확인
+                    var role = session.getIdToken().payload['custom:role']; // 역할 가져오기
+                    console.log('User role:', role);
+    
+                    if (role === 'student') {
+                        window.location.href = 'student.html'; // 학생 페이지로 리디렉션
+                    } else if (role === 'admin') {
+                        window.location.href = 'admin.html'; // 관리자 페이지로 리디렉션
+                    }
+                });
             },
             function signinError(err) {
-                alert(err);
+                console.error('Sign-in failed:', err);
+    
+                // 오류 메시지 표시
+                errorMessageDiv.text('Sign-in failed: ' + err.message).show();
             }
         );
     }
+    
 
     function handleRegister(event) {
         var email = $('#emailInputRegister').val();
