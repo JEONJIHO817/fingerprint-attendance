@@ -122,7 +122,17 @@ var WildRydes = window.WildRydes || {};
         signin(email, password,
             function signinSuccess() {
                 console.log('Successfully Logged In');
-                window.location.href = 'ride.html';
+                
+                // 사용자 역할 확인
+                var cognitoUser = result;
+                var session = cognitoUser.getSignInUserSession();
+                var role = session.getIdToken().payload['custom:role']; // 역할 가져오기
+
+                if (role === 'student') {
+                    window.location.href = 'student.html'; // 학생 페이지로 리디렉션
+                } else if (role === 'admin') {
+                    window.location.href = 'admin.html'; // 관리자 페이지로 리디렉션
+                }
             },
             function signinError(err) {
                 alert(err);
