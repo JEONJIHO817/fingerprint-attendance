@@ -6,11 +6,9 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title></title>
+        <title>Sign In</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width">
-
-        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
         <link rel="stylesheet" href="css/font.css">
         <link rel="stylesheet" href="css/normalize.css">
@@ -18,10 +16,6 @@
         <link rel="stylesheet" href="/css/message.css">
     </head>
     <body>
-        <!--[if lt IE 7]>
-            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
-        <![endif]-->
-
         <div id="noCognitoMessage" class="configMessage" style="display: none;">
             <div class="backdrop"></div>
             <div class="panel panel-default">
@@ -38,13 +32,11 @@
           <img src="images/logo.png">
         </header>
 
-
         <section class="form-wrap">
             <h1>Sign In</h1>
             <form id="signinForm">
               <input type="email" id="emailInputSignin" placeholder="Email" required>
               <input type="password" id="passwordInputSignin" placeholder="Password" pattern=".*" required>
-
               <input type="submit" value="Sign in">
             </form>
         </section>
@@ -55,5 +47,30 @@
         <script src="js/vendor/amazon-cognito-identity.min.js"></script>
         <script src="js/config.js"></script>
         <script src="js/cognito-auth.js"></script>
+
+        <script>
+            document.getElementById('signinForm').onsubmit = async function (event) {
+                event.preventDefault();
+
+                const email = document.getElementById('emailInputSignin').value;
+                const password = document.getElementById('passwordInputSignin').value;
+
+                try {
+                    const user = await Auth.signIn(email, password);
+                    const role = user.signInUserSession.idToken.payload['custom:role']; // Cognito 사용자 속성
+
+                    if (role === 'student') {
+                        window.location.href = 'student.html'; // 학생 페이지로 리디렉션
+                    } else if (role === 'admin') {
+                        window.location.href = 'admin.html'; // 관리자 페이지로 리디렉션
+                    } else {
+                        alert('Unknown role. Please contact support.');
+                    }
+                } catch (err) {
+                    console.error('Sign-in failed:', err);
+                    alert('Sign-in failed. Please try again.');
+                }
+            };
+        </script>
     </body>
 </html>
