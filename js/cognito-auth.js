@@ -79,16 +79,10 @@ var WildRydes = window.WildRydes || {};
 
         var cognitoUser = createCognitoUser(email);
         cognitoUser.authenticateUser(authenticationDetails, {
-            onSuccess: function(result) {
-                var accessToken = result.getAccessToken().getJwtToken();
-                var groups = result.getAccessToken().payload['cognito:groups'] || [];
-                console.log('User Groups:', groups); // 그룹 정보 출력
-                onSuccess(result);
-            },
+            onSuccess: onSuccess,
             onFailure: onFailure
         });
     }
-
 
     function verify(email, code, onSuccess, onFailure) {
         createCognitoUser(email).confirmRegistration(code, true, function confirmCallback(err, result) {
