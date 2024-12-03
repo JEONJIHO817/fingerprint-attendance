@@ -1,10 +1,10 @@
 window._config = {
     cognito: {
-        userPoolId: 'ap-south-1_fMkul0Fbi', 
-        userPoolClientId: '539dfgrgg7onkeevjvisjb3v47', 
-        region: 'ap-south-1' 
+        userPoolId: 'ap-northeast-2_35jaq3PLD', 
+        userPoolClientId: '3j6k0r1364pq6q4gasqvm2l6fq', 
+        region: 'ap-northeast-2' 
     },
     api: {
-        invokeUrl: 'https://b8hr1whxef.execute-api.ap-south-1.amazonaws.com/prod',
+        invokeUrl: '',
     }
 };
