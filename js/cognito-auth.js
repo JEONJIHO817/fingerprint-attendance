@@ -124,7 +124,7 @@ var WildRydes = window.WildRydes || {};
                 console.log('Successfully Logged In');
                 
                 // 사용자 역할 확인
-                var cognitoUser = result;
+                var cognitoUser = result.user;
                 var session = cognitoUser.getSignInUserSession();
                 var role = session.getIdToken().payload['custom:role']; // 역할 가져오기
 
