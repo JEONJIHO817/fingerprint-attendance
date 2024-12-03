@@ -52,23 +52,24 @@ var WildRydes = window.WildRydes || {};
      * Cognito User Pool functions
      */
 
-    function register(email, password, onSuccess, onFailure) {
-        var dataEmail = {
-            Name: 'email',
-            Value: email
-        };
-        var attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmail);
+    function register(email, password, role, onSuccess, onFailure) {
+    var dataEmail = { Name: 'email', Value: email };
+    var dataRole = { Name: 'custom:role', Value: role }; // 사용자 정의 속성 추가
 
-        userPool.signUp(toUsername(email), password, [attributeEmail], null,
-            function signUpCallback(err, result) {
-                if (!err) {
-                    onSuccess(result);
-                } else {
-                    onFailure(err);
-                }
+    var attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmail);
+    var attributeRole = new AmazonCognitoIdentity.CognitoUserAttribute(dataRole);
+
+    userPool.signUp(toUsername(email), password, [attributeEmail, attributeRole], null,
+        function signUpCallback(err, result) {
+            if (!err) {
+                onSuccess(result);
+            } else {
+                onFailure(err);
             }
-        );
-    }
+        }
+    );
+}
+
 
     function signin(email, password, onSuccess, onFailure) {
         var authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails({
@@ -78,10 +79,16 @@ var WildRydes = window.WildRydes || {};
 
         var cognitoUser = createCognitoUser(email);
         cognitoUser.authenticateUser(authenticationDetails, {
-            onSuccess: onSuccess,
+            onSuccess: function(result) {
+                var accessToken = result.getAccessToken().getJwtToken();
+                var groups = result.getAccessToken().payload['cognito:groups'] || [];
+                console.log('User Groups:', groups); // 그룹 정보 출력
+                onSuccess(result);
+            },
             onFailure: onFailure
         });
     }
+
 
     function verify(email, code, onSuccess, onFailure) {
         createCognitoUser(email).confirmRegistration(code, true, function confirmCallback(err, result) {
@@ -133,7 +140,8 @@ var WildRydes = window.WildRydes || {};
         var email = $('#emailInputRegister').val();
         var password = $('#passwordInputRegister').val();
         var password2 = $('#password2InputRegister').val();
-
+        var role = $('#roleInputRegister').val(); // Role 값 가져오기
+    
         var onSuccess = function registerSuccess(result) {
             var cognitoUser = result.user;
             console.log('user name is ' + cognitoUser.getUsername());
@@ -142,17 +150,20 @@ var WildRydes = window.WildRydes || {};
                 window.location.href = 'verify.html';
             }
         };
+    
         var onFailure = function registerFailure(err) {
             alert(err);
         };
+    
         event.preventDefault();
-
+    
         if (password === password2) {
-            register(email, password, onSuccess, onFailure);
+            register(email, password, role, onSuccess, onFailure); // Role 전달
         } else {
             alert('Passwords do not match');
         }
     }
+    
 
     function handleVerify(event) {
         var email = $('#emailInputVerify').val();
