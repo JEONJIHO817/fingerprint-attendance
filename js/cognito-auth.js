@@ -120,7 +120,7 @@ var WildRydes = window.WildRydes || {};
         var password = $('#passwordInputSignin').val();
         event.preventDefault();
         signin(email, password,
-            function signinSuccess() {
+            function signinSuccess(result) {
                 console.log('Successfully Logged In');
                 
                 // 사용자 역할 확인
