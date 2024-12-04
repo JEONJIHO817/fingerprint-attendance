@@ -1,4 +1,4 @@
-import awsconfig from './src/aws-exports'; // Cognito 설정 파일
+import awsconfig from '../src/aws-exports'; // Cognito 설정 파일
 
 Amplify.configure(awsconfig);
 
