@@ -134,18 +134,8 @@ var WildRydes = window.WildRydes || {};
                         errorMessageDiv.text('Failed to retrieve session: ' + err.message).show();
                         return;
                     }
-    
-                    // 사용자 역할 확인
-                    var role = session.getIdToken().payload['custom:role']; // 역할 가져오기
-                    console.log('User role:', role);
-    
-                    if (role === 'student') {
+                    else{
                         window.location.href = 'student.html'; // 학생 페이지로 리디렉션
-                    } else if (role === 'admin') {
-                        window.location.href = 'admin.html'; // 관리자 페이지로 리디렉션
-                    } else {
-                        console.warn('Unknown role. Redirecting to default page.');
-                        window.location.href = 'default.html'; // 알 수 없는 역할 시 기본 페이지
                     }
                 });
             },
