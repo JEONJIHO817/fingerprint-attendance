@@ -1,18 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Portal</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>Wild Rydes - 출근부</title>
+
+    <!-- Bootstrap 및 CSS 파일 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/ride.css">
 </head>
+
 <body>
-  <header>
-    <h1>Student Dashboard</h1>
-  </header>
-  <main>
-    <button id="attendanceBtn">View My Attendance</button>
-    <button id="clockInOutBtn">Clock In/Out</button>
-  </main>
-  <script src="js/student.js"></script>
+    <div class="info panel panel-default">
+        <div class="panel-heading">
+            <h3>환영합니다! 원하는 동작을 선택하세요.</h3>
+            <button id="checkAttendance" class="btn btn-success">출근부 조회</button>
+            <button id="clockInOut" class="btn btn-primary">출/퇴근하기</button>
+            <div class="dropdown pull-right">
+                <button id="accountLink" class="btn" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Account <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="accountLink">
+                    <li><a id="signOut" href="#">Sign out</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript 파일 -->
+    <script src="js/vendor/jquery-3.1.0.js"></script>
+    <script src="js/vendor/bootstrap.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/cognito-auth.js"></script>
+    <script src="js/ride.js"></script>
 </body>
+
 </html>
