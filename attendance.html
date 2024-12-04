@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance Records</title>
+</head>
+<body class="page-attendance">
+  <header class="site-header">
+    <h1 class="title">Attendance Records</h1>
+    <a class="home-button" href="/">Home</a>
+  </header>
+  
+  <main class="content">
+    <section class="attendance-table">
+      <h2>Attendance Log</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Time In</th>
+            <th>Time Out</th>
+            <th>Total Hours</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Example Rows -->
+          <tr>
+            <td>2024-12-01</td>
+            <td>09:00 AM</td>
+            <td>05:00 PM</td>
+            <td>8 hrs</td>
+          </tr>
+          <tr>
+            <td>2024-12-02</td>
+            <td>09:30 AM</td>
+            <td>05:30 PM</td>
+            <td>8 hrs</td>
+          </tr>
+          <!-- More rows populated dynamically -->
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- JavaScript 파일 -->
+  <script src="js/vendor/jquery-3.1.0.js"></script>
+  <script src="js/vendor/bootstrap.min.js"></script>
+  <script src="js/vendor/aws-cognito-sdk.min.js"></script>
+  <script src="js/vendor/amazon-cognito-identity.min.js"></script>
+  <script src="https://js.arcgis.com/4.6/"></script>
+  <script src="js/config.js"></script>
+  <script src="js/cognito-auth.js"></script>
+  <script src="js/attendance.js"></script>
+</body>
+</html>
