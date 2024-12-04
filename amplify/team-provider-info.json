@@ -11,5 +11,23 @@
       "StackId": "arn:aws:cloudformation:ap-northeast-2:195275678021:stack/amplify-wildrydessite-dev-6cba6/8f91b860-b259-11ef-8af0-0af81947ffb7",
       "AmplifyAppId": "d3o3xkyg6akl2s"
     }
+  },
+  "wildrides": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-wildrydessite-wildrides-24c05-authRole",
+      "UnauthRoleArn": "arn:aws:iam::195275678021:role/amplify-wildrydessite-wildrides-24c05-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::195275678021:role/amplify-wildrydessite-wildrides-24c05-authRole",
+      "Region": "ap-northeast-2",
+      "DeploymentBucketName": "amplify-wildrydessite-wildrides-24c05-deployment",
+      "UnauthRoleName": "amplify-wildrydessite-wildrides-24c05-unauthRole",
+      "StackName": "amplify-wildrydessite-wildrides-24c05",
+      "StackId": "arn:aws:cloudformation:ap-northeast-2:195275678021:stack/amplify-wildrydessite-wildrides-24c05/5c100e70-b262-11ef-ac69-0696c639d5ed",
+      "AmplifyAppId": "d3o3xkyg6akl2s"
+    },
+    "categories": {
+      "auth": {
+        "wildrydessite2d78612f": {}
+      }
+    }
   }
 }
