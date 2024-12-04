@@ -1,9 +1,17 @@
-import Amplify, { Auth } from 'aws-amplify';
 import awsconfig from './aws-exports'; // Cognito 설정 파일
 
 Amplify.configure(awsconfig);
 
-// 로그인 폼 처리
+// Amplify 및 Auth 구성하기
+Amplify.configure({
+  Auth: {
+    region: 'YOUR_COGNITO_REGION',
+    userPoolId: 'YOUR_USER_POOL_ID',
+    userPoolWebClientId: 'YOUR_USER_POOL_CLIENT_ID',
+  }
+});
+
+// 로그인 로직
 document.getElementById('loginForm').onsubmit = async function (event) {
   event.preventDefault();
 
@@ -11,7 +19,7 @@ document.getElementById('loginForm').onsubmit = async function (event) {
   const password = document.getElementById('passwordInput').value;
 
   try {
-    const user = await Auth.signIn(email, password);
+    const user = await Amplify.Auth.signIn(email, password);
     const role = user.signInUserSession.idToken.payload['custom:role'];
 
     if (role === 'student') {
@@ -26,6 +34,7 @@ document.getElementById('loginForm').onsubmit = async function (event) {
     alert('Login failed. Please try again.');
   }
 };
+
 
 // 회원가입 폼 처리
 document.getElementById('signupForm').onsubmit = async function (event) {
