@@ -22,12 +22,12 @@ WildRydes.map = WildRydes.map || {};
         // 출근부 조회 버튼 클릭 시
         $('#checkAttendance').click(function () {
           console.log('출근부 조회 버튼 클릭됨');
-          window.location.href = 'attendance.html';
+          window.location.href = '/attendance.html';
       });
       
       $('#clockInOut').click(function () {
           console.log('출/퇴근 버튼 클릭됨');
-          window.location.href = 'clockInOut.html';
+          window.location.href = '/clockInOut.html';
       });
       
 
