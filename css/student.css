@@ -1,0 +1,106 @@
+/* Reset & Base Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+h1 {
+    font-size: 36px;
+    font-weight: bold;
+    margin: 20px 0 10px;
+    color: #2c3e50;
+}
+
+.subtitle {
+    font-size: 18px;
+    color: #7f8c8d;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Button Group */
+.button-group {
+    margin: 30px 0;
+}
+
+.button-group .btn {
+    margin: 10px;
+    padding: 15px 30px;
+    font-size: 16px;
+    border-radius: 6px;
+    text-transform: uppercase;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: white;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+/* Footer */
+footer {
+    margin-top: 30px;
+}
+
+.dropdown-toggle {
+    font-size: 16px;
+    padding: 10px 15px;
+    border-radius: 6px;
+    color: #555;
+}
+
+.dropdown-menu {
+    font-size: 14px;
+}
+
+.dropdown-menu a {
+    padding: 10px 20px;
+    display: block;
+    color: #333;
+    text-decoration: none;
+}
+
+.dropdown-menu a:hover {
+    background-color: #f8f9fa;
+    color: #007bff;
+}
+
+/* Responsiveness */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 28px;
+    }
+
+    .btn {
+        font-size: 14px;
+        padding: 10px 20px;
+    }
+}
