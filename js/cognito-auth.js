@@ -52,23 +52,23 @@ var WildRydes = window.WildRydes || {};
      * Cognito User Pool functions
      */
 
-    function register(email, password, role, onSuccess, onFailure) {
-    var dataEmail = { Name: 'email', Value: email };
-    var dataRole = { Name: 'custom:role', Value: role }; // 사용자 정의 속성 추가
+    function register(email, password, employeeId, onSuccess, onFailure) {
+        var dataEmail = { Name: 'email', Value: email };
+        var dataEmployeeId = { Name: 'custom:employeeId', Value: employeeId }; // 사용자 정의 속성 추가
 
-    var attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmail);
-    var attributeRole = new AmazonCognitoIdentity.CognitoUserAttribute(dataRole);
+        var attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmail);
+        var attributeEmployeeId = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmployeeId);
 
-    userPool.signUp(toUsername(email), password, [attributeEmail, attributeRole], null,
-        function signUpCallback(err, result) {
-            if (!err) {
-                onSuccess(result);
-            } else {
-                onFailure(err);
+        userPool.signUp(toUsername(email), password, [attributeEmail, attributeEmployeeId], null,
+            function signUpCallback(err, result) {
+                if (!err) {
+                    onSuccess(result);
+                } else {
+                    onFailure(err);
+                }
             }
-        }
-    );
-}
+        );
+    }
 
 
     function signin(email, password, onSuccess, onFailure) {
@@ -173,7 +173,7 @@ var WildRydes = window.WildRydes || {};
         var email = $('#emailInputRegister').val();
         var password = $('#passwordInputRegister').val();
         var password2 = $('#password2InputRegister').val();
-        var role = $('#roleInputRegister').val(); // Role 값 가져오기
+        var employeeId = $('#employeeIDInputRegister').val(); // Role 값 가져오기
     
         var onSuccess = function registerSuccess(result) {
             var cognitoUser = result.user;
@@ -191,7 +191,7 @@ var WildRydes = window.WildRydes || {};
         event.preventDefault();
     
         if (password === password2) {
-            register(email, password, role, onSuccess, onFailure); // Role 전달
+            register(email, password, employeeId, onSuccess, onFailure); // Role 전달
         } else {
             alert('Passwords do not match');
         }
