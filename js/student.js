@@ -21,13 +21,15 @@ WildRydes.map = WildRydes.map || {};
     $(function onDocReady() {
         // 출근부 조회 버튼 클릭 시
         $('#checkAttendance').click(function () {
-            window.location.href = 'attendance.html'; // 출근부 조회 페이지로 이동
-        });
-
-        // 출/퇴근하기 버튼 클릭 시
-        $('#clockInOut').click(function () {
-            window.location.href = 'clockInOut.html'; // 출/퇴근 페이지로 이동
-        });
+          console.log('출근부 조회 버튼 클릭됨');
+          window.location.href = 'attendance.html';
+      });
+      
+      $('#clockInOut').click(function () {
+          console.log('출/퇴근 버튼 클릭됨');
+          window.location.href = 'clockInOut.html';
+      });
+      
 
         // 로그아웃 버튼 클릭 시
         $('#signOut').click(function () {
