@@ -45,6 +45,13 @@
               <input type="email" id="emailInputSignin" placeholder="Email" required>
               <input type="password" id="passwordInputSignin" placeholder="Password" pattern=".*" required>
 
+              <!-- 추가된 Role 선택 드롭다운 -->
+              <select id="roleInputSignin" required>
+                <option value="" disabled selected>Select your role</option>
+                <option value="admin">Admin</option>
+                <option value="student">Student</option>
+              </select>
+
               <input type="submit" value="Sign in">
             </form>
         </section>

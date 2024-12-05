@@ -122,8 +122,15 @@ var WildRydes = window.WildRydes || {};
     function handleSignin(event) {
         var email = $('#emailInputSignin').val();
         var password = $('#passwordInputSignin').val();
+        var role = $('#roleInputSignin').val();
         var errorMessageDiv = $('#errorMessage'); // 오류 메시지를 보여줄 div
         event.preventDefault();
+    
+        // 역할(role) 선택 여부 확인
+        if (!role) {
+            errorMessageDiv.text('Please select a role (Admin or Student)').show();
+            return;
+        }
     
         // 로그인 시도
         signin(email, password,
@@ -134,8 +141,12 @@ var WildRydes = window.WildRydes || {};
                         errorMessageDiv.text('Failed to retrieve session: ' + err.message).show();
                         return;
                     }
-                    else{
-                        window.location.href = 'student.html'; // 학생 페이지로 리디렉션
+    
+                    // 역할에 따라 다른 페이지로 리디렉션
+                    if (role === 'admin') {
+                        window.location.href = 'admin.html'; // Admin 페이지로 리디렉션
+                    } else if (role === 'student') {
+                        window.location.href = 'student.html'; // Student 페이지로 리디렉션
                     }
                 });
             },
@@ -145,6 +156,7 @@ var WildRydes = window.WildRydes || {};
             }
         );
     }
+    
     
 
     function handleRegister(event) {
