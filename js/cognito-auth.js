@@ -122,12 +122,12 @@ var WildRydes = window.WildRydes || {};
     function handleSignin(event) {
         var email = $('#emailInputSignin').val();
         var password = $('#passwordInputSignin').val();
-        var role = $('#roleInputSignin').val();
+        var selectedRole = $('#roleInputSignin').val();
         var errorMessageDiv = $('#errorMessage'); // 오류 메시지를 보여줄 div
         event.preventDefault();
     
         // 역할(role) 선택 여부 확인
-        if (!role) {
+        if (!selectedRole) {
             errorMessageDiv.text('Please select a role (Admin or Student)').show();
             return;
         }
@@ -142,12 +142,36 @@ var WildRydes = window.WildRydes || {};
                         return;
                     }
     
-                    // 역할에 따라 다른 페이지로 리디렉션
-                    if (role === 'admin') {
-                        window.location.href = 'admin.html'; // Admin 페이지로 리디렉션
-                    } else if (role === 'student') {
-                        window.location.href = 'student.html'; // Student 페이지로 리디렉션
-                    }
+                    // 세션이 유효하면 사용자 속성 가져오기
+                    cognitoUser.getUserAttributes(function (err, attributes) {
+                        if (err) {
+                            console.error('Error fetching user attributes:', err);
+                            errorMessageDiv.text('Failed to fetch user attributes: ' + err.message).show();
+                            return;
+                        }
+    
+                        // custom:role 속성 값 확인
+                        var storedRole = null;
+                        attributes.forEach(function (attribute) {
+                            if (attribute.getName() === 'custom:role') {
+                                storedRole = attribute.getValue();
+                            }
+                        });
+    
+                        // 선택된 역할과 저장된 역할 비교
+                        if (storedRole === selectedRole) {
+                            console.log('Role match. Login successful.');
+                            // 역할에 따라 페이지 리디렉션
+                            if (selectedRole === 'admin') {
+                                window.location.href = 'admin.html'; // Admin 페이지로 이동
+                            } else if (selectedRole === 'student') {
+                                window.location.href = 'student.html'; // Student 페이지로 이동
+                            }
+                        } else {
+                            console.error('Role mismatch. Access denied.');
+                            errorMessageDiv.text('Role mismatch. Access denied.').show();
+                        }
+                    });
                 });
             },
             function signinError(err) {
@@ -156,6 +180,7 @@ var WildRydes = window.WildRydes || {};
             }
         );
     }
+    
     
     
 
