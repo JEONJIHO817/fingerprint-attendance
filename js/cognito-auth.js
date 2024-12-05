@@ -58,8 +58,14 @@ var WildRydes = window.WildRydes || {};
 
         var attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmail);
         var attributeEmployeeId = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmployeeId);
+        
+        var dataRole = null;
+        if(employeeId.length === 9) dataRole = {Name: 'custom:role', Value: "student"};
+        else if(employeeId.length === 5) dataRole = {Name: 'custom:role', Value: "admin"};
+        
+        var attributeRole = new AmazonCognitoIdentity.CognitoUserAttribute(dataRole);
 
-        userPool.signUp(toUsername(email), password, [attributeEmail, attributeEmployeeId], null,
+        userPool.signUp(toUsername(email), password, [attributeEmail, attributeRole, attributeEmployeeId], null,
             function signUpCallback(err, result) {
                 if (!err) {
                     onSuccess(result);
