@@ -35,7 +35,7 @@ WildRydes.map = WildRydes.map || {};
         $('#signOut').click(function () {
             WildRydes.signOut();
             alert('로그아웃되었습니다.');
-            window.location.href = '/signin.html';
+            window.location.href = '/index.html';
         });
     });
 }(jQuery));
