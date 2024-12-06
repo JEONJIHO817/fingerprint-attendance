@@ -6,6 +6,7 @@ WildRydes.clockInOut = WildRydes.clockInOut || {};
 (function clockInOutScopeWrapper($) {
     var authToken;
 
+    // 인증 토큰 설정
     WildRydes.authToken.then(function setAuthToken(token) {
         if (token) {
             authToken = token;
@@ -17,35 +18,42 @@ WildRydes.clockInOut = WildRydes.clockInOut || {};
         window.location.href = '/signin.html';
     });
 
-    $('#submit-clockinout').click(function() {
-        // 현재 시간 가져오기
-        var currentTime = new Date().toISOString(); // ISO 8601 형식으로 변환
-        var action = $('#action-select').val(); // Clock In 또는 Clock Out 선택값
+    // 출/퇴근 제출 버튼 클릭 이벤트
+    $('#submit-clockinout').click(function () {
+        var currentTime = new Date().toISOString();
+        var action = $('#action-select').val();
+        var fileInput = $('#fingerprint-upload')[0];
+        var formData = new FormData();
 
+        // 필수 값 검증
         if (!action) {
             alert('출근 또는 퇴근을 선택하세요.');
             return;
         }
 
-        var requestData = {
-            timestamp: currentTime,
-            action: action
-        };
+        // 폼 데이터 생성
+        formData.append('timestamp', currentTime);
+        formData.append('action', action);
+        if (fileInput.files.length > 0) {
+            formData.append('fingerprint', fileInput.files[0]); // 이미지 파일 추가
+        }
 
+        // API 호출
         $.ajax({
             method: 'POST',
             url: _config.api.invokeUrl + '/ride',
             headers: {
                 Authorization: authToken
             },
-            data: JSON.stringify(requestData),
-            contentType: 'application/json',
-            success: function(response) {
-                $('#status-message').text('출/퇴근 처리가 완료되었습니다: ' + response.status);
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                $('#status-message').text('출/퇴근 처리가 완료되었습니다: ' + response.message).removeClass('text-danger').addClass('text-success');
             },
             error: function ajaxError(jqXHR, textStatus, errorThrown) {
                 console.error('Error submitting clock-in/out: ', textStatus, ', Details: ', errorThrown);
-                $('#status-message').text('출/퇴근 처리 중 에러가 발생했습니다.');
+                $('#status-message').text('출/퇴근 처리 중 에러가 발생했습니다.').removeClass('text-success').addClass('text-danger');
             }
         });
     });
