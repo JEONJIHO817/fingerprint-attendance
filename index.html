@@ -1,28 +1,84 @@
 <!doctype html>
-<html class="no-js" lang="">
+<html lang="ko">
+
 <head>
   <meta charset="utf-8">
-  <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>근로장학생 출근부시스템</title>
+  <title>근로장학생 출근부 시스템</title>
 
-  <link rel="stylesheet" href="css/font.css">
-  <link rel="stylesheet" href="css/main.css">
+  <!-- 외부 스타일시트 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css">
+  <style>
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
 
-  <script src="js/vendor/modernizr.js"></script>
+    .site-header {
+      text-align: center;
+      padding: 50px 15px;
+      background-color: #007bff;
+      color: #fff;
+    }
+
+    .site-header .title {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .home-button {
+      display: inline-block;
+      padding: 15px 30px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #fff;
+      background-color: #28a745;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .home-button:hover {
+      background-color: #218838;
+    }
+
+    .home-button:last-child {
+      background-color: #007bff;
+    }
+
+    .home-button:last-child:hover {
+      background-color: #0056b3;
+    }
+  </style>
 </head>
-<body class="page-home">
 
+<body class="page-home">
+  <!-- 헤더 -->
   <header class="site-header">
-    <h1 class="title"> 근로장학생 출근부시스템 </h1>
+    <h1 class="title">근로장학생 출근부 시스템</h1>
     <div class="button-group">
       <a class="home-button" href="/register.html">회원가입</a>
       <a class="home-button" href="/signin.html">로그인</a>
     </div>
   </header>
 
+  <!-- 스크립트 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/js/bootstrap.min.js"></script>
   <script src="https://unpkg.com/aws-amplify/dist/aws-amplify.min.js"></script>
   <script src="js/vendor.js"></script>
   <script type="module" src="js/main.js"></script>
 </body>
+
 </html>
