@@ -43,7 +43,7 @@ WildRydes.clockInOut = WildRydes.clockInOut || {};
             data: JSON.stringify(requestData),
             contentType: 'application/json',
             success: function(response) {
-                $('#status-message').text('출/퇴근 처리가 완료되었습니다: ' + response.status);
+                $('#status-message').text(response.action + '부로 출/퇴근 처리가 완료되었습니다: ');
             },
             error: function ajaxError(jqXHR, textStatus, errorThrown) {
                 console.error('Error submitting clock-in/out: ', textStatus, ', Details: ', errorThrown);

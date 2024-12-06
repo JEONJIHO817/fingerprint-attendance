@@ -37,7 +37,7 @@ WildRydes.attendance = WildRydes.attendance || {};
         // FullCalendar 설정
         var calendarEl = document.getElementById('attendance-calendar');
 
-        // 날짜별 근무 시간 계산
+        // 날짜별 근무 시간 및 상세 근무 기록 계산
         var workSummary = calculateWorkSummary(records);
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -56,10 +56,16 @@ WildRydes.attendance = WildRydes.attendance || {};
                 };
             }),
             eventContent: function(arg) {
-                // 각 날짜의 총 근무 시간을 표시
-                var workTime = workSummary[arg.event.startStr.split('T')[0]] || { hours: 0, minutes: 0 }; // 해당 날짜의 총 근무 시간
+                var date = arg.event.startStr.split('T')[0]; // 해당 날짜
+                var workTime = workSummary[date]?.total || { hours: 0, minutes: 0 };
+                var details = workSummary[date]?.details || "기록 없음";
+
                 return {
-                    html: `<b>${arg.event.title}</b><br/><span>근무 시간: ${workTime.hours}시간 ${workTime.minutes}분</span>`
+                    html: `
+                        <b>${arg.event.title}</b><br/>
+                        근무 시간: ${workTime.hours}시간 ${workTime.minutes}분<br/>
+                        ${details}
+                    `
                 };
             }
         });
@@ -74,9 +80,9 @@ WildRydes.attendance = WildRydes.attendance || {};
         records.forEach(function(record) {
             var date = record.timestamp.split('T')[0]; // 날짜만 추출 (YYYY-MM-DD)
             if (!workSummary[date]) {
-                workSummary[date] = [];
+                workSummary[date] = { events: [], total: { hours: 0, minutes: 0 }, details: "" };
             }
-            workSummary[date].push({
+            workSummary[date].events.push({
                 time: new Date(record.timestamp).getTime(),
                 action: record.action
             });
@@ -84,24 +90,31 @@ WildRydes.attendance = WildRydes.attendance || {};
 
         // 날짜별로 근무 시간을 계산
         Object.keys(workSummary).forEach(function(date) {
-            var events = workSummary[date];
+            var events = workSummary[date].events;
             events.sort(function(a, b) {
                 return a.time - b.time; // 시간 순 정렬
             });
 
             var totalWorkTimeMs = 0; // 밀리초 단위로 총 근무 시간 계산
+            var detailsArray = []; // 출/퇴근 상세 기록
             for (var i = 0; i < events.length - 1; i += 2) {
                 if (events[i].action === "Clock In" && events[i + 1]?.action === "Clock Out") {
                     totalWorkTimeMs += events[i + 1].time - events[i].time;
+                    var startTime = new Date(events[i].time).toLocaleTimeString("ko-KR", { hour: '2-digit', minute: '2-digit' });
+                    var endTime = new Date(events[i + 1].time).toLocaleTimeString("ko-KR", { hour: '2-digit', minute: '2-digit' });
+                    detailsArray.push(`${startTime} ~ ${endTime}`);
                 }
             }
 
             // 밀리초 단위를 시간과 분으로 변환
             var totalMinutes = Math.floor(totalWorkTimeMs / (1000 * 60)); // 총 분 계산
-            workSummary[date] = {
+            workSummary[date].total = {
                 hours: Math.floor(totalMinutes / 60), // 시간 계산
                 minutes: totalMinutes % 60 // 남은 분 계산
             };
+
+            // 상세 기록 설정
+            workSummary[date].details = detailsArray.join(", ");
         });
 
         return workSummary;
