@@ -4,6 +4,7 @@ var WildRydes = window.WildRydes || {};
 
 (function scopeWrapper($) {
     var signinUrl = '/signin.html';
+    var isRedirecting = false; // 리다이렉션 방지 플래그
 
     var poolData = {
         UserPoolId: _config.cognito.userPoolId,
@@ -36,21 +37,18 @@ var WildRydes = window.WildRydes || {};
 
     // 페이지 로드 시 세션 검증
     $(document).ready(function () {
-        try {
-            verifySessionOnLoad();
-        } catch (error) {
-            console.error('Error during session verification:', error);
-            window.location.href = signinUrl;
-        }
+        verifySessionOnLoad();
     });
 
     function verifySessionOnLoad() {
+        if (isRedirecting) return; // 이미 리다이렉션 중이면 동작하지 않음
+
         var cognitoUser = userPool.getCurrentUser();
 
         if (!cognitoUser) {
             console.log('No user is signed in. Redirecting to signin page.');
             sessionStorage.removeItem('authToken');
-            window.location.href = signinUrl;
+            redirectToSignin();
             return;
         }
 
@@ -59,20 +57,27 @@ var WildRydes = window.WildRydes || {};
             if (err) {
                 console.error('Error getting session:', err);
                 sessionStorage.removeItem('authToken');
-                window.location.href = signinUrl;
+                redirectToSignin();
                 return;
             }
 
             if (!session.isValid()) {
                 console.log('Session is invalid. Redirecting to signin page.');
                 sessionStorage.removeItem('authToken');
-                window.location.href = signinUrl;
+                redirectToSignin();
                 return;
             }
 
             console.log('Session is valid.');
             sessionStorage.setItem('authToken', session.getIdToken().getJwtToken());
         });
+    }
+
+    function redirectToSignin() {
+        if (!isRedirecting) {
+            isRedirecting = true;
+            window.location.href = signinUrl;
+        }
     }
 
     WildRydes.authToken = new Promise(function fetchCurrentAuthToken(resolve, reject) {
