@@ -22,8 +22,6 @@ WildRydes.clockInOut = WildRydes.clockInOut || {};
     $('#submit-clockinout').click(function () {
         var currentTime = new Date().toISOString();
         var action = $('#action-select').val();
-        var fileInput = $('#fingerprint-upload')[0];
-        var formData = new FormData();
 
         // 필수 값 검증
         if (!action) {
@@ -31,12 +29,11 @@ WildRydes.clockInOut = WildRydes.clockInOut || {};
             return;
         }
 
-        // 폼 데이터 생성
-        formData.append('timestamp', currentTime);
-        formData.append('action', action);
-        if (fileInput.files.length > 0) {
-            formData.append('fingerprint', fileInput.files[0]); // 이미지 파일 추가
-        }
+        // 요청 데이터 생성
+        var requestData = {
+            timestamp: currentTime,
+            action: action
+        };
 
         // API 호출
         $.ajax({
@@ -45,9 +42,8 @@ WildRydes.clockInOut = WildRydes.clockInOut || {};
             headers: {
                 Authorization: authToken
             },
-            data: formData,
-            processData: false,
-            contentType: false,
+            data: JSON.stringify(requestData),
+            contentType: 'application/json',
             success: function (response) {
                 $('#status-message').text('출/퇴근 처리가 완료되었습니다: ' + response.message).removeClass('text-danger').addClass('text-success');
             },
