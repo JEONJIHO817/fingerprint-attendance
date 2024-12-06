@@ -13,18 +13,17 @@
 </head>
 <body class="page-clock-in-out">
 
-  <header class="site-header">
-    <h1 class="title">출/퇴근</h1>
-    <a class="home-button" href="/student.html">뒤로가기</a>
-  </header>
+    <div>
+        <label for="action-select">출/퇴근:</label>
+        <select id="action-select">
+            <option value="">선택</option>
+            <option value="Clock In">출근</option>
+            <option value="Clock Out">퇴근</option>
+        </select>
+    </div>
+    <button id="submit-clockinout" class="btn btn-primary">출/퇴근 제출</button>
+    <p id="status-message"></p>    
 
-  <section id="clock-in-out-section">
-    <h2>출/퇴근 지문 인증</h2>
-    <input type="file" id="fingerprint-input" accept="image/*">
-    <button id="submit-fingerprint">출/퇴근 처리</button>
-    <div id="status-message"></div>
-  </section>
-  
   <script src="js/vendor/jquery-3.1.0.js"></script>
   <script src="js/vendor/bootstrap.min.js"></script>
   <script src="js/vendor/aws-cognito-sdk.min.js"></script>
