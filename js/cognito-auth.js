@@ -4,7 +4,7 @@ var WildRydes = window.WildRydes || {};
 
 (function scopeWrapper($) {
     var signinUrl = '/signin.html';
-    var isRedirecting = false; // 리다이렉션 방지 플래그
+    var isRedirecting = false; // 중복 리다이렉션 방지 플래그
 
     var poolData = {
         UserPoolId: _config.cognito.userPoolId,
@@ -26,7 +26,6 @@ var WildRydes = window.WildRydes || {};
         AWSCognito.config.region = _config.cognito.region;
     }
 
-    // 로그아웃 시 세션과 세션 스토리지를 모두 제거
     WildRydes.signOut = function signOut() {
         var currentUser = userPool.getCurrentUser();
         if (currentUser) {
@@ -40,42 +39,51 @@ var WildRydes = window.WildRydes || {};
         verifySessionOnLoad();
     });
 
-    function verifySessionOnLoad() {
+    async function verifySessionOnLoad() {
         if (isRedirecting) return; // 이미 리다이렉션 중이면 동작하지 않음
+        console.log('Starting session verification...');
 
         var cognitoUser = userPool.getCurrentUser();
 
         if (!cognitoUser) {
             console.log('No user is signed in. Redirecting to signin page.');
-            sessionStorage.removeItem('authToken');
             redirectToSignin();
             return;
         }
 
-        // 세션 확인
-        cognitoUser.getSession(function (err, session) {
-            if (err) {
-                console.error('Error getting session:', err);
-                sessionStorage.removeItem('authToken');
-                redirectToSignin();
-                return;
-            }
-
+        try {
+            // 세션 확인
+            var session = await getSessionAsync(cognitoUser);
             if (!session.isValid()) {
                 console.log('Session is invalid. Redirecting to signin page.');
-                sessionStorage.removeItem('authToken');
                 redirectToSignin();
                 return;
             }
 
             console.log('Session is valid.');
             sessionStorage.setItem('authToken', session.getIdToken().getJwtToken());
+        } catch (err) {
+            console.error('Error during session verification:', err);
+            redirectToSignin();
+        }
+    }
+
+    function getSessionAsync(cognitoUser) {
+        return new Promise((resolve, reject) => {
+            cognitoUser.getSession(function (err, session) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(session);
+                }
+            });
         });
     }
 
     function redirectToSignin() {
         if (!isRedirecting) {
             isRedirecting = true;
+            console.log('Redirecting to signin page...');
             window.location.href = signinUrl;
         }
     }
@@ -86,7 +94,6 @@ var WildRydes = window.WildRydes || {};
         if (cognitoUser) {
             cognitoUser.getSession(function sessionCallback(err, session) {
                 if (err) {
-                    console.error('Error fetching auth token:', err);
                     reject(err);
                 } else if (!session.isValid()) {
                     sessionStorage.removeItem('authToken');
