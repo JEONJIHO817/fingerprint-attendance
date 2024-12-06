@@ -57,9 +57,9 @@ WildRydes.attendance = WildRydes.attendance || {};
             }),
             eventContent: function(arg) {
                 // 각 날짜의 총 근무 시간을 표시
-                var workTime = workSummary[arg.event.startStr.split('T')[0]] || 0; // 해당 날짜의 총 근무 시간
+                var workTime = workSummary[arg.event.startStr.split('T')[0]] || { hours: 0, minutes: 0 }; // 해당 날짜의 총 근무 시간
                 return {
-                    html: `<b>${arg.event.title}</b><br/><span>근무 시간: ${workTime.toFixed(2)}시간</span>`
+                    html: `<b>${arg.event.title}</b><br/><span>근무 시간: ${workTime.hours}시간 ${workTime.minutes}분</span>`
                 };
             }
         });
@@ -89,13 +89,19 @@ WildRydes.attendance = WildRydes.attendance || {};
                 return a.time - b.time; // 시간 순 정렬
             });
 
-            var totalWorkTime = 0;
+            var totalWorkTimeMs = 0; // 밀리초 단위로 총 근무 시간 계산
             for (var i = 0; i < events.length - 1; i += 2) {
                 if (events[i].action === "Clock In" && events[i + 1]?.action === "Clock Out") {
-                    totalWorkTime += (events[i + 1].time - events[i].time) / (1000 * 60 * 60); // 시간 단위로 계산
+                    totalWorkTimeMs += events[i + 1].time - events[i].time;
                 }
             }
-            workSummary[date] = totalWorkTime; // 총 근무 시간 저장
+
+            // 밀리초 단위를 시간과 분으로 변환
+            var totalMinutes = Math.floor(totalWorkTimeMs / (1000 * 60)); // 총 분 계산
+            workSummary[date] = {
+                hours: Math.floor(totalMinutes / 60), // 시간 계산
+                minutes: totalMinutes % 60 // 남은 분 계산
+            };
         });
 
         return workSummary;
