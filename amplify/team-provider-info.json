@@ -27,6 +27,12 @@
     "categories": {
       "auth": {
         "wildrydessite2d78612f": {}
+      },
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d3o3xkyg6akl2s",
+          "type": "manual"
+        }
       }
     }
   }

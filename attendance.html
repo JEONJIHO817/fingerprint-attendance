@@ -1,56 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html class="no-js" lang="">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Attendance Records</title>
+  <meta charset="utf-8">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>근로장학생 출근부 조회</title>
+  
+  <link rel="stylesheet" href="css/font.css">
+  <link rel="stylesheet" href="css/main.css">
+  
+  <script src="js/vendor/modernizr.js"></script>
 </head>
 <body class="page-attendance">
-  <header class="site-header">
-    <h1 class="title">Attendance Records</h1>
-    <a class="home-button" href="/">Home</a>
-  </header>
-  
-  <main class="content">
-    <section class="attendance-table">
-      <h2>Attendance Log</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Time In</th>
-            <th>Time Out</th>
-            <th>Total Hours</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Example Rows -->
-          <tr>
-            <td>2024-12-01</td>
-            <td>09:00 AM</td>
-            <td>05:00 PM</td>
-            <td>8 hrs</td>
-          </tr>
-          <tr>
-            <td>2024-12-02</td>
-            <td>09:30 AM</td>
-            <td>05:30 PM</td>
-            <td>8 hrs</td>
-          </tr>
-          <!-- More rows populated dynamically -->
-        </tbody>
-      </table>
-    </section>
-  </main>
 
-  <!-- JavaScript 파일 -->
-  <script src="js/vendor/jquery-3.1.0.js"></script>
-  <script src="js/vendor/bootstrap.min.js"></script>
-  <script src="js/vendor/aws-cognito-sdk.min.js"></script>
-  <script src="js/vendor/amazon-cognito-identity.min.js"></script>
-  <script src="https://js.arcgis.com/4.6/"></script>
-  <script src="js/config.js"></script>
-  <script src="js/cognito-auth.js"></script>
-  <script src="js/attendance.js"></script>
+  <header class="site-header">
+    <h1 class="title">출근부 조회</h1>
+    <a class="home-button" href="/student.html">뒤로가기</a>
+  </header>
+
+  <section id="attendance-section">
+    <h2>근로장학생 출근 기록</h2>
+    <ul id="attendance-list"></ul>
+  </section>
+
+  <script src="https://unpkg.com/aws-amplify/dist/aws-amplify.min.js"></script>
+  <script src="js/vendor.js"></script>
+  <script type="module" src="js/attendance.js"></script>
 </body>
 </html>

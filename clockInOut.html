@@ -1,44 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html class="no-js" lang="">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clock In/Out</title>
-</head>
-<body class="page-clock">
-  <header class="site-header">
-    <h1 class="title">Clock In/Out</h1>
-    <a class="home-button" href="/">Home</a>
-  </header>
+  <meta charset="utf-8">
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>근로장학생 출/퇴근</title>
   
-  <main class="content">
-    <section class="clock-action">
-      <h2>Manage Your Attendance</h2>
-      <div class="clock-buttons">
-        <button id="clockIn" class="action-button">Clock In</button>
-        <button id="clockOut" class="action-button">Clock Out</button>
-      </div>
-    </section>
-  </main>
+  <link rel="stylesheet" href="css/font.css">
+  <link rel="stylesheet" href="css/main.css">
+  
+  <script src="js/vendor/modernizr.js"></script>
+</head>
+<body class="page-clock-in-out">
 
-  <script>
-    document.getElementById('clockIn').addEventListener('click', function () {
-      alert('Clocked In Successfully!');
-      // Add logic to save clock-in time
-    });
+  <header class="site-header">
+    <h1 class="title">출/퇴근</h1>
+    <a class="home-button" href="/student.html">뒤로가기</a>
+  </header>
 
-    document.getElementById('clockOut').addEventListener('click', function () {
-      alert('Clocked Out Successfully!');
-      // Add logic to save clock-out time
-    });
-  </script>
-  <script src="js/vendor/jquery-3.1.0.js"></script>
-  <script src="js/vendor/bootstrap.min.js"></script>
-  <script src="js/vendor/aws-cognito-sdk.min.js"></script>
-  <script src="js/vendor/amazon-cognito-identity.min.js"></script>
-  <script src="https://js.arcgis.com/4.6/"></script>
-  <script src="js/config.js"></script>
-  <script src="js/cognito-auth.js"></script>
-  <script src="js/clockInOut.js"></script>
+  <section id="clock-in-out-section">
+    <h2>출/퇴근 지문 인증</h2>
+    <input type="file" id="fingerprint-input" accept="image/*">
+    <button id="submit-fingerprint">출/퇴근 처리</button>
+    <div id="status-message"></div>
+  </section>
+
+  <script src="https://unpkg.com/aws-amplify/dist/aws-amplify.min.js"></script>
+  <script src="js/vendor.js"></script>
+  <script type="module" src="js/clockInOut.js"></script>
 </body>
 </html>
