@@ -1,4 +1,4 @@
-/*global WildRydes _config*/
+/*global WildRydes _config */
 
 var WildRydes = window.WildRydes || {};
 WildRydes.attendance = WildRydes.attendance || {};
@@ -34,10 +34,24 @@ WildRydes.attendance = WildRydes.attendance || {};
     }
 
     function displayAttendanceRecords(records) {
-        var $list = $('#attendance-list');
-        records.forEach(function(record) {
-            var listItem = `<li>${record.action} - ${record.timestamp}</li>`;
-            $list.append(listItem);
+        // FullCalendar 설정
+        var calendarEl = document.getElementById('attendance-calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth', // 월별 보기
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            events: records.map(function(record) {
+                return {
+                    title: record.action, // "Clock In" 또는 "Clock Out"
+                    start: record.timestamp, // ISO 형식 날짜
+                    color: record.action === "Clock In" ? "#4caf50" : "#f44336" // 출근은 녹색, 퇴근은 빨간색
+                };
+            })
         });
+
+        calendar.render();
     }
 }(jQuery));
