@@ -48,24 +48,17 @@ WildRydes.attendance = WildRydes.attendance || {};
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek,timeGridDay'
             },
-            events: records.map(function(record) {
+            events: Object.keys(workSummary).map(function(date) {
+                var workData = workSummary[date];
+                var details = workData.details.join("<br/>");
                 return {
-                    title: record.action, // "Clock In" 또는 "Clock Out"
-                    start: record.timestamp, // ISO 형식 날짜
-                    color: record.action === "Clock In" ? "#4caf50" : "#f44336" // 출근은 녹색, 퇴근은 빨간색
+                    title: `${date}<br/>--------------------------<br/>${details}<br/>총 근무 시간: ${workData.total.hours}시간 ${workData.total.minutes}분<br/>--------------------------`,
+                    start: date // 날짜에 표시
                 };
             }),
             eventContent: function(arg) {
-                var date = arg.event.startStr.split('T')[0]; // 해당 날짜
-                var workTime = workSummary[date]?.total || { hours: 0, minutes: 0 };
-                var details = workSummary[date]?.details || "기록 없음";
-
                 return {
-                    html: `
-                        <b>${arg.event.title}</b><br/>
-                        근무 시간: ${workTime.hours}시간 ${workTime.minutes}분<br/>
-                        ${details}
-                    `
+                    html: `<div style="white-space:normal;">${arg.event.title}</div>`
                 };
             }
         });
@@ -80,7 +73,7 @@ WildRydes.attendance = WildRydes.attendance || {};
         records.forEach(function(record) {
             var date = record.timestamp.split('T')[0]; // 날짜만 추출 (YYYY-MM-DD)
             if (!workSummary[date]) {
-                workSummary[date] = { events: [], total: { hours: 0, minutes: 0 }, details: "" };
+                workSummary[date] = { events: [], total: { hours: 0, minutes: 0 }, details: [] };
             }
             workSummary[date].events.push({
                 time: new Date(record.timestamp).getTime(),
@@ -114,7 +107,7 @@ WildRydes.attendance = WildRydes.attendance || {};
             };
 
             // 상세 기록 설정
-            workSummary[date].details = detailsArray.join(", ");
+            workSummary[date].details = detailsArray;
         });
 
         return workSummary;
