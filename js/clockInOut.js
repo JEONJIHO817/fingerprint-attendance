@@ -23,7 +23,7 @@ WildRydes.clockInOut = WildRydes.clockInOut || {};
         // 현재 시간 가져오기
         var currentTime = new Date().toISOString(); // ISO 8601 형식으로 변환
         var action = $('#action-select').val(); // Clock In 또는 Clock Out 선택값
-        var fileInput = $('#fingerprint-upload')[0];
+
         if (!action) {
             alert('출근 또는 퇴근을 선택하세요.');
             return;
