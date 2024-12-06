@@ -31,7 +31,7 @@ var WildRydes = window.WildRydes || {};
         sessionStorage.removeItem('authToken'); // 세션 스토리지에서 토큰 제거
     };
 
-    // 세션 확인 및 자동 리다이렉션
+    /*// 세션 확인 및 자동 리다이렉션
     $(document).ready(function () {
         var cognitoUser = userPool.getCurrentUser();
 
@@ -50,7 +50,7 @@ var WildRydes = window.WildRydes || {};
         } else {
             console.log('No user is signed in.');
         }
-    });
+    });*/
 
     // authToken을 세션 스토리지에서 관리
     WildRydes.authToken = new Promise(function fetchCurrentAuthToken(resolve, reject) {
