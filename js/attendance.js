@@ -36,7 +36,7 @@ WildRydes.attendance = WildRydes.attendance || {};
     function displayAttendanceRecords(records) {
         var $list = $('#attendance-list');
         records.forEach(function(record) {
-            var listItem = `<li>${record.date} - ${record.status}</li>`;
+            var listItem = `<li>${record.action} - ${record.timestamp}</li>`;
             $list.append(listItem);
         });
     }
