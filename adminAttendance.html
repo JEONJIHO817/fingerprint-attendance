@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학생 출근부 조회</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.8/index.global.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.8/index.global.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.8/index.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.8/index.global.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #calendar {
+            margin-top: 20px;
+        }
+
+        .dropdown-section {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>학생 출근부 조회</h1>
+        </header>
+
+        <section class="dropdown-section">
+            <label for="studentDropdown" class="form-label">학생 선택</label>
+            <select id="studentDropdown" class="form-select">
+                <option value="">학생을 선택하세요</option>
+                <!-- 학생 목록은 JavaScript로 추가 -->
+            </select>
+            <button id="fetchAttendanceButton" class="btn btn-primary mt-3">조회</button>
+        </section>
+
+        <div id="calendar"></div>
+
+        <section class="edit-section mt-5">
+            <button id="editAttendanceButton" class="btn btn-warning">출근부 수정</button>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const studentDropdown = document.getElementById('studentDropdown');
+            const fetchAttendanceButton = document.getElementById('fetchAttendanceButton');
+            const editAttendanceButton = document.getElementById('editAttendanceButton');
+
+            const calendarEl = document.getElementById('calendar');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'ko',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: [] // API 호출 후 데이터를 동적으로 추가
+            });
+
+            // 캘린더 초기 렌더
+            calendar.render();
+
+            // 학생 목록을 동적으로 추가 (예시 데이터, API 연동 필요)
+            const students = [
+                { id: 'student1', name: '홍길동' },
+                { id: 'student2', name: '김철수' },
+                { id: 'student3', name: '박영희' }
+            ];
+
+            students.forEach(student => {
+                const option = document.createElement('option');
+                option.value = student.id;
+                option.textContent = student.name;
+                studentDropdown.appendChild(option);
+            });
+
+            // 조회 버튼 클릭 이벤트
+            fetchAttendanceButton.addEventListener('click', function () {
+                const selectedStudentId = studentDropdown.value;
+
+                if (!selectedStudentId) {
+                    alert('학생을 선택하세요.');
+                    return;
+                }
+
+                alert(`학생 ID: ${selectedStudentId}의 출근부를 조회합니다.`);
+
+                // 선택한 학생의 출근부 데이터를 API에서 가져와 캘린더에 표시
+                const exampleEvents = [
+                    {
+                        title: '출근',
+                        start: '2024-12-01T09:00:00',
+                        color: '#4caf50'
+                    },
+                    {
+                        title: '퇴근',
+                        start: '2024-12-01T18:00:00',
+                        color: '#f44336'
+                    }
+                ];
+
+                calendar.removeAllEvents(); // 기존 이벤트 제거
+                exampleEvents.forEach(event => {
+                    calendar.addEvent(event); // 새 이벤트 추가
+                });
+            });
+
+            // 수정 버튼 클릭 이벤트
+            editAttendanceButton.addEventListener('click', function () {
+                const selectedStudentId = studentDropdown.value;
+
+                if (!selectedStudentId) {
+                    alert('학생을 선택하세요.');
+                    return;
+                }
+
+                alert(`학생 ID: ${selectedStudentId}의 출근부를 수정합니다.`);
+                // 수정 페이지 또는 모달로 이동
+            });
+        });
+    </script>
+</body>
+
+</html>

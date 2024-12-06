@@ -5,9 +5,14 @@ const fingerprintForm = document.getElementById('fingerprintForm');
 // 출근부 조회 버튼 클릭 이벤트
 document.getElementById('viewAllAttendanceBtn').onclick = function () {
     console.log('Redirecting to attendance page...');
-    window.location.href = '/attendance.html'; // 출근부 조회 페이지로 리디렉션
+    window.location.href = '/adminAttendance.html'; // 출근부 조회 페이지로 리디렉션
 };
 
+
+
+
+
+//------------------------------------------------------------------------------------------
 // 지문 등록 버튼 클릭 이벤트
 document.getElementById('registerFingerprintBtn').onclick = function () {
     fingerprintModal.show(); // 지문 등록 모달 표시
