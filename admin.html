@@ -4,15 +4,96 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Portal</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      padding: 20px;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    main {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    .action-btn {
+      width: 200px;
+      padding: 20px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
   <header>
     <h1>Admin Dashboard</h1>
+    <p>Manage student attendance and fingerprint records</p>
   </header>
   <main>
-    <button id="viewAllAttendanceBtn">View All Attendance</button>
-    <button id="registerFingerprintBtn">Register Fingerprint</button>
+    <button id="viewAllAttendanceBtn" class="btn btn-primary action-btn">View Attendance</button>
+    <button id="registerFingerprintBtn" class="btn btn-secondary action-btn">Register Fingerprint</button>
   </main>
+
+  <!-- Modal for viewing attendance -->
+  <div class="modal fade" id="attendanceModal" tabindex="-1" aria-labelledby="attendanceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="attendanceModalLabel">All Students' Attendance Records</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Student Name</th>
+                <th>Date</th>
+                <th>Clock In</th>
+                <th>Clock Out</th>
+                <th>Total Hours</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="attendanceTableBody">
+              <!-- Records will be dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for fingerprint registration -->
+  <div class="modal fade" id="fingerprintModal" tabindex="-1" aria-labelledby="fingerprintModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="fingerprintModalLabel">Register Fingerprint</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="fingerprintForm">
+            <div class="mb-3">
+              <label for="studentId" class="form-label">Student ID</label>
+              <input type="text" class="form-control" id="studentId" placeholder="Enter Student ID">
+            </div>
+            <div class="mb-3">
+              <label for="fingerprintFile" class="form-label">Upload Fingerprint File</label>
+              <input type="file" class="form-control" id="fingerprintFile">
+            </div>
+            <button type="submit" class="btn btn-primary">Register</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
   <script src="js/admin.js"></script>
 </body>
 </html>
