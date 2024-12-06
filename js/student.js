@@ -8,13 +8,13 @@ WildRydes.map = WildRydes.map || {};
 
     // 인증 토큰 설정
     WildRydes.authToken.then(function setAuthToken(token) {
-        if (token) {
-            authToken = token;
-        } else {
-            window.location.href = '/signin.html';
-        }
+      if (token) {
+          $('#protectedContent').show(); // 인증 통과 시 콘텐츠 표시
+      } else {
+          window.location.href = '/signin.html';
+      }
     }).catch(function handleTokenError(error) {
-        alert(error);
+        console.error('Authentication error: ', error);
         window.location.href = '/signin.html';
     });
 
