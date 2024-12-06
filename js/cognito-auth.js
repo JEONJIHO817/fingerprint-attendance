@@ -25,10 +25,13 @@ var WildRydes = window.WildRydes || {};
         AWSCognito.config.region = _config.cognito.region;
     }
 
+    // 로그아웃 기능 수정
     WildRydes.signOut = function signOut() {
         userPool.getCurrentUser().signOut();
+        sessionStorage.removeItem('authToken'); // 세션 스토리지에서 토큰 제거
     };
 
+    // authToken을 세션 스토리지에서 관리
     WildRydes.authToken = new Promise(function fetchCurrentAuthToken(resolve, reject) {
         var cognitoUser = userPool.getCurrentUser();
 
@@ -37,9 +40,12 @@ var WildRydes = window.WildRydes || {};
                 if (err) {
                     reject(err);
                 } else if (!session.isValid()) {
+                    sessionStorage.removeItem('authToken'); // 만료된 세션일 경우 제거
                     resolve(null);
                 } else {
-                    resolve(session.getIdToken().getJwtToken());
+                    var token = session.getIdToken().getJwtToken();
+                    sessionStorage.setItem('authToken', token); // 세션 스토리지에 저장
+                    resolve(token);
                 }
             });
         } else {
@@ -47,11 +53,9 @@ var WildRydes = window.WildRydes || {};
         }
     });
 
-
     /*
      * Cognito User Pool functions
      */
-
     function register(email, password, employeeId, onSuccess, onFailure) {
         var dataEmail = { Name: 'email', Value: email };
         var dataEmployeeId = { Name: 'custom:employeeId', Value: employeeId }; // 사용자 정의 속성 추가
@@ -76,7 +80,6 @@ var WildRydes = window.WildRydes || {};
         );
     }
 
-
     function signin(email, password, onSuccess, onFailure) {
         var authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails({
             Username: toUsername(email),
@@ -87,12 +90,13 @@ var WildRydes = window.WildRydes || {};
         cognitoUser.authenticateUser(authenticationDetails, {
             onSuccess: function authenticateSuccess(result) {
                 console.log('Authentication successful');
-                onSuccess(cognitoUser); // CognitoUser 객체를 반환
+                var token = result.getIdToken().getJwtToken();
+                sessionStorage.setItem('authToken', token); // 세션 스토리지에 토큰 저장
+                onSuccess(cognitoUser);
             },
             onFailure: onFailure
         });
     }
-
 
     function verify(email, code, onSuccess, onFailure) {
         createCognitoUser(email).confirmRegistration(code, true, function confirmCallback(err, result) {
@@ -118,7 +122,6 @@ var WildRydes = window.WildRydes || {};
     /*
      *  Event Handlers
      */
-
     $(function onDocReady() {
         $('#signinForm').submit(handleSignin);
         $('#registrationForm').submit(handleRegister);
@@ -131,7 +134,6 @@ var WildRydes = window.WildRydes || {};
         var errorMessageDiv = $('#errorMessage'); // 오류 메시지를 보여줄 div
         event.preventDefault();
     
-        // 로그인 시도
         signin(email, password,
             function signinSuccess(cognitoUser) {
                 cognitoUser.getSession(function (err, session) {
@@ -141,7 +143,6 @@ var WildRydes = window.WildRydes || {};
                         return;
                     }
     
-                    // 세션이 유효하면 사용자 속성 가져오기
                     cognitoUser.getUserAttributes(function (err, attributes) {
                         if (err) {
                             console.error('Error fetching user attributes:', err);
@@ -149,7 +150,6 @@ var WildRydes = window.WildRydes || {};
                             return;
                         }
     
-                        // custom:role 속성 값 확인
                         var storedRole = null;
                         attributes.forEach(function (attribute) {
                             if (attribute.getName() === 'custom:role') {
@@ -158,9 +158,9 @@ var WildRydes = window.WildRydes || {};
                         });
     
                         if (storedRole === 'admin') {
-                            window.location.href = 'admin.html'; // Admin 페이지로 이동
+                            window.location.href = 'admin.html';
                         } else if (storedRole === 'student') {
-                            window.location.href = 'student.html'; // Student 페이지로 이동
+                            window.location.href = 'student.html';
                         }
                     });
                 });
@@ -171,9 +171,6 @@ var WildRydes = window.WildRydes || {};
             }
         );
     }
-    
-    
-    
 
     function handleRegister(event) {
         var email = $('#emailInputRegister').val();
@@ -210,8 +207,6 @@ var WildRydes = window.WildRydes || {};
         event.preventDefault();
         verify(email, code,
             function verifySuccess(result) {
-                console.log('call result: ' + result);
-                console.log('Successfully verified');
                 alert('Verification successful. You will now be redirected to the login page.');
                 window.location.href = signinUrl;
             },
@@ -220,4 +215,9 @@ var WildRydes = window.WildRydes || {};
             }
         );
     }
+
+    // 창 닫을 때 로그아웃 처리
+    window.onbeforeunload = function () {
+        sessionStorage.removeItem('authToken');
+    };
 }(jQuery));
