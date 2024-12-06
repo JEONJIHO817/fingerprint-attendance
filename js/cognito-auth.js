@@ -25,13 +25,42 @@ var WildRydes = window.WildRydes || {};
         AWSCognito.config.region = _config.cognito.region;
     }
 
-    // 로그아웃 기능 수정
+    // 로그아웃 시 세션과 세션 스토리지를 모두 제거
     WildRydes.signOut = function signOut() {
         userPool.getCurrentUser().signOut();
-        sessionStorage.removeItem('authToken'); // 세션 스토리지에서 토큰 제거
+        sessionStorage.removeItem('authToken');
     };
 
-    // authToken을 세션 스토리지에서 관리
+    // 페이지 로드 시 세션 검증
+    $(document).ready(function () {
+        verifySessionOnLoad();
+    });
+
+    function verifySessionOnLoad() {
+        var cognitoUser = userPool.getCurrentUser();
+
+        if (!cognitoUser) {
+            // 로그인된 사용자가 없는 경우
+            console.log('No user is signed in. Redirecting to signin page.');
+            sessionStorage.removeItem('authToken');
+            window.location.href = signinUrl;
+            return;
+        }
+
+        // 세션 확인
+        cognitoUser.getSession(function (err, session) {
+            if (err || !session.isValid()) {
+                console.log('Session is invalid. Redirecting to signin page.');
+                sessionStorage.removeItem('authToken');
+                window.location.href = signinUrl;
+            } else {
+                console.log('Session is valid.');
+                // 세션 스토리지에 토큰 저장
+                sessionStorage.setItem('authToken', session.getIdToken().getJwtToken());
+            }
+        });
+    }
+
     WildRydes.authToken = new Promise(function fetchCurrentAuthToken(resolve, reject) {
         var cognitoUser = userPool.getCurrentUser();
 
@@ -40,7 +69,7 @@ var WildRydes = window.WildRydes || {};
                 if (err) {
                     reject(err);
                 } else if (!session.isValid()) {
-                    sessionStorage.removeItem('authToken'); // 만료된 세션일 경우 제거
+                    sessionStorage.removeItem('authToken'); // 만료된 세션 제거
                     resolve(null);
                 } else {
                     var token = session.getIdToken().getJwtToken();
