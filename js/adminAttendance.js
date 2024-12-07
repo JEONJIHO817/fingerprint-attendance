@@ -113,7 +113,7 @@ WildRydes.attendance = WildRydes.attendance || {};
             return;
         }
 
-        const timestampToDelete = selectedEvent.startStr;
+        const timestampToDelete = new Date(selectedEvent.start).toISOString();
 
         $.ajax({
             method: 'DELETE',
@@ -148,7 +148,7 @@ WildRydes.attendance = WildRydes.attendance || {};
 
         $.ajax({
             method: 'POST',
-            url: `${_config.api.invokeUrl}/admin/mod-attendance`,
+            url: _config.api.invokeUrl + '/admin/mod-attendance',
             headers: { Authorization: authToken },
             data: JSON.stringify({
                 employeeId: currentEmployeeId,
