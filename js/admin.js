@@ -23,16 +23,20 @@ fingerprintForm.onsubmit = function (e) {
     e.preventDefault();
     
     const studentId = document.getElementById('studentId').value;
-    const fingerprintFile = document.getElementById('fingerprintFile').files[0];
-    
-    if (!studentId || !fingerprintFile) {
-        alert('Please provide all required fields.');
+    const fingerprintFile1 = document.getElementById('fingerprintFile1').files[0];
+    const fingerprintFile2 = document.getElementById('fingerprintFile2').files[0];
+    const fingerprintFile3 = document.getElementById('fingerprintFile3').files[0];
+
+    if (!studentId || !fingerprintFile1 || !fingerprintFile2 || !fingerprintFile3) {
+        alert('Please provide Student ID and all three fingerprint files.');
         return;
     }
 
     const formData = new FormData();
     formData.append('studentId', studentId);
-    formData.append('fingerprint', fingerprintFile);
+    formData.append('fingerprint', fingerprintFile1);
+    formData.append('fingerprint', fingerprintFile2);
+    formData.append('fingerprint', fingerprintFile3);
 
     // Simulate API Call for Fingerprint Registration
     fetch('/api/admin/registerFingerprint', { // Replace with your API endpoint
