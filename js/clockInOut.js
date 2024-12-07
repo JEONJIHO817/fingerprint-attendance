@@ -30,26 +30,46 @@ WildRydes.clockInOut = WildRydes.clockInOut || {};
             return;
         }
 
+        if (!fileInput.files || !fileInput.files[0]) {
+            alert('파일이 등록되지 않았습니다!');
+            return;
+        }
+
         var requestData = {
             timestamp: currentTime,
             action: action
         };
 
-        $.ajax({
-            method: 'POST',
-            url: _config.api.invokeUrl + '/ride',
-            headers: {
-                Authorization: authToken
-            },
-            data: JSON.stringify(requestData),
-            contentType: 'application/json',
-            success: function(response) {
-                $('#status-message').text(action + ' 처리가 완료되었습니다: ' + currentTime);
-            },
-            error: function ajaxError(jqXHR, textStatus, errorThrown) {
-                console.error('Error submitting clock-in/out: ', textStatus, ', Details: ', errorThrown);
-                $('#status-message').text('출/퇴근 처리 중 에러가 발생했습니다.');
-            }
-        });
+        var file = fileInput.files[0];
+        var reader = new FileReader();
+
+        reader.onload = function(event) {
+            var base64Image = event.target.result.split(',')[1]; // Base64 데이터
+            requestData.fingerprint = base64Image; // Base64 데이터를 requestData에 추가
+            
+
+            $.ajax({
+                method: 'POST',
+                url: _config.api.invokeUrl + '/ride',
+                headers: {
+                    Authorization: authToken
+                },
+                data: JSON.stringify(requestData),
+                contentType: 'application/json',
+                success: function(response) {
+                    $('#status-message').text(action + ' 처리가 완료되었습니다: ' + currentTime);
+                },
+                error: function ajaxError(jqXHR, textStatus, errorThrown) {
+                    console.error('Error submitting clock-in/out: ', textStatus, ', Details: ', errorThrown);
+                    $('#status-message').text('출/퇴근 처리 중 에러가 발생했습니다.');
+                }
+            });
+        };
+
+        reader.onerror = function() {
+            alert('파일을 읽는 도중 오류가 발생했습니다.');
+        };
+    
+        reader.readAsDataURL(file); // 파일 읽기 시작
     });
 }(jQuery));
