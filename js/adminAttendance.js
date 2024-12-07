@@ -61,8 +61,8 @@ WildRydes.attendance = WildRydes.attendance || {};
 
         students.forEach(student => {
             const option = document.createElement('option');
-            option.value = student.employId; // employId 값을 드롭다운의 값으로 설정
-            option.textContent = student.employId; // 드롭다운에 employId 표시
+            option.value = student.employeeId; // employId 값을 드롭다운의 값으로 설정
+            option.textContent = student.employeeId; // 드롭다운에 employId 표시
             studentDropdown.appendChild(option);
         });
     }
