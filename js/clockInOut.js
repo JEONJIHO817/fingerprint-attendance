@@ -23,34 +23,53 @@ WildRydes.clockInOut = WildRydes.clockInOut || {};
         // 현재 시간 가져오기 (한국 시간으로 변환)
         var currentTime = new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', hour12: false });
         var action = $('#action-select').val(); // Clock In 또는 Clock Out 선택값
-        var fileInput = $('#fingerprint-upload')[0]; //지문파일 업로드된거
+        var fileInput = $('#fingerprint-upload')[0];
 
         if (!action) {
             alert('출근 또는 퇴근을 선택하세요.');
             return;
         }
 
+        if (!fileInput.files || !fileInput.files[0]) {
+            alert('파일이 등록되지 않았습니다!');
+            return;
+        }
+
         var requestData = { //내가 요청할거 (출근할건지 퇴근할건지, 몇시인지, 지문이 뭔지)
             timestamp: currentTime,
             action: action
-            //fileInput
         };
 
-        $.ajax({
-            method: 'POST',
-            url: _config.api.invokeUrl + '/ride',
-            headers: {
-                Authorization: authToken
-            },
-            data: JSON.stringify(requestData),
-            contentType: 'application/json',
-            success: function(response) {
-                $('#status-message').text(action + ' 처리가 완료되었습니다: ' + currentTime);
-            },
-            error: function ajaxError(jqXHR, textStatus, errorThrown) {
-                console.error('Error submitting clock-in/out: ', textStatus, ', Details: ', errorThrown);
-                $('#status-message').text('출/퇴근 처리 중 에러가 발생했습니다.');
-            }
-        });
+        var file = fileInput.files[0];
+        var reader = new FileReader();
+
+        reader.onload = function(event) {
+            var base64Image = event.target.result.split(',')[1]; // Base64 데이터
+            requestData.fingerprint = base64Image; // Base64 데이터를 requestData에 추가
+            
+
+            $.ajax({
+                method: 'POST',
+                url: _config.api.invokeUrl + '/ride',
+                headers: {
+                    Authorization: authToken
+                },
+                data: JSON.stringify(requestData),
+                contentType: 'application/json',
+                success: function(response) {
+                    $('#status-message').text(action + ' 처리가 완료되었습니다: ' + currentTime);
+                },
+                error: function ajaxError(jqXHR, textStatus, errorThrown) {
+                    console.error('Error submitting clock-in/out: ', textStatus, ', Details: ', errorThrown);
+                    $('#status-message').text('출/퇴근 처리 중 에러가 발생했습니다.');
+                }
+            });
+        };
+
+        reader.onerror = function() {
+            alert('파일을 읽는 도중 오류가 발생했습니다.');
+        };
+    
+        reader.readAsDataURL(file); // 파일 읽기 시작
     });
 }(jQuery));
