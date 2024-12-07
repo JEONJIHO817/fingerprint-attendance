@@ -116,9 +116,10 @@ WildRydes.attendance = WildRydes.attendance || {};
         // 선택된 이벤트의 타임스탬프를 가져옴
         const selectedTimestamp = selectedEvent.start;
 
-        // 타임스탬프를 DB 형식(날짜와 시간만 포함)으로 변환
-        const timestampToDelete = new Date(selectedTimestamp).toISOString().slice(0, 19); // 초 단위까지
-
+        // 타임스탬프를 KST 형식(YYYY-MM-DDTHH:mm:ss)으로 변환
+        const kstDate = new Date(selectedTimestamp.getTime() + (9 * 60 * 60 * 1000)); // UTC+9 시간 추가
+        const timestampToDelete = kstDate.toISOString().slice(0, 19).replace('T', 'T'); // 초 단위까지 추출
+            
         $.ajax({
             method: 'DELETE',
             url: _config.api.invokeUrl + '/admin/mod-attendance',
