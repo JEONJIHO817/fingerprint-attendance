@@ -9,7 +9,7 @@ WildRydes.attendance = WildRydes.attendance || {};
     WildRydes.authToken.then(function setAuthToken(token) {
         if (token) {
             authToken = token;
-            fetchStudentList(); // 학생 목록 가져오기
+            fetchStudentList();
         } else {
             window.location.href = '/signin.html';
         }
@@ -20,10 +20,13 @@ WildRydes.attendance = WildRydes.attendance || {};
 
     const studentDropdown = document.getElementById('studentDropdown');
     const fetchAttendanceButton = document.getElementById('fetchAttendanceButton');
-    const editAttendanceButton = document.getElementById('editAttendanceButton');
+    const editModal = document.getElementById('editModal');
+    const editTimestampInput = document.getElementById('editTimestamp');
+    const editActionInput = document.getElementById('editAction');
+    const saveEditButton = document.getElementById('saveEditButton');
+    const closeModalButton = document.getElementById('closeModalButton');
     const calendarEl = document.getElementById('calendar');
 
-    // FullCalendar 초기화
     const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         locale: 'ko',
@@ -32,33 +35,30 @@ WildRydes.attendance = WildRydes.attendance || {};
             center: 'title',
             right: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
-        events: []
+        events: [],
+        eventClick: function (info) {
+            openEditModal(info.event);
+        }
     });
 
     calendar.render();
 
-    // 학생 목록 가져오기
     function fetchStudentList() {
         $.ajax({
             method: 'GET',
-            url: _config.api.invokeUrl + '/admin/students', // API Gateway 경로
+            url: _config.api.invokeUrl + '/admin/students',
             headers: {
                 Authorization: authToken
             },
-            success: function (data) {
-                populateStudentDropdown(data);
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.error('Error fetching student list:', errorThrown);
+            success: populateStudentDropdown,
+            error: function () {
                 alert('학생 목록을 가져오는 중 문제가 발생했습니다.');
             }
         });
     }
 
-    // 드롭다운 목록 생성
     function populateStudentDropdown(students) {
-        studentDropdown.innerHTML = '<option value="">학생을 선택하세요</option>'; // 초기화
-
+        studentDropdown.innerHTML = '<option value="">학생을 선택하세요</option>';
         students.forEach(student => {
             const option = document.createElement('option');
             option.value = student.employeeId;
@@ -67,85 +67,70 @@ WildRydes.attendance = WildRydes.attendance || {};
         });
     }
 
-    // 조회 버튼 클릭 이벤트
     fetchAttendanceButton.addEventListener('click', function () {
-        const selectedEmployId = studentDropdown.value;
-
-        if (!selectedEmployId) {
+        const employeeId = studentDropdown.value;
+        if (!employeeId) {
             alert('학생을 선택하세요.');
             return;
         }
 
-        fetchAttendanceRecords(selectedEmployId);
+        fetchAttendanceRecords(employeeId);
     });
 
-    // 출근부 데이터 가져오기
     function fetchAttendanceRecords(employeeId) {
         $.ajax({
-            method: 'POST', // POST 메서드 사용
-            url: _config.api.invokeUrl + '/admin/get-attendance', // URL 경로
-            headers: {
-                Authorization: authToken,
-            },
-            data: JSON.stringify({ employeeId }), // 페이로드에 employeeId 포함
-            success: function (data) {
-                updateCalendarWithAttendance(data);
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.error('Error fetching attendance records:', errorThrown);
+            method: 'POST',
+            url: `${_config.api.invokeUrl}/admin/get-attendance`,
+            headers: { Authorization: authToken },
+            data: JSON.stringify({ employeeId }),
+            success: updateCalendarWithAttendance,
+            error: function () {
                 alert('출근부를 가져오는 중 문제가 발생했습니다.');
             }
         });
     }
 
-    // 캘린더 업데이트
     function updateCalendarWithAttendance(records) {
         calendar.removeAllEvents();
-
         records.forEach(record => {
             calendar.addEvent({
+                id: record.timestamp,
                 title: record.action === 'Clock In' ? '출근' : '퇴근',
                 start: record.timestamp,
-                color: record.action === 'Clock In' ? '#4caf50' : '#f44336'
+                extendedProps: { employeeId: record.employeeId, action: record.action }
             });
         });
     }
 
-    // 수정 버튼 클릭 이벤트
-    editAttendanceButton.addEventListener('click', function () {
-        const selectedEmployId = studentDropdown.value;
+    function openEditModal(event) {
+        editTimestampInput.value = event.start.toISOString();
+        editActionInput.value = event.extendedProps.action;
+        editModal.style.display = 'block';
 
-        if (!selectedEmployId) {
-            alert('학생을 선택하세요.');
-            return;
-        }
+        saveEditButton.onclick = function () {
+            const updatedTimestamp = editTimestampInput.value;
+            const updatedAction = editActionInput.value;
+            updateAttendanceRecord(event.extendedProps.employeeId, updatedTimestamp, updatedAction, event);
+        };
+    }
 
-        const newTimestamp = prompt('새로운 타임스탬프(예: 2024-12-07T08:00:00)를 입력하세요.');
-        const newAction = prompt('새로운 액션(Clock In/Clock Out)을 입력하세요.');
+    closeModalButton.onclick = function () {
+        editModal.style.display = 'none';
+    };
 
-        if (!newTimestamp || !newAction) {
-            alert('타임스탬프와 액션을 모두 입력해야 합니다.');
-            return;
-        }
-
-        updateAttendanceRecord(selectedEmployId, newTimestamp, newAction);
-    });
-
-    // 출근부 데이터 수정
-    function updateAttendanceRecord(employeeId, timestamp, action) {
+    function updateAttendanceRecord(employeeId, timestamp, action, event) {
         $.ajax({
             method: 'PUT',
-            url: `${_config.api.invokeUrl}/admin/mod-attendance`, // API 경로
-            headers: {
-                Authorization: authToken,
-            },
+            url: `${_config.api.invokeUrl}/admin/mod-attendance`,
+            headers: { Authorization: authToken },
             data: JSON.stringify({ employeeId, timestamp, action }),
             success: function () {
                 alert('출근부 수정이 완료되었습니다.');
-                fetchAttendanceRecords(employeeId); // 수정 후 데이터 갱신
+                event.setProp('title', action === 'Clock In' ? '출근' : '퇴근');
+                event.setStart(timestamp);
+                editModal.style.display = 'none';
             },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.error('Error updating attendance record:', errorThrown);
+            error: function () {
                 alert('출근부 수정 중 문제가 발생했습니다.');
             }
         });

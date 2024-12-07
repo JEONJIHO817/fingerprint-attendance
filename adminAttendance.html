@@ -37,9 +37,38 @@
             margin-top: 20px;
         }
 
-        .edit-section {
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 400px;
             text-align: center;
-            margin-top: 20px;
+        }
+
+        .modal input,
+        .modal select {
+            margin: 10px 0;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .modal button {
+            margin-top: 10px;
+            padding: 10px 20px;
         }
     </style>
 </head>
@@ -60,9 +89,21 @@
 
         <div id="calendar"></div>
 
-        <section class="edit-section">
-            <button id="editAttendanceButton" class="btn btn-warning">출근부 수정</button>
-        </section>
+        <!-- 수정 모달 -->
+        <div id="editModal" class="modal">
+            <div class="modal-content">
+                <h2>출근부 수정</h2>
+                <label for="editTimestamp">타임스탬프</label>
+                <input type="text" id="editTimestamp" readonly />
+                <label for="editAction">액션</label>
+                <select id="editAction">
+                    <option value="Clock In">출근</option>
+                    <option value="Clock Out">퇴근</option>
+                </select>
+                <button id="saveEditButton" class="btn btn-success">저장</button>
+                <button id="closeModalButton" class="btn btn-secondary">닫기</button>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.8/index.global.min.js"></script>
