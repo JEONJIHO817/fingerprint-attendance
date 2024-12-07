@@ -39,7 +39,7 @@ fingerprintForm.onsubmit = function (e) {
     formData.append('fingerprint', fingerprintFile3);
 
     // Simulate API Call for Fingerprint Registration
-    fetch(_config.api.invokeUrl + '/admin/registerFingerprint', { // Replace with your API endpoint
+    fetch('https://tglilj6saa.execute-api.ap-northeast-2.amazonaws.com/prod/admin/registerFingerprint', { // Replace with your API endpoint
         method: 'POST',
         body: formData,
     })
