@@ -97,19 +97,26 @@ WildRydes.attendance = WildRydes.attendance || {};
                 id: record.timestamp,
                 title: record.action === 'Clock In' ? '출근' : '퇴근',
                 start: record.timestamp,
+                color: record.action === 'Clock In' ? '#4caf50' : '#f44336', // 출근: 초록색, 퇴근: 빨간색
                 extendedProps: { employeeId: record.employeeId, action: record.action }
             });
         });
     }
 
     function openEditModal(event) {
-        editTimestampInput.value = event.start.toISOString();
+        editTimestampInput.value = event.start.toISOString().slice(0, 16);
         editActionInput.value = event.extendedProps.action;
         editModal.style.display = 'block';
 
         saveEditButton.onclick = function () {
             const updatedTimestamp = editTimestampInput.value;
             const updatedAction = editActionInput.value;
+
+            if (!updatedTimestamp || !updatedAction) {
+                alert('타임스탬프와 액션을 입력하세요.');
+                return;
+            }
+
             updateAttendanceRecord(event.extendedProps.employeeId, updatedTimestamp, updatedAction, event);
         };
     }
@@ -126,8 +133,9 @@ WildRydes.attendance = WildRydes.attendance || {};
             data: JSON.stringify({ employeeId, timestamp, action }),
             success: function () {
                 alert('출근부 수정이 완료되었습니다.');
+                event.setStart(new Date(timestamp));
                 event.setProp('title', action === 'Clock In' ? '출근' : '퇴근');
-                event.setStart(timestamp);
+                event.setProp('color', action === 'Clock In' ? '#4caf50' : '#f44336'); // 색상 업데이트
                 editModal.style.display = 'none';
             },
             error: function () {
