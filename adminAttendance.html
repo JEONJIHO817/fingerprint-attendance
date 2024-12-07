@@ -41,6 +41,42 @@
             text-align: center;
             margin-top: 20px;
         }
+
+        /* 모달 스타일 */
+        #editModal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        #editModal label,
+        #editModal input {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        #editModal button {
+            margin: 5px;
+        }
+
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
     </style>
 </head>
 
@@ -60,19 +96,11 @@
 
         <div id="calendar"></div>
 
-        <section class="edit-section">
-            <button id="editAttendanceButton" class="btn btn-warning">출근부 수정</button>
-        </section>
-
         <!-- 수정 모달 -->
-        <div id="editModal" style="display:none;">
+        <div id="modalOverlay"></div>
+        <div id="editModal">
             <label for="editTimestamp">타임스탬프:</label>
             <input type="datetime-local" id="editTimestamp">
-            <label for="editAction">액션:</label>
-            <select id="editAction">
-                <option value="Clock In">출근</option>
-                <option value="Clock Out">퇴근</option>
-            </select>
             <button id="saveEditButton">저장</button>
             <button id="closeModalButton">취소</button>
         </div>
@@ -90,3 +118,5 @@
     <script src="js/cognito-auth.js"></script>
     <script src="js/adminAttendance.js"></script>
 </body>
+
+</html>

@@ -21,8 +21,8 @@ WildRydes.attendance = WildRydes.attendance || {};
     const studentDropdown = document.getElementById('studentDropdown');
     const fetchAttendanceButton = document.getElementById('fetchAttendanceButton');
     const editModal = document.getElementById('editModal');
+    const modalOverlay = document.getElementById('modalOverlay');
     const editTimestampInput = document.getElementById('editTimestamp');
-    const editActionInput = document.getElementById('editAction');
     const saveEditButton = document.getElementById('saveEditButton');
     const closeModalButton = document.getElementById('closeModalButton');
     const calendarEl = document.getElementById('calendar');
@@ -97,46 +97,47 @@ WildRydes.attendance = WildRydes.attendance || {};
                 id: record.timestamp,
                 title: record.action === 'Clock In' ? '출근' : '퇴근',
                 start: record.timestamp,
-                color: record.action === 'Clock In' ? '#4caf50' : '#f44336', // 출근: 초록색, 퇴근: 빨간색
-                extendedProps: { employeeId: record.employeeId, action: record.action }
+                color: record.action === 'Clock In' ? '#4caf50' : '#f44336',
+                extendedProps: { employeeId: record.employeeId }
             });
         });
     }
 
     function openEditModal(event) {
         editTimestampInput.value = event.start.toISOString().slice(0, 16);
-        editActionInput.value = event.extendedProps.action;
         editModal.style.display = 'block';
+        modalOverlay.style.display = 'block';
 
         saveEditButton.onclick = function () {
             const updatedTimestamp = editTimestampInput.value;
-            const updatedAction = editActionInput.value;
-
-            if (!updatedTimestamp || !updatedAction) {
-                alert('타임스탬프와 액션을 입력하세요.');
+            if (!updatedTimestamp) {
+                alert('타임스탬프를 입력하세요.');
                 return;
             }
 
-            updateAttendanceRecord(event.extendedProps.employeeId, updatedTimestamp, updatedAction, event);
+            updateAttendanceRecord(event.extendedProps.employeeId, event.id, updatedTimestamp, event);
         };
     }
 
     closeModalButton.onclick = function () {
-        editModal.style.display = 'none';
+        closeEditModal();
     };
 
-    function updateAttendanceRecord(employeeId, timestamp, action, event) {
+    function closeEditModal() {
+        editModal.style.display = 'none';
+        modalOverlay.style.display = 'none';
+    }
+
+    function updateAttendanceRecord(employeeId, oldTimestamp, newTimestamp, event) {
         $.ajax({
             method: 'PUT',
             url: `${_config.api.invokeUrl}/admin/mod-attendance`,
             headers: { Authorization: authToken },
-            data: JSON.stringify({ employeeId, timestamp, action }),
+            data: JSON.stringify({ employeeId, oldTimestamp, newTimestamp }),
             success: function () {
                 alert('출근부 수정이 완료되었습니다.');
-                event.setStart(new Date(timestamp));
-                event.setProp('title', action === 'Clock In' ? '출근' : '퇴근');
-                event.setProp('color', action === 'Clock In' ? '#4caf50' : '#f44336'); // 색상 업데이트
-                editModal.style.display = 'none';
+                event.setStart(new Date(newTimestamp));
+                closeEditModal();
             },
             error: function () {
                 alert('출근부 수정 중 문제가 발생했습니다.');
