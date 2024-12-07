@@ -23,16 +23,17 @@ WildRydes.clockInOut = WildRydes.clockInOut || {};
         // 현재 시간 가져오기 (한국 시간으로 변환)
         var currentTime = new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', hour12: false });
         var action = $('#action-select').val(); // Clock In 또는 Clock Out 선택값
-        var fileInput = $('#fingerprint-upload')[0];
+        var fileInput = $('#fingerprint-upload')[0]; //지문파일 업로드된거
 
         if (!action) {
             alert('출근 또는 퇴근을 선택하세요.');
             return;
         }
 
-        var requestData = {
+        var requestData = { //내가 요청할거 (출근할건지 퇴근할건지, 몇시인지, 지문이 뭔지)
             timestamp: currentTime,
             action: action
+            //fileInput
         };
 
         $.ajax({

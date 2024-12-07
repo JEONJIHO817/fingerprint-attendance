@@ -98,12 +98,23 @@ WildRydes.attendance = WildRydes.attendance || {};
     function updateCalendarWithAttendance(records) {
         calendar.removeAllEvents();
         records.forEach(record => {
-            calendar.addEvent({
-                title: record.action === 'Clock In' ? '출근' : '퇴근',
-                start: record.timestamp,
-                color: record.action === 'Clock In' ? '#4caf50' : '#f44336',
-                extendedProps: { action: record.action }
-            });
+            // timestamp를 변환
+            const timestampRegex = /(\d{4})\.\s*(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{1,2})시\s*(\d{1,2})분\s*(\d{1,2})초/;
+            const match = record.timestamp.match(timestampRegex);
+
+            if (match) {
+                const [_, year, month, day, hour, minute, second] = match.map(Number);
+                const startDate = new Date(year, month - 1, day, hour, minute, second);
+
+                calendar.addEvent({
+                    title: record.action === 'Clock In' ? '출근' : '퇴근',
+                    start: startDate.toISOString(),
+                    color: record.action === 'Clock In' ? '#4caf50' : '#f44336',
+                    extendedProps: { action: record.action }
+                });
+            } else {
+                console.error('Invalid timestamp format:', record.timestamp);
+            }
         });
     }
 
@@ -113,20 +124,15 @@ WildRydes.attendance = WildRydes.attendance || {};
             return;
         }
 
-        // 선택된 이벤트의 타임스탬프를 가져옴
-        const selectedTimestamp = selectedEvent.start;
+        const selectedTimestamp = selectedEvent.start.toISOString();
 
-        // 타임스탬프를 KST 형식(YYYY-MM-DDTHH:mm:ss)으로 변환
-        const kstDate = new Date(selectedTimestamp.getTime() + (9 * 60 * 60 * 1000)); // UTC+9 시간 추가
-        const timestampToDelete = kstDate.toISOString().slice(0, 19).replace('T', 'T'); // 초 단위까지 추출
-            
         $.ajax({
             method: 'DELETE',
             url: _config.api.invokeUrl + '/admin/mod-attendance',
             headers: { Authorization: authToken },
             data: JSON.stringify({
                 employeeId: currentEmployeeId,
-                timestamp: timestampToDelete
+                timestamp: selectedTimestamp
             }),
             success: function () {
                 alert('출근 기록이 삭제되었습니다.');
