@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>학생 출근부 조회</title>
+    <title>학생 출근부 조회 및 수정</title>
     <style>
         body {
             font-family: 'Noto Sans KR', sans-serif;
@@ -12,54 +12,61 @@
             margin: 0;
             padding: 0;
         }
-    
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
         .form-select {
-            font-size: 16px; /* 폰트 크기 설정 */
-            color: #333; /* 텍스트 색상 설정 */
-            background-color: #fff; /* 배경 색상 설정 */
-            border: 1px solid #ccc; /* 테두리 */
+            width: 100%;
             padding: 8px;
-            border-radius: 4px;
+            margin-bottom: 20px;
         }
-    
-        .form-select option {
-            color: #333; /* 드롭다운 옵션의 텍스트 색상 */
-            background-color: #fff; /* 옵션 배경 */
+
+        #calendar {
+            margin-top: 20px;
         }
-    </style>    
+
+        .edit-section {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 
 <body>
     <div class="container">
         <header>
-            <h1>학생 출근부 조회</h1>
+            <h1>학생 출근부 조회 및 수정</h1>
         </header>
 
-        <section class="dropdown-section">
+        <section>
             <label for="studentDropdown" class="form-label">Employee ID 선택</label>
             <select id="studentDropdown" class="form-select">
-                <option value="">Employee ID를 선택하세요</option>
+                <option value="">학생을 선택하세요</option>
             </select>
             <button id="fetchAttendanceButton" class="btn btn-primary mt-3">조회</button>
         </section>
 
         <div id="calendar"></div>
 
-        <section class="edit-section mt-5">
+        <section class="edit-section">
             <button id="editAttendanceButton" class="btn btn-warning">출근부 수정</button>
         </section>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.8/index.global.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.8/index.global.min.js"></script>
-    <script src="js/vendor.js"></script>
-    <script src="js/vendor/jquery-3.1.0.js"></script>
-    <script src="js/vendor/bootstrap.min.js"></script>
-    <script src="js/vendor/aws-cognito-sdk.min.js"></script>
-    <script src="js/vendor/amazon-cognito-identity.min.js"></script>
-    <script src="https://js.arcgis.com/4.6/"></script>
-    <script src="js/config.js"></script>
-    <script src="js/cognito-auth.js"></script>
     <script src="js/adminAttendance.js"></script>
 </body>
 
