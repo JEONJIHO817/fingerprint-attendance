@@ -80,13 +80,15 @@ WildRydes.attendance = WildRydes.attendance || {};
     });
 
     // 출근부 데이터 가져오기
-    function fetchAttendanceRecords(employId) {
+    function fetchAttendanceRecords(employeeId) {
         $.ajax({
-            method: 'GET',
-            url: `${_config.api.invokeUrl}/admin/attendance/${employId}`, // API 경로
+            method: 'POST', // POST 메서드 사용
+            url: _config.api.invokeUrl + '/admin/attendance', // URL 경로
             headers: {
-                Authorization: authToken
+                Authorization: authToken,
+                'Content-Type': 'application/json'
             },
+            data: JSON.stringify({ employeeId }), // 페이로드에 employeeId 포함
             success: function (data) {
                 updateCalendarWithAttendance(data);
             },
@@ -131,18 +133,18 @@ WildRydes.attendance = WildRydes.attendance || {};
     });
 
     // 출근부 데이터 수정
-    function updateAttendanceRecord(employId, timestamp, action) {
+    function updateAttendanceRecord(employeeId, timestamp, action) {
         $.ajax({
             method: 'PUT',
-            url: `${_config.api.invokeUrl}/admin/attendance/${employId}`, // API 경로
+            url: `${_config.api.invokeUrl}/admin/attendance`, // API 경로
             headers: {
                 Authorization: authToken,
                 'Content-Type': 'application/json'
             },
-            data: JSON.stringify({ timestamp, action }),
+            data: JSON.stringify({ employeeId, timestamp, action }),
             success: function () {
                 alert('출근부 수정이 완료되었습니다.');
-                fetchAttendanceRecords(employId); // 수정 후 데이터 갱신
+                fetchAttendanceRecords(employeeId); // 수정 후 데이터 갱신
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.error('Error updating attendance record:', errorThrown);
