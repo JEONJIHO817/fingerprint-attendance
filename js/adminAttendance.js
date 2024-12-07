@@ -113,12 +113,11 @@ WildRydes.attendance = WildRydes.attendance || {};
             return;
         }
 
-            // 선택된 이벤트의 타임스탬프를 가져옴
-        const selectedTimestamp = new Date(selectedEvent.start);
+        // 선택된 이벤트의 타임스탬프를 가져옴
+        const selectedTimestamp = selectedEvent.start;
 
-        // KST로 변환
-        const timestampToDelete = new Date(selectedTimestamp.getTime() + 9 * 60 * 60 * 1000) // UTC -> KST
-            .toISOString()
+        // 타임스탬프를 DB 형식(날짜와 시간만 포함)으로 변환
+        const timestampToDelete = new Date(selectedTimestamp).toISOString().slice(0, 19); // 초 단위까지
 
         $.ajax({
             method: 'DELETE',
