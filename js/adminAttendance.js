@@ -20,11 +20,12 @@ WildRydes.attendance = WildRydes.attendance || {};
 
     const studentDropdown = document.getElementById('studentDropdown');
     const fetchAttendanceButton = document.getElementById('fetchAttendanceButton');
+    const addRecordButton = document.getElementById('addRecordButton');
     const calendarEl = document.getElementById('calendar');
     const editModal = document.getElementById('editModal');
     const closeModal = document.getElementById('closeModal');
     const deleteEvent = document.getElementById('deleteEvent');
-    const addEvent = document.getElementById('addEvent');
+    const eventInfo = document.getElementById('eventInfo');
 
     let currentEmployeeId;
     let selectedDate;
@@ -39,16 +40,10 @@ WildRydes.attendance = WildRydes.attendance || {};
             right: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
         events: [],
-        dateClick: function (info) {
-            selectedDate = info.dateStr;
-            selectedEvent = null; // 날짜 클릭 시 기존 이벤트 없음
-            document.getElementById('eventInfo').textContent = `날짜: ${selectedDate}`;
-            editModal.classList.add('active');
-        },
         eventClick: function (info) {
             selectedEvent = info.event;
             selectedDate = info.event.startStr;
-            document.getElementById('eventInfo').textContent = `날짜: ${selectedDate}, 액션: ${selectedEvent.extendedProps.action}`;
+            eventInfo.textContent = `날짜: ${selectedDate}, 액션: ${selectedEvent.extendedProps.action}`;
             editModal.classList.add('active');
         }
     });
@@ -139,13 +134,17 @@ WildRydes.attendance = WildRydes.attendance || {};
         });
     });
 
-    addEvent.addEventListener('click', function () {
+    addRecordButton.addEventListener('click', function () {
+        const dateToAdd = prompt('추가할 날짜를 입력하세요 (YYYY-MM-DD):');
+        const timeToAdd = prompt('추가할 시간을 입력하세요 (HH:mm):');
         const action = prompt('추가할 액션을 입력하세요 (Clock In/Clock Out):');
 
-        if (!action || (action !== 'Clock In' && action !== 'Clock Out')) {
-            alert('올바른 액션을 입력하세요.');
+        if (!dateToAdd || !timeToAdd || !action || (action !== 'Clock In' && action !== 'Clock Out')) {
+            alert('올바른 날짜, 시간 및 액션을 입력하세요.');
             return;
         }
+
+        const timestamp = `${dateToAdd}T${timeToAdd}:00`;
 
         $.ajax({
             method: 'POST',
@@ -153,13 +152,12 @@ WildRydes.attendance = WildRydes.attendance || {};
             headers: { Authorization: authToken },
             data: JSON.stringify({
                 employeeId: currentEmployeeId,
-                timestamp: selectedDate,
+                timestamp: timestamp,
                 action: action
             }),
             success: function () {
                 alert('출근 기록이 추가되었습니다.');
                 fetchAttendanceRecords(currentEmployeeId);
-                editModal.classList.remove('active');
             },
             error: function () {
                 alert('출근 기록 추가 중 문제가 발생했습니다.');
