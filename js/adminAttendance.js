@@ -23,13 +23,12 @@ WildRydes.attendance = WildRydes.attendance || {};
     const calendarEl = document.getElementById('calendar');
     const editModal = document.getElementById('editModal');
     const closeModal = document.getElementById('closeModal');
-    const saveChanges = document.getElementById('saveChanges');
     const deleteEvent = document.getElementById('deleteEvent');
-    const timestampInput = document.getElementById('timestampInput');
-    const actionSelect = document.getElementById('actionSelect');
+    const addEvent = document.getElementById('addEvent');
 
     let currentEmployeeId;
-    let currentEvent;
+    let selectedDate;
+    let selectedEvent;
 
     const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
@@ -40,10 +39,16 @@ WildRydes.attendance = WildRydes.attendance || {};
             right: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
         events: [],
+        dateClick: function (info) {
+            selectedDate = info.dateStr;
+            selectedEvent = null; // 날짜 클릭 시 기존 이벤트 없음
+            document.getElementById('eventInfo').textContent = `날짜: ${selectedDate}`;
+            editModal.classList.add('active');
+        },
         eventClick: function (info) {
-            currentEvent = info.event;
-            timestampInput.value = new Date(currentEvent.start).toISOString().slice(0, 16);
-            actionSelect.value = currentEvent.extendedProps.action;
+            selectedEvent = info.event;
+            selectedDate = info.event.startStr;
+            document.getElementById('eventInfo').textContent = `날짜: ${selectedDate}, 액션: ${selectedEvent.extendedProps.action}`;
             editModal.classList.add('active');
         }
     });
@@ -107,37 +112,13 @@ WildRydes.attendance = WildRydes.attendance || {};
         });
     }
 
-    saveChanges.addEventListener('click', function () {
-        const updatedTimestamp = timestampInput.value;
-        const updatedAction = actionSelect.value;
-
-        if (!updatedTimestamp || !updatedAction) {
-            alert('모든 필드를 입력하세요.');
+    deleteEvent.addEventListener('click', function () {
+        if (!selectedEvent) {
+            alert('삭제할 출근 기록이 선택되지 않았습니다.');
             return;
         }
 
-        $.ajax({
-            method: 'PUT',
-            url: `${_config.api.invokeUrl}/admin/mod-attendance`,
-            headers: { Authorization: authToken },
-            data: JSON.stringify({
-                employeeId: currentEmployeeId,
-                timestamp: updatedTimestamp,
-                action: updatedAction
-            }),
-            success: function () {
-                alert('출근부가 수정되었습니다.');
-                fetchAttendanceRecords(currentEmployeeId);
-                editModal.classList.remove('active');
-            },
-            error: function () {
-                alert('출근부 수정 중 문제가 발생했습니다.');
-            }
-        });
-    });
-
-    deleteEvent.addEventListener('click', function () {
-        const timestampToDelete = timestampInput.value;
+        const timestampToDelete = selectedEvent.startStr;
 
         $.ajax({
             method: 'DELETE',
@@ -148,12 +129,40 @@ WildRydes.attendance = WildRydes.attendance || {};
                 timestamp: timestampToDelete
             }),
             success: function () {
-                alert('출근부가 삭제되었습니다.');
+                alert('출근 기록이 삭제되었습니다.');
                 fetchAttendanceRecords(currentEmployeeId);
                 editModal.classList.remove('active');
             },
             error: function () {
-                alert('출근부 삭제 중 문제가 발생했습니다.');
+                alert('출근 기록 삭제 중 문제가 발생했습니다.');
+            }
+        });
+    });
+
+    addEvent.addEventListener('click', function () {
+        const action = prompt('추가할 액션을 입력하세요 (Clock In/Clock Out):');
+
+        if (!action || (action !== 'Clock In' && action !== 'Clock Out')) {
+            alert('올바른 액션을 입력하세요.');
+            return;
+        }
+
+        $.ajax({
+            method: 'POST',
+            url: `${_config.api.invokeUrl}/admin/mod-attendance`,
+            headers: { Authorization: authToken },
+            data: JSON.stringify({
+                employeeId: currentEmployeeId,
+                timestamp: selectedDate,
+                action: action
+            }),
+            success: function () {
+                alert('출근 기록이 추가되었습니다.');
+                fetchAttendanceRecords(currentEmployeeId);
+                editModal.classList.remove('active');
+            },
+            error: function () {
+                alert('출근 기록 추가 중 문제가 발생했습니다.');
             }
         });
     });

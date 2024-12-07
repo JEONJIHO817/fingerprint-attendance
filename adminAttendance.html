@@ -89,23 +89,17 @@
 
         <div class="modal" id="editModal">
             <div class="modal-header">
-                <h2>출근부 수정</h2>
+                <h2>출근부 관리</h2>
                 <button id="closeModal">닫기</button>
             </div>
             <div class="modal-body">
-                <label for="timestampInput">타임스탬프</label>
-                <input type="datetime-local" id="timestampInput">
-                <label for="actionSelect">액션</label>
-                <select id="actionSelect">
-                    <option value="Clock In">출근</option>
-                    <option value="Clock Out">퇴근</option>
-                </select>
+                <p id="eventInfo">출근 기록 정보</p>
             </div>
             <div class="modal-footer">
-                <button id="saveChanges">저장</button>
                 <button id="deleteEvent">삭제</button>
+                <button id="addEvent">추가</button>
             </div>
-        </div>
+        </div>        
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.8/index.global.min.js"></script>
