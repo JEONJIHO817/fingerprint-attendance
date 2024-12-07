@@ -117,7 +117,7 @@ WildRydes.attendance = WildRydes.attendance || {};
 
         $.ajax({
             method: 'DELETE',
-            url: `${_config.api.invokeUrl}/admin/delete-attendance`,
+            url: _config.api.invokeUrl + '/admin/mod-attendance',
             headers: { Authorization: authToken },
             data: JSON.stringify({
                 employeeId: currentEmployeeId,
