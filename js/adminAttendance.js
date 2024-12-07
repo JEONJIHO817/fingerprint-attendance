@@ -83,7 +83,7 @@ WildRydes.attendance = WildRydes.attendance || {};
     function fetchAttendanceRecords(employeeId) {
         $.ajax({
             method: 'POST', // POST 메서드 사용
-            url: _config.api.invokeUrl + '/admin/attendance', // URL 경로
+            url: _config.api.invokeUrl + '/admin/get-attendance', // URL 경로
             headers: {
                 Authorization: authToken,
             },
@@ -135,7 +135,7 @@ WildRydes.attendance = WildRydes.attendance || {};
     function updateAttendanceRecord(employeeId, timestamp, action) {
         $.ajax({
             method: 'PUT',
-            url: `${_config.api.invokeUrl}/admin/attendance`, // API 경로
+            url: `${_config.api.invokeUrl}/admin/mod-attendance`, // API 경로
             headers: {
                 Authorization: authToken,
             },
