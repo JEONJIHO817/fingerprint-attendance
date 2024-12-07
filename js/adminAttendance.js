@@ -86,7 +86,6 @@ WildRydes.attendance = WildRydes.attendance || {};
             url: _config.api.invokeUrl + '/admin/attendance', // URL 경로
             headers: {
                 Authorization: authToken,
-                'Content-Type': 'application/json'
             },
             data: JSON.stringify({ employeeId }), // 페이로드에 employeeId 포함
             success: function (data) {
@@ -139,7 +138,6 @@ WildRydes.attendance = WildRydes.attendance || {};
             url: `${_config.api.invokeUrl}/admin/attendance`, // API 경로
             headers: {
                 Authorization: authToken,
-                'Content-Type': 'application/json'
             },
             data: JSON.stringify({ employeeId, timestamp, action }),
             success: function () {
