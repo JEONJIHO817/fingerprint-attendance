@@ -20,12 +20,16 @@ WildRydes.attendance = WildRydes.attendance || {};
 
     const studentDropdown = document.getElementById('studentDropdown');
     const fetchAttendanceButton = document.getElementById('fetchAttendanceButton');
-    const editModal = document.getElementById('editModal');
-    const modalOverlay = document.getElementById('modalOverlay');
-    const editTimestampInput = document.getElementById('editTimestamp');
-    const saveEditButton = document.getElementById('saveEditButton');
-    const closeModalButton = document.getElementById('closeModalButton');
     const calendarEl = document.getElementById('calendar');
+    const editModal = document.getElementById('editModal');
+    const closeModal = document.getElementById('closeModal');
+    const saveChanges = document.getElementById('saveChanges');
+    const deleteEvent = document.getElementById('deleteEvent');
+    const timestampInput = document.getElementById('timestampInput');
+    const actionSelect = document.getElementById('actionSelect');
+
+    let currentEmployeeId;
+    let currentEvent;
 
     const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
@@ -37,7 +41,10 @@ WildRydes.attendance = WildRydes.attendance || {};
         },
         events: [],
         eventClick: function (info) {
-            openEditModal(info.event);
+            currentEvent = info.event;
+            timestampInput.value = new Date(currentEvent.start).toISOString().slice(0, 16);
+            actionSelect.value = currentEvent.extendedProps.action;
+            editModal.classList.add('active');
         }
     });
 
@@ -47,9 +54,7 @@ WildRydes.attendance = WildRydes.attendance || {};
         $.ajax({
             method: 'GET',
             url: _config.api.invokeUrl + '/admin/students',
-            headers: {
-                Authorization: authToken
-            },
+            headers: { Authorization: authToken },
             success: populateStudentDropdown,
             error: function () {
                 alert('학생 목록을 가져오는 중 문제가 발생했습니다.');
@@ -68,19 +73,19 @@ WildRydes.attendance = WildRydes.attendance || {};
     }
 
     fetchAttendanceButton.addEventListener('click', function () {
-        const employeeId = studentDropdown.value;
-        if (!employeeId) {
+        currentEmployeeId = studentDropdown.value;
+        if (!currentEmployeeId) {
             alert('학생을 선택하세요.');
             return;
         }
 
-        fetchAttendanceRecords(employeeId);
+        fetchAttendanceRecords(currentEmployeeId);
     });
 
     function fetchAttendanceRecords(employeeId) {
         $.ajax({
             method: 'POST',
-            url: `${_config.api.invokeUrl}/admin/get-attendance`,
+            url: _config.api.invokeUrl + '/admin/get-attendance',
             headers: { Authorization: authToken },
             data: JSON.stringify({ employeeId }),
             success: updateCalendarWithAttendance,
@@ -94,54 +99,66 @@ WildRydes.attendance = WildRydes.attendance || {};
         calendar.removeAllEvents();
         records.forEach(record => {
             calendar.addEvent({
-                id: record.timestamp,
                 title: record.action === 'Clock In' ? '출근' : '퇴근',
                 start: record.timestamp,
                 color: record.action === 'Clock In' ? '#4caf50' : '#f44336',
-                extendedProps: { employeeId: record.employeeId }
+                extendedProps: { action: record.action }
             });
         });
     }
 
-    function openEditModal(event) {
-        editTimestampInput.value = event.start.toISOString().slice(0, 16);
-        editModal.style.display = 'block';
-        modalOverlay.style.display = 'block';
+    saveChanges.addEventListener('click', function () {
+        const updatedTimestamp = timestampInput.value;
+        const updatedAction = actionSelect.value;
 
-        saveEditButton.onclick = function () {
-            const updatedTimestamp = editTimestampInput.value;
-            if (!updatedTimestamp) {
-                alert('타임스탬프를 입력하세요.');
-                return;
-            }
+        if (!updatedTimestamp || !updatedAction) {
+            alert('모든 필드를 입력하세요.');
+            return;
+        }
 
-            updateAttendanceRecord(event.extendedProps.employeeId, event.id, updatedTimestamp, event);
-        };
-    }
-
-    closeModalButton.onclick = function () {
-        closeEditModal();
-    };
-
-    function closeEditModal() {
-        editModal.style.display = 'none';
-        modalOverlay.style.display = 'none';
-    }
-
-    function updateAttendanceRecord(employeeId, oldTimestamp, newTimestamp, event) {
         $.ajax({
             method: 'PUT',
             url: `${_config.api.invokeUrl}/admin/mod-attendance`,
             headers: { Authorization: authToken },
-            data: JSON.stringify({ employeeId, oldTimestamp, newTimestamp }),
+            data: JSON.stringify({
+                employeeId: currentEmployeeId,
+                timestamp: updatedTimestamp,
+                action: updatedAction
+            }),
             success: function () {
-                alert('출근부 수정이 완료되었습니다.');
-                event.setStart(new Date(newTimestamp));
-                closeEditModal();
+                alert('출근부가 수정되었습니다.');
+                fetchAttendanceRecords(currentEmployeeId);
+                editModal.classList.remove('active');
             },
             error: function () {
                 alert('출근부 수정 중 문제가 발생했습니다.');
             }
         });
-    }
+    });
+
+    deleteEvent.addEventListener('click', function () {
+        const timestampToDelete = timestampInput.value;
+
+        $.ajax({
+            method: 'DELETE',
+            url: `${_config.api.invokeUrl}/admin/delete-attendance`,
+            headers: { Authorization: authToken },
+            data: JSON.stringify({
+                employeeId: currentEmployeeId,
+                timestamp: timestampToDelete
+            }),
+            success: function () {
+                alert('출근부가 삭제되었습니다.');
+                fetchAttendanceRecords(currentEmployeeId);
+                editModal.classList.remove('active');
+            },
+            error: function () {
+                alert('출근부 삭제 중 문제가 발생했습니다.');
+            }
+        });
+    });
+
+    closeModal.addEventListener('click', function () {
+        editModal.classList.remove('active');
+    });
 }(jQuery));
