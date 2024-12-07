@@ -113,7 +113,13 @@ WildRydes.attendance = WildRydes.attendance || {};
             return;
         }
 
-        const timestampToDelete = new Date(selectedEvent.start).toISOString();
+            // 선택된 이벤트의 타임스탬프를 가져옴
+        const selectedTimestamp = new Date(selectedEvent.start);
+
+        // KST로 변환
+        const timestampToDelete = new Date(selectedTimestamp.getTime() + 9 * 60 * 60 * 1000) // UTC -> KST
+            .toISOString()
+            .replace('Z', '+09:00'); // ISO 8601 형식으로 변환
 
         $.ajax({
             method: 'DELETE',
