@@ -192,32 +192,45 @@ var WildRydes = window.WildRydes || {};
             }
         );
     }
-
     function handleRegister(event) {
         var email = $('#emailInputRegister').val();
         var password = $('#passwordInputRegister').val();
         var password2 = $('#password2InputRegister').val();
-        var employeeId = $('#employeeIDInputRegister').val(); // Role 값 가져오기
+        var employeeId = $('#employeeIDInputRegister').val();
+        var errorMessageDiv = $('#errorMessageRegister'); // 오류 메시지 표시 div 추가
     
         var onSuccess = function registerSuccess(result) {
             var cognitoUser = result.user;
-            console.log('user name is ' + cognitoUser.getUsername());
-            var confirmation = ('Registration successful. Please check your email inbox or spam folder for your verification code.');
-            if (confirmation) {
-                window.location.href = 'verify.html';
-            }
+            console.log('User name is ' + cognitoUser.getUsername());
+            alert('회원가입에 성공했습니다. 이메일에서 확인 코드를 확인하세요.');
+            window.location.href = 'verify.html';
         };
     
         var onFailure = function registerFailure(err) {
-            alert(err);
+            let errorMessage;
+            switch (err.code) {
+                case 'UsernameExistsException':
+                    errorMessage = '이미 존재하는 이메일 주소입니다.';
+                    break;
+                case 'InvalidPasswordException':
+                    errorMessage = '비밀번호는 최소 8자 이상이어야 하며 숫자와 특수문자를 포함해야 합니다.';
+                    break;
+                case 'CodeMismatchException':
+                    errorMessage = '잘못된 확인 코드입니다. 다시 시도하세요.';
+                    break;
+                default:
+                    errorMessage = err.message || '알 수 없는 오류가 발생했습니다. 다시 시도하세요.';
+            }
+            errorMessageDiv.text(errorMessage).css('display', 'block');
         };
+        
     
         event.preventDefault();
     
         if (password === password2) {
-            register(email, password, employeeId, onSuccess, onFailure); // Role 전달
+            register(email, password, employeeId, onSuccess, onFailure);
         } else {
-            alert('Passwords do not match');
+            errorMessageDiv.text('비밀번호가 일치하지 않습니다.').css('display', 'block');
         }
     }
     
@@ -225,17 +238,36 @@ var WildRydes = window.WildRydes || {};
     function handleVerify(event) {
         var email = $('#emailInputVerify').val();
         var code = $('#codeInputVerify').val();
+        var errorMessageDiv = $('#errorMessageVerify'); // 오류 메시지 표시 div 추가
         event.preventDefault();
-        verify(email, code,
-            function verifySuccess(result) {
-                alert('Verification successful. You will now be redirected to the login page.');
-                window.location.href = signinUrl;
-            },
-            function verifyError(err) {
-                alert(err);
+    
+        var onSuccess = function verifySuccess(result) {
+            alert('인증에 성공했습니다. 로그인 페이지로 이동합니다.');
+            window.location.href = signinUrl;
+        };
+    
+        var onFailure = function registerFailure(err) {
+            let errorMessage;
+            switch (err.code) {
+                case 'UsernameExistsException':
+                    errorMessage = '이미 존재하는 이메일 주소입니다.';
+                    break;
+                case 'InvalidPasswordException':
+                    errorMessage = '비밀번호는 최소 8자 이상이어야 하며 숫자와 특수문자를 포함해야 합니다.';
+                    break;
+                case 'CodeMismatchException':
+                    errorMessage = '잘못된 확인 코드입니다. 다시 시도하세요.';
+                    break;
+                default:
+                    errorMessage = err.message || '알 수 없는 오류가 발생했습니다. 다시 시도하세요.';
             }
-        );
+            errorMessageDiv.text(errorMessage).css('display', 'block');
+        };
+        
+    
+        verify(email, code, onSuccess, onFailure);
     }
+    
 
     // 창 닫을 때 로그아웃 처리
     window.onbeforeunload = function () {
