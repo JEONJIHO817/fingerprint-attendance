@@ -21,7 +21,6 @@ WildRydes.attendance = WildRydes.attendance || {};
     const studentDropdown = document.getElementById('studentDropdown');
     const fetchAttendanceButton = document.getElementById('fetchAttendanceButton');
     const addRecordButton = document.getElementById('addRecordButton');
-    const updateRecordButton = document.getElementById('updateRecordButton');
     const calendarEl = document.getElementById('calendar');
     const editModal = document.getElementById('editModal');
     const closeModal = document.getElementById('closeModal');
@@ -120,7 +119,7 @@ WildRydes.attendance = WildRydes.attendance || {};
     }
 
     // 출근부 기록 수정
-    updateRecordButton.addEventListener('click', function () {
+    addRecordButton.addEventListener('click', function () {
         if (!selectedEvent) {
             alert('수정할 기록을 선택하세요.');
             return;
