@@ -34,16 +34,24 @@ fingerprintForm.onsubmit = function (e) {
 
     const formData = new FormData();
     formData.append('studentId', studentId);
-    formData.append('fingerprint', fingerprintFile1);
-    formData.append('fingerprint', fingerprintFile2);
-    formData.append('fingerprint', fingerprintFile3);
+    formData.append('fingerprint1', fingerprintFile1);
+    formData.append('fingerprint2', fingerprintFile2);
+    formData.append('fingerprint3', fingerprintFile3);
 
     // Simulate API Call for Fingerprint Registration
-    fetch('https://tglilj6saa.execute-api.ap-northeast-2.amazonaws.com/prod/admin/registerFingerprint', { // Replace with your API endpoint
+    fetch('https://tglilj6saa.execute-api.ap-northeast-2.amazonaws.com/prod/admin/registerFingerprint', {
         method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${authToken}`,
+        },
         body: formData,
     })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             alert(data.message || 'Fingerprint registered successfully!');
             fingerprintModal.hide();
