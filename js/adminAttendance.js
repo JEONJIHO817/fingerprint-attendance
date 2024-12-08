@@ -132,7 +132,7 @@ WildRydes.attendance = WildRydes.attendance || {};
         const selectedTimestamp = selectedEvent.start;
 
         // ISO 형식 -> DB 형식 변환
-        const kstDate = new Date(selectedTimestamp.getTime() + (9 * 60 * 60 * 1000)); // UTC+9 시간 추가
+        const kstDate = new Date(selectedTimestamp.getTime()); // UTC+9 시간 추가
         const timestampToDelete = `${kstDate.getFullYear()}. ${kstDate.getMonth() + 1}. ${kstDate.getDate()}. ${kstDate.getHours()}시 ${kstDate.getMinutes()}분 ${kstDate.getSeconds()}초`;
 
         console.log("삭제 요청 타임스탬프:", timestampToDelete);
@@ -168,7 +168,7 @@ WildRydes.attendance = WildRydes.attendance || {};
 
         // ISO 형식 -> DB 형식 변환
         const newDate = new Date(`${dateToAdd}T${timeToAdd}:00`);
-        const kstDate = new Date(newDate.getTime() + (9 * 60 * 60 * 1000)); // UTC+9 시간 추가
+        const kstDate = new Date(newDate.getTime()); // UTC+9 시간 추가
         const timestampToAdd = `${kstDate.getFullYear()}. ${kstDate.getMonth() + 1}. ${kstDate.getDate()}. ${kstDate.getHours()}시 ${kstDate.getMinutes()}분 ${kstDate.getSeconds()}초`;
 
         $.ajax({
