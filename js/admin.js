@@ -32,29 +32,27 @@ document.addEventListener('DOMContentLoaded', () => {
       formData.append('fingerprintFile3', fingerprintFile3); // 세 번째 파일 추가
   
       try {
-        // 인증 토큰 (예: Cognito User Pool 토큰) 추가
-        const authToken = await getCognitoToken(); // 여기에 실제 인증 토큰을 입력하세요.
-  
-        const response = await fetch('https://tglilj6saa.execute-api.ap-northeast-2.amazonaws.com/prod/admin/registerFingerprint', {
+        // API Gateway에 POST 요청 보내기
+        const response = await fetch('https://tglilj6saa.execute-api.ap-northeast-2.amazonaws.com/prod/admin/registerFingerprint', { // API Gateway 엔드포인트를 실제 값으로 대체해야 함
           method: 'POST',
-          headers: {
-            Authorization: `Bearer ${authToken}` // 인증 헤더 추가
-          },
-          body: formData
+          body: formData // FormData를 요청 본문에 포함
         });
   
+        // 요청 성공 여부 확인
         if (response.ok) {
-          const result = await response.json();
-          alert('지문 데이터가 성공적으로 등록되었습니다!');
-          fingerprintForm.reset();
+          const result = await response.json(); // 응답 데이터를 JSON으로 변환
+          alert('지문 데이터가 성공적으로 등록되었습니다!'); // 성공 메시지 표시
+          console.log('API 응답:', result); // 디버깅용 응답 데이터 출력
+          fingerprintForm.reset(); // 폼 초기화
         } else {
-          const error = await response.json();
-          alert(`등록 실패: ${error.message}`);
-          console.error('에러 응답:', error);
+          const error = await response.text(); // 에러 메시지 확인
+          alert('지문 데이터 등록에 실패했습니다.');
+          console.error('에러 응답:', error); // 에러 로그 출력
         }
       } catch (error) {
+        // 네트워크 또는 기타 오류 처리
         alert('지문 데이터를 등록하는 중 오류가 발생했습니다.');
-        console.error('오류:', error);
+        console.error('오류:', error); // 에러 로그 출력
       }
     });
   });
