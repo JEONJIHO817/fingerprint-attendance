@@ -1,21 +1,6 @@
 // Fingerprint Modal Elements
 const fingerprintModal = new bootstrap.Modal(document.getElementById('fingerprintModal'));
 const fingerprintForm = document.getElementById('fingerprintForm');
-let authToken; // Declare authToken
-
-// 인증 토큰 설정
-WildRydes.authToken
-    .then(function setAuthToken(token) {
-        if (token) {
-            authToken = token;
-        } else {
-            window.location.href = '/signin.html';
-        }
-    })
-    .catch(function handleTokenError(error) {
-        console.error('Error retrieving auth token: ', error);
-        window.location.href = '/signin.html';
-    });
 
 // 출근부 조회 버튼 클릭 이벤트
 document.getElementById('viewAllAttendanceBtn').onclick = function () {
@@ -23,6 +8,11 @@ document.getElementById('viewAllAttendanceBtn').onclick = function () {
     window.location.href = '/adminAttendance.html'; // 출근부 조회 페이지로 리디렉션
 };
 
+
+
+
+
+//------------------------------------------------------------------------------------------
 // 지문 등록 버튼 클릭 이벤트
 document.getElementById('registerFingerprintBtn').onclick = function () {
     fingerprintModal.show(); // 지문 등록 모달 표시
@@ -33,7 +23,8 @@ fingerprintForm.onsubmit = function (e) {
     e.preventDefault();
     
     if (!authToken) {
-        alert('Authentication token is missing. Please sign in again.');
+        alert('Authentication token is missing or invalid. Please sign in again.');
+        window.location.href = '/signin.html'; // 로그인 페이지로 리디렉션
         return;
     }
 
@@ -63,7 +54,14 @@ fingerprintForm.onsubmit = function (e) {
     })
         .then(response => {
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                // HTTP 응답 상태 코드가 200-299 범위가 아닐 경우
+                if (response.status === 401) {
+                    // 권한 오류 처리
+                    alert('You are not authorized to perform this action. Please sign in again.');
+                    window.location.href = '/signin.html';
+                } else {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
             }
             return response.json();
         })
