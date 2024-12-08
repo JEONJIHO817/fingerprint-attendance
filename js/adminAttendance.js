@@ -138,16 +138,22 @@ WildRydes.attendance = WildRydes.attendance || {};
             alert('삭제할 출근 기록이 선택되지 않았습니다.');
             return;
         }
-
-        const selectedTimestamp = selectedEvent.start.toISOString();
-
+    
+        const selectedTimestamp = selectedEvent.start;
+    
+        // 타임스탬프를 DB 형식(YYYY. MM. DD. HH시 mm분 ss초)으로 변환
+        const kstDate = new Date(selectedTimestamp.getTime() + (9 * 60 * 60 * 1000)); // UTC+9 시간 추가
+        const timestampToDelete = `${kstDate.getFullYear()}. ${kstDate.getMonth() + 1}. ${kstDate.getDate()}. ${kstDate.getHours()}시 ${kstDate.getMinutes()}분 ${kstDate.getSeconds()}초`;
+    
+        console.log("삭제 요청 타임스탬프:", timestampToDelete);
+    
         $.ajax({
             method: 'DELETE',
             url: _config.api.invokeUrl + '/admin/mod-attendance',
             headers: { Authorization: authToken },
             data: JSON.stringify({
                 employeeId: currentEmployeeId,
-                timestamp: selectedTimestamp
+                timestamp: timestampToDelete
             }),
             success: function () {
                 alert('출근 기록이 삭제되었습니다.');
