@@ -56,7 +56,6 @@ WildRydes.attendance = WildRydes.attendance || {};
             url: _config.api.invokeUrl + '/admin/students',
             headers: { Authorization: authToken },
             success: function (response) {
-                // 응답 body를 JSON으로 파싱
                 const students = JSON.parse(response.body);
                 populateStudentDropdown(students);
             },
@@ -65,18 +64,9 @@ WildRydes.attendance = WildRydes.attendance || {};
             }
         });
     }
-    
+
     function populateStudentDropdown(students) {
-        const studentDropdown = document.getElementById('studentDropdown'); // 올바른 요소 선택
-        if (!studentDropdown) {
-            console.error("Dropdown element 'studentDropdown' not found.");
-            return;
-        }
-    
-        // 드롭다운 초기화
         studentDropdown.innerHTML = '<option value="">학생을 선택하세요</option>';
-    
-        // 학생 목록 추가
         students.forEach(student => {
             const option = document.createElement('option');
             option.value = student.employeeId;
@@ -84,7 +74,6 @@ WildRydes.attendance = WildRydes.attendance || {};
             studentDropdown.appendChild(option);
         });
     }
-    
 
     fetchAttendanceButton.addEventListener('click', function () {
         currentEmployeeId = studentDropdown.value;
@@ -109,10 +98,10 @@ WildRydes.attendance = WildRydes.attendance || {};
         });
     }
 
-    
     function updateCalendarWithAttendance(records) {
         calendar.removeAllEvents();
         records.forEach(record => {
+            // DB 형식 -> ISO 형식 변환
             const timestampRegex = /(\d{4})\.\s*(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{1,2})시\s*(\d{1,2})분\s*(\d{1,2})초/;
             const match = record.timestamp.match(timestampRegex);
 
@@ -121,7 +110,8 @@ WildRydes.attendance = WildRydes.attendance || {};
                 const [_, year, month, day, hour, minute, second] = match.map(Number);
                 parsedDate = new Date(year, month - 1, day, hour, minute, second);
             } else {
-                parsedDate = new Date(record.timestamp); // ISO 형식일 경우
+                console.error('Invalid timestamp format:', record.timestamp);
+                return;
             }
 
             calendar.addEvent({
@@ -138,15 +128,15 @@ WildRydes.attendance = WildRydes.attendance || {};
             alert('삭제할 출근 기록이 선택되지 않았습니다.');
             return;
         }
-    
+
         const selectedTimestamp = selectedEvent.start;
-    
-        // 타임스탬프를 DB 형식(YYYY. MM. DD. HH시 mm분 ss초)으로 변환
+
+        // ISO 형식 -> DB 형식 변환
         const kstDate = new Date(selectedTimestamp.getTime() + (9 * 60 * 60 * 1000)); // UTC+9 시간 추가
         const timestampToDelete = `${kstDate.getFullYear()}. ${kstDate.getMonth() + 1}. ${kstDate.getDate()}. ${kstDate.getHours()}시 ${kstDate.getMinutes()}분 ${kstDate.getSeconds()}초`;
-    
+
         console.log("삭제 요청 타임스탬프:", timestampToDelete);
-    
+
         $.ajax({
             method: 'DELETE',
             url: _config.api.invokeUrl + '/admin/mod-attendance',
@@ -176,7 +166,10 @@ WildRydes.attendance = WildRydes.attendance || {};
             return;
         }
 
-        const timestamp = `${dateToAdd}T${timeToAdd}:00`;
+        // ISO 형식 -> DB 형식 변환
+        const newDate = new Date(`${dateToAdd}T${timeToAdd}:00`);
+        const kstDate = new Date(newDate.getTime() + (9 * 60 * 60 * 1000)); // UTC+9 시간 추가
+        const timestampToAdd = `${kstDate.getFullYear()}. ${kstDate.getMonth() + 1}. ${kstDate.getDate()}. ${kstDate.getHours()}시 ${kstDate.getMinutes()}분 ${kstDate.getSeconds()}초`;
 
         $.ajax({
             method: 'POST',
@@ -184,7 +177,7 @@ WildRydes.attendance = WildRydes.attendance || {};
             headers: { Authorization: authToken },
             data: JSON.stringify({
                 employeeId: currentEmployeeId,
-                timestamp: timestamp,
+                timestamp: timestampToAdd,
                 action: action
             }),
             success: function () {
