@@ -1,3 +1,8 @@
+/*global WildRydes _config*/
+
+var WildRydes = window.WildRydes || {};
+WildRydes.admin = WildRydes.admin || {};
+
 // Fingerprint Modal Elements
 const fingerprintModal = new bootstrap.Modal(document.getElementById('fingerprintModal'));
 const fingerprintForm = document.getElementById('fingerprintForm');
