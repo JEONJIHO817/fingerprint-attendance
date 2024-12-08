@@ -14,63 +14,46 @@ document.getElementById('viewAllAttendanceBtn').onclick = function () {
 
 //------------------------------------------------------------------------------------------
 // 지문 등록 버튼 클릭 이벤트
-document.getElementById('registerFingerprintBtn').onclick = function () {
-    fingerprintModal.show(); // 지문 등록 모달 표시
-};
-
-// Handle Fingerprint Form Submission
-fingerprintForm.onsubmit = function (e) {
+document.getElementById('fingerprintForm').addEventListener('submit', async function (e) {
     e.preventDefault();
-    
-    if (!authToken) {
-        alert('Authentication token is missing or invalid. Please sign in again.');
-        window.location.href = '/signin.html'; // 로그인 페이지로 리디렉션
-        return;
-    }
 
+    // Get form data
     const studentId = document.getElementById('studentId').value;
-    const fingerprintFile1 = document.getElementById('fingerprintFile1').files[0];
-    const fingerprintFile2 = document.getElementById('fingerprintFile2').files[0];
-    const fingerprintFile3 = document.getElementById('fingerprintFile3').files[0];
+    const fingerprintFiles = [
+        document.getElementById('fingerprintFile1').files[0],
+        document.getElementById('fingerprintFile2').files[0],
+        document.getElementById('fingerprintFile3').files[0],
+    ];
 
-    if (!studentId || !fingerprintFile1 || !fingerprintFile2 || !fingerprintFile3) {
-        alert('Please provide Student ID and all three fingerprint files.');
+    if (!studentId || fingerprintFiles.some(file => !file)) {
+        alert('Please fill out all fields and upload all files.');
         return;
     }
 
+    // Create FormData to send files
     const formData = new FormData();
     formData.append('studentId', studentId);
-    formData.append('fingerprint1', fingerprintFile1);
-    formData.append('fingerprint2', fingerprintFile2);
-    formData.append('fingerprint3', fingerprintFile3);
+    fingerprintFiles.forEach((file, index) => {
+        formData.append(`fingerprintFile${index + 1}`, file);
+    });
 
-    // Simulate API Call for Fingerprint Registration
-    fetch('https://tglilj6saa.execute-api.ap-northeast-2.amazonaws.com/prod/admin/registerFingerprint', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${authToken}`,
-        },
-        body: formData,
-    })
-        .then(response => {
-            if (!response.ok) {
-                // HTTP 응답 상태 코드가 200-299 범위가 아닐 경우
-                if (response.status === 401) {
-                    // 권한 오류 처리
-                    alert('You are not authorized to perform this action. Please sign in again.');
-                    window.location.href = '/signin.html';
-                } else {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-            }
-            return response.json();
-        })
-        .then(data => {
-            alert(data.message || 'Fingerprint registered successfully!');
-            fingerprintModal.hide();
-        })
-        .catch(error => {
-            console.error('Error registering fingerprint:', error);
-            alert('Failed to register fingerprint.');
+    try {
+        // Send request to API Gateway
+        const response = await fetch('https://tglilj6saa.execute-api.ap-northeast-2.amazonaws.com/prod/admin/registerFingerprint', {
+            method: 'POST',
+            body: formData,
         });
-};
+
+        if (response.ok) {
+            const result = await response.json();
+            alert(`Fingerprint registration successful: ${result.message}`);
+        } else {
+            const error = await response.json();
+            alert(`Error: ${error.message}`);
+        }
+    } catch (error) {
+        console.error('Error registering fingerprint:', error);
+        alert('Failed to register fingerprint. Please try again later.');
+    }
+});
+
