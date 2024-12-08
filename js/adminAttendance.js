@@ -55,15 +55,28 @@ WildRydes.attendance = WildRydes.attendance || {};
             method: 'GET',
             url: _config.api.invokeUrl + '/admin/students',
             headers: { Authorization: authToken },
-            success: populateStudentDropdown,
+            success: function (response) {
+                // 응답 body를 JSON으로 파싱
+                const students = JSON.parse(response.body);
+                populateStudentDropdown(students);
+            },
             error: function () {
                 alert('학생 목록을 가져오는 중 문제가 발생했습니다.');
             }
         });
     }
-
+    
     function populateStudentDropdown(students) {
+        const studentDropdown = document.getElementById('studentDropdown'); // 올바른 요소 선택
+        if (!studentDropdown) {
+            console.error("Dropdown element 'studentDropdown' not found.");
+            return;
+        }
+    
+        // 드롭다운 초기화
         studentDropdown.innerHTML = '<option value="">학생을 선택하세요</option>';
+    
+        // 학생 목록 추가
         students.forEach(student => {
             const option = document.createElement('option');
             option.value = student.employeeId;
@@ -71,6 +84,7 @@ WildRydes.attendance = WildRydes.attendance || {};
             studentDropdown.appendChild(option);
         });
     }
+    
 
     fetchAttendanceButton.addEventListener('click', function () {
         currentEmployeeId = studentDropdown.value;
@@ -124,16 +138,22 @@ WildRydes.attendance = WildRydes.attendance || {};
             alert('삭제할 출근 기록이 선택되지 않았습니다.');
             return;
         }
-
-        const selectedTimestamp = selectedEvent.start.toISOString();
-
+    
+        const selectedTimestamp = selectedEvent.start;
+    
+        // 타임스탬프를 DB 형식(YYYY. MM. DD. HH시 mm분 ss초)으로 변환
+        const kstDate = new Date(selectedTimestamp.getTime() + (9 * 60 * 60 * 1000)); // UTC+9 시간 추가
+        const timestampToDelete = `${kstDate.getFullYear()}. ${kstDate.getMonth() + 1}. ${kstDate.getDate()}. ${kstDate.getHours()}시 ${kstDate.getMinutes()}분 ${kstDate.getSeconds()}초`;
+    
+        console.log("삭제 요청 타임스탬프:", timestampToDelete);
+    
         $.ajax({
             method: 'DELETE',
             url: _config.api.invokeUrl + '/admin/mod-attendance',
             headers: { Authorization: authToken },
             data: JSON.stringify({
                 employeeId: currentEmployeeId,
-                timestamp: selectedTimestamp
+                timestamp: timestampToDelete
             }),
             success: function () {
                 alert('출근 기록이 삭제되었습니다.');
