@@ -14,6 +14,10 @@ document.getElementById('viewAllAttendanceBtn').onclick = function () {
 
 //------------------------------------------------------------------------------------------
 // 지문 등록 버튼 클릭 이벤트
+document.getElementById('registerFingerprintBtn').onclick = function () {
+    fingerprintModal.show(); // 지문 등록 모달 표시
+};
+
 document.getElementById('fingerprintForm').addEventListener('submit', async function (e) {
     e.preventDefault();
 
@@ -39,7 +43,7 @@ document.getElementById('fingerprintForm').addEventListener('submit', async func
 
     try {
         // Send request to API Gateway
-        const response = await fetch('https://tglilj6saa.execute-api.ap-northeast-2.amazonaws.com/prod/admin/registerFingerprint', {
+        const response = await fetch('https://<YOUR_API_GATEWAY_ENDPOINT>/register-fingerprint', {
             method: 'POST',
             body: formData,
         });
