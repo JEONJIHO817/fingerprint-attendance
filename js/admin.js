@@ -35,46 +35,61 @@ document.getElementById('viewAllAttendanceBtn').onclick = function () {
     });
 
     // 지문 등록 폼 제출 이벤트
-    $('#fingerprintForm').on('submit', function (event) {
-        event.preventDefault(); // 폼 기본 제출 동작 방지
-
+    const convertFileToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result.split(',')[1]); // Base64만 추출
+            reader.onerror = (error) => reject(error);
+            reader.readAsDataURL(file);
+        });
+    };
+    
+    $('#fingerprintForm').on('submit', async function (event) {
+        event.preventDefault();
+    
         const studentId = $('#studentId').val();
         const file1 = $('#fingerprintFile1')[0].files[0];
         const file2 = $('#fingerprintFile2')[0].files[0];
         const file3 = $('#fingerprintFile3')[0].files[0];
-
-        // 입력값 검증
+    
         if (!studentId || !file1 || !file2 || !file3) {
             alert('모든 필드를 입력하고 파일을 업로드하세요.');
             return;
         }
-
-        // FormData 객체 생성
-        const formData = new FormData();
-        formData.append('studentId', studentId);
-        formData.append('file1', file1);
-        formData.append('file2', file2);
-        formData.append('file3', file3);
-
-        // API Gateway로 데이터 전송
-        $.ajax({
-            method: 'POST',
-            url: _config.api.invokeUrl + '/admin/registerFingerprint', // API Gateway 경로
-            headers: {
-                Authorization: authToken, // 인증 헤더 추가
-            },
-            data: formData,
-            processData: false, // FormData를 문자열로 변환하지 않음
-            contentType: false, // FormData가 자체적으로 Content-Type을 설정
-            success: function () {
-                alert('Fingerprint registered successfully!');
-                $('#fingerprintModal').modal('hide'); // 모달 닫기
-            },
-            error: function ajaxError(jqXHR, textStatus, errorThrown) {
-                console.error('Error registering fingerprint: ', textStatus, errorThrown);
-                alert('Error occurred during fingerprint registration.');
-            },
-        });
+    
+        try {
+            const fingerprintFile1 = await convertFileToBase64(file1);
+            const fingerprintFile2 = await convertFileToBase64(file2);
+            const fingerprintFile3 = await convertFileToBase64(file3);
+    
+            const payload = {
+                studentId,
+                fingerprintFile1,
+                fingerprintFile2,
+                fingerprintFile3,
+            };
+    
+            $.ajax({
+                method: 'POST',
+                url: _config.api.invokeUrl + '/admin/registerFingerprint',
+                headers: {
+                    Authorization: authToken,
+                },
+                contentType: 'application/json',
+                data: JSON.stringify(payload), // JSON 형태로 전송
+                success: function () {
+                    alert('Fingerprint registered successfully!');
+                    $('#fingerprintModal').modal('hide');
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error('Error registering fingerprint: ', textStatus, errorThrown);
+                    alert('Error occurred during fingerprint registration.');
+                },
+            });
+        } catch (error) {
+            console.error('Error processing files:', error);
+            alert('파일 처리 중 오류가 발생했습니다.');
+        }
     });
 })(jQuery);
 
