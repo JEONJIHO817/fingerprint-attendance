@@ -59,7 +59,7 @@ document.getElementById('viewAllAttendanceBtn').onclick = function () {
         // API Gateway로 데이터 전송
         $.ajax({
             method: 'POST',
-            url: _config.api.invokeUrl + '/registerFingerprint', // API Gateway 경로
+            url: _config.api.invokeUrl + '/admin/registerFingerprint', // API Gateway 경로
             headers: {
                 Authorization: authToken, // 인증 헤더 추가
             },
