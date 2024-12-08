@@ -39,6 +39,19 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       try {
+        var authToken;
+
+        // 인증 토큰 설정
+        WildRydes.authToken.then(function setAuthToken(token) {
+            if (token) {
+                authToken = token;
+            } else {
+                window.location.href = '/signin.html';
+            }
+        }).catch(function handleTokenError(error) {
+            console.error('Error retrieving auth token: ', error);
+            window.location.href = '/signin.html';
+        });
           // 각 파일을 Base64로 변환
           const fileToBase64 = (file) => new Promise((resolve, reject) => {
               const reader = new FileReader();
