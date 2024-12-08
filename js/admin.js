@@ -63,8 +63,6 @@ document.getElementById('viewAllAttendanceBtn').onclick = function () {
             headers: {
                 Authorization: authToken, // 인증 헤더 추가
             },
-            processData: false,
-            contentType: false,
             data: formData,
             success: function () {
                 alert('Fingerprint registered successfully!');
