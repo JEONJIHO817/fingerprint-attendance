@@ -43,7 +43,7 @@ document.getElementById('fingerprintForm').addEventListener('submit', async func
 
     try {
         // Send request to API Gateway
-        const response = await fetch('https://<YOUR_API_GATEWAY_ENDPOINT>/register-fingerprint', {
+        const response = await fetch('https://tglilj6saa.execute-api.ap-northeast-2.amazonaws.com/prod/admin/registerFingerprint', {
             method: 'POST',
             body: formData,
         });
