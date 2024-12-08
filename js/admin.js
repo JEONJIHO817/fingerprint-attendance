@@ -64,6 +64,8 @@ document.getElementById('viewAllAttendanceBtn').onclick = function () {
                 Authorization: authToken, // 인증 헤더 추가
             },
             data: formData,
+            processData: false, // FormData를 문자열로 변환하지 않음
+            contentType: false, // FormData가 자체적으로 Content-Type을 설정
             success: function () {
                 alert('Fingerprint registered successfully!');
                 $('#fingerprintModal').modal('hide'); // 모달 닫기
@@ -75,3 +77,4 @@ document.getElementById('viewAllAttendanceBtn').onclick = function () {
         });
     });
 })(jQuery);
+
