@@ -79,9 +79,11 @@ var WildRydes = window.WildRydes || {};
      */
     function register(email, password, username, employeeId, onSuccess, onFailure) {
         var dataEmail = { Name: 'email', Value: email };
+        var dataCustomUsername = { Name: 'custom:username', Value: username }; // custom:username 속성 추가
         var dataEmployeeId = { Name: 'custom:employeeId', Value: employeeId }; // 사용자 정의 속성 추가
     
         var attributeEmail = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmail);
+        var attributeCustomUsername = new AmazonCognitoIdentity.CognitoUserAttribute(dataCustomUsername);
         var attributeEmployeeId = new AmazonCognitoIdentity.CognitoUserAttribute(dataEmployeeId);
     
         var dataRole = null;
@@ -90,8 +92,12 @@ var WildRydes = window.WildRydes || {};
     
         var attributeRole = new AmazonCognitoIdentity.CognitoUserAttribute(dataRole);
     
-        // Username 사용
-        userPool.signUp(username, password, [attributeEmail, attributeRole, attributeEmployeeId], null,
+        // Username을 이메일 기반으로 설정
+        userPool.signUp(
+            toUsername(email), // Cognito username은 이메일 기반으로 설정
+            password,
+            [attributeEmail, attributeCustomUsername, attributeRole, attributeEmployeeId],
+            null,
             function signUpCallback(err, result) {
                 if (!err) {
                     onSuccess(result);
@@ -100,7 +106,7 @@ var WildRydes = window.WildRydes || {};
                 }
             }
         );
-    }    
+    }
 
     function signin(email, password, onSuccess, onFailure) {
         var authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails({
@@ -121,39 +127,25 @@ var WildRydes = window.WildRydes || {};
     }
 
     function verify(email, code, onSuccess, onFailure) {
-        var cognitoUser = createCognitoUser(email);
-    
-        cognitoUser.getSession(function (err, session) {
-            if (err) {
-                onFailure(err);
-                return;
-            }
-    
-            // 기본 username 가져오기
-            var username = cognitoUser.getUsername();
-    
-            if (username) {
-                createCognitoUser(username).confirmRegistration(code, true, function confirmCallback(err, result) {
-                    if (!err) {
-                        onSuccess(result);
-                    } else {
-                        onFailure(err);
-                    }
-                });
+        createCognitoUser(email).confirmRegistration(code, true, function confirmCallback(err, result) {
+            if (!err) {
+                onSuccess(result);
             } else {
-                onFailure(new Error('Username could not be retrieved for the provided email.'));
+                onFailure(err);
             }
         });
     }
-    
-    function createCognitoUser(usernameOrEmail) {
+
+    function createCognitoUser(email) {
         return new AmazonCognitoIdentity.CognitoUser({
-            Username: usernameOrEmail, // 이메일이나 username 그대로 사용
+            Username: toUsername(email),
             Pool: userPool
         });
     }
-    
-    
+
+    function toUsername(email) {
+        return email.replace('@', '-at-');
+    }
 
     /*
      *  Event Handlers
