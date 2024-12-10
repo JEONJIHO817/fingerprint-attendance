@@ -38,6 +38,8 @@ WildRydes.clockInOut = WildRydes.clockInOut || {};
     // 출/퇴근 제출 버튼 클릭 이벤트
     $('#submit-clockinout').click(async function () {
         try {
+            console.log("Current studentId:", studentId);
+
             // 입력 검증
             const action = $('#action-select').val();
             const fileInput = $('#fingerprint-upload')[0].files[0];
