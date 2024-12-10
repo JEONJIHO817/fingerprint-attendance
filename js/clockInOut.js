@@ -69,10 +69,10 @@ WildRydes.clockInOut = WildRydes.clockInOut || {};
             });
             
             // 응답이 JSON 문자열이므로 파싱
-            const response = JSON.parse(fingerprintResult.body);
+            console.log('Received response:', fingerprintResult); // 응답 데이터 확인용
             
             // 지문 인증 성공 시 출퇴근 기록
-            if (response.verified) {
+            if (fingerprintResult.verified) {
                 const currentTime = new Date().toLocaleString('ko-KR', { 
                     timeZone: 'Asia/Seoul', 
                     hour12: false 
