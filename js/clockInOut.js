@@ -56,10 +56,8 @@ WildRydes.clockInOut = WildRydes.clockInOut || {};
                 url: _config.api.invokeUrl + '/compare_fp',
                 headers: { Authorization: authToken },
                 data: JSON.stringify({
-                    body: JSON.stringify({
-                        studentId: studentId,
-                        fingerprint: fingerprintBase64
-                    })
+                    studentId: studentId,
+                    fingerprint: fingerprintBase64
                 }),
                 contentType: 'application/json'
             });
