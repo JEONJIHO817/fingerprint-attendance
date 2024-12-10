@@ -18,34 +18,38 @@ var WildRydes = window.WildRydes || {};
         window.location.href = '/signin.html';
     });
 
-    // Change Password Form Submission
     $('#changePasswordForm').on('submit', function (event) {
         event.preventDefault();
-
+    
         var currentPassword = $('#currentPassword').val();
         var newPassword = $('#newPassword').val();
-
-        if (!currentPassword || !newPassword) {
-            alert('Please fill in all fields.');
-            return;
-        }
-
+    
         var cognitoUser = getCurrentCognitoUser();
         if (!cognitoUser) {
-            alert("User not authenticated.");
+            alert("사용자가 인증되지 않았습니다. 다시 로그인하세요.");
+            window.location.href = '/signin.html';
             return;
         }
-
-        cognitoUser.changePassword(currentPassword, newPassword, function (err, result) {
-            if (err) {
-                console.error('Error changing password:', err.message);
-                alert("Failed to change password: " + err.message);
-            } else {
-                alert("Password changed successfully.");
-                $('#changePasswordForm').trigger("reset");
+    
+        cognitoUser.getSession(function (err, session) {
+            if (err || !session.isValid()) {
+                alert("세션이 만료되었습니다. 다시 로그인하세요.");
+                window.location.href = '/signin.html';
+                return;
             }
+    
+            cognitoUser.changePassword(currentPassword, newPassword, function (err, result) {
+                if (err) {
+                    console.error('비밀번호 변경 실패:', err.message);
+                    alert("비밀번호 변경 실패: " + err.message);
+                } else {
+                    alert("비밀번호가 성공적으로 변경되었습니다.");
+                    $('#changePasswordForm').trigger("reset");
+                }
+            });
         });
     });
+    
 
     // Delete Account Form Submission
     $('#deleteAccountForm').on('submit', function (event) {
