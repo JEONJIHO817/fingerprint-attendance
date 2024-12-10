@@ -67,14 +67,17 @@ WildRydes.clockInOut = WildRydes.clockInOut || {};
                 }),
                 contentType: 'application/json'
             });
-    
+            
+            // 응답이 JSON 문자열이므로 파싱
+            const response = JSON.parse(fingerprintResult.body);
+            
             // 지문 인증 성공 시 출퇴근 기록
-            if (fingerprintResult.statusCode === 200) {
+            if (response.verified) {
                 const currentTime = new Date().toLocaleString('ko-KR', { 
                     timeZone: 'Asia/Seoul', 
                     hour12: false 
                 });
-    
+            
                 await $.ajax({
                     method: 'POST',
                     url: _config.api.invokeUrl + '/ride',
@@ -86,7 +89,7 @@ WildRydes.clockInOut = WildRydes.clockInOut || {};
                     }),
                     contentType: 'application/json'
                 });
-    
+            
                 $('#status-message').text(`${action} 처리가 완료되었습니다: ${currentTime}`);
                 alert(`${action} 성공!`);
             }
