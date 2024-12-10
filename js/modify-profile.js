@@ -1,65 +1,83 @@
-/*global WildRydes _config AmazonCognitoIdentity */
+/*global WildRydes _config AmazonCognitoIdentity*/
 
-var WildRydes = window.WildRydes || {};
+(function modifyProfileScopeWrapper($) {
+    var authToken;
 
-(function accountManagementScopeWrapper($) {
-  var poolData = {
-    UserPoolId: _config.cognito.userPoolId,
-    ClientId: _config.cognito.userPoolClientId
-  };
-
-  var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-  var cognitoUser = userPool.getCurrentUser();
-
-  if (!cognitoUser) {
-    alert('로그인이 필요합니다.');
-    window.location.href = '/signin.html';
-  }
-
-  // 비밀번호 변경
-  $('#passwordChangeForm').submit(function (event) {
-    event.preventDefault();
-    const oldPassword = $('#oldPassword').val();
-    const newPassword = $('#newPassword').val();
-
-    cognitoUser.changePassword(oldPassword, newPassword, function (err, result) {
-      if (err) {
-        alert('비밀번호 변경 중 오류가 발생했습니다: ' + err.message);
-        console.error(err);
-      } else {
-        alert('비밀번호가 성공적으로 변경되었습니다.');
-        $('#passwordChangeForm')[0].reset();
-      }
-    });
-  });
-
-  // 계정 삭제
-  $('#accountDeleteForm').submit(function (event) {
-    event.preventDefault();
-    const confirmPassword = $('#confirmPassword').val();
-
-    // 재인증을 수행해야 계정을 삭제할 수 있음
-    const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails({
-      Username: cognitoUser.username,
-      Password: confirmPassword
-    });
-
-    cognitoUser.authenticateUser(authenticationDetails, {
-      onSuccess: function () {
-        cognitoUser.deleteUser(function (err, result) {
-          if (err) {
-            alert('계정 삭제 중 오류가 발생했습니다: ' + err.message);
-            console.error(err);
-          } else {
-            alert('계정이 성공적으로 삭제되었습니다.');
+    WildRydes.authToken.then(function setAuthToken(token) {
+        if (token) {
+            authToken = token;
+        } else {
+            alert("User not authenticated. Redirecting to login page.");
             window.location.href = '/signin.html';
-          }
-        });
-      },
-      onFailure: function (err) {
-        alert('재인증 실패: ' + err.message);
-        console.error(err);
-      }
+        }
+    }).catch(function handleTokenError(error) {
+        console.error('Error retrieving auth token:', error);
+        alert("User not authenticated. Redirecting to login page.");
+        window.location.href = '/signin.html';
     });
-  });
+
+    // Change Password Form Submission
+    $('#changePasswordForm').on('submit', function (event) {
+        event.preventDefault();
+
+        var currentPassword = $('#currentPassword').val();
+        var newPassword = $('#newPassword').val();
+
+        if (!currentPassword || !newPassword) {
+            alert('Please fill in all fields.');
+            return;
+        }
+
+        var cognitoUser = getCurrentCognitoUser();
+        if (!cognitoUser) {
+            alert("User not authenticated.");
+            return;
+        }
+
+        cognitoUser.changePassword(currentPassword, newPassword, function (err, result) {
+            if (err) {
+                console.error('Error changing password:', err.message);
+                alert("Failed to change password: " + err.message);
+            } else {
+                alert("Password changed successfully.");
+                $('#changePasswordForm').trigger("reset");
+            }
+        });
+    });
+
+    // Delete Account Form Submission
+    $('#deleteAccountForm').on('submit', function (event) {
+        event.preventDefault();
+
+        var confirmDelete = confirm("Are you sure you want to delete your account? This action cannot be undone.");
+        if (!confirmDelete) return;
+
+        var cognitoUser = getCurrentCognitoUser();
+        if (!cognitoUser) {
+            alert("User not authenticated.");
+            return;
+        }
+
+        cognitoUser.deleteUser(function (err, result) {
+            if (err) {
+                console.error('Error deleting account:', err.message);
+                alert("Failed to delete account: " + err.message);
+            } else {
+                alert("Account deleted successfully.");
+                sessionStorage.removeItem('authToken');
+                window.location.href = '/signin.html';
+            }
+        });
+    });
+
+    // Helper Function to Get Current Cognito User
+    function getCurrentCognitoUser() {
+        var poolData = {
+            UserPoolId: _config.cognito.userPoolId,
+            ClientId: _config.cognito.userPoolClientId
+        };
+
+        var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+        return userPool.getCurrentUser();
+    }
 }(jQuery));
