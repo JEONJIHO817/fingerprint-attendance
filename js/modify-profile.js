@@ -1,5 +1,7 @@
 /*global WildRydes _config AmazonCognitoIdentity*/
 
+var WildRydes = window.WildRydes || {};
+
 (function modifyProfileScopeWrapper($) {
     var authToken;
 
