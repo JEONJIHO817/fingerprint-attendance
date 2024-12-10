@@ -7,6 +7,19 @@ WildRydes.clockInOut = WildRydes.clockInOut || {};
     var authToken;
     var studentId;
 
+    function convertFileToBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                // Base64 문자열에서 'data:image/png;base64,' 부분을 제거하고 순수 Base64만 반환
+                const base64String = reader.result.split(',')[1];
+                resolve(base64String);
+            };
+            reader.onerror = (error) => reject(error);
+            reader.readAsDataURL(file);
+        });
+    }
+
     // 인증 토큰 설정
     WildRydes.authToken
         .then(function setAuthToken(token) {
