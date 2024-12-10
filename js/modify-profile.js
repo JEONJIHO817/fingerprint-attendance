@@ -55,26 +55,36 @@ var WildRydes = window.WildRydes || {};
     $('#deleteAccountForm').on('submit', function (event) {
         event.preventDefault();
 
-        var confirmDelete = confirm("Are you sure you want to delete your account? This action cannot be undone.");
+        var confirmDelete = confirm("정말 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.");
         if (!confirmDelete) return;
 
         var cognitoUser = getCurrentCognitoUser();
         if (!cognitoUser) {
-            alert("User not authenticated.");
+            alert("사용자가 인증되지 않았습니다. 다시 로그인하세요.");
+            window.location.href = '/signin.html';
             return;
         }
 
-        cognitoUser.deleteUser(function (err, result) {
-            if (err) {
-                console.error('Error deleting account:', err.message);
-                alert("Failed to delete account: " + err.message);
-            } else {
-                alert("Account deleted successfully.");
-                sessionStorage.removeItem('authToken');
+        cognitoUser.getSession(function (err, session) {
+            if (err || !session.isValid()) {
+                alert("세션이 만료되었습니다. 다시 로그인하세요.");
                 window.location.href = '/signin.html';
+                return;
             }
+
+            cognitoUser.deleteUser(function (err, result) {
+                if (err) {
+                    console.error('계정 삭제 실패:', err.message);
+                    alert("계정 삭제 실패: " + err.message);
+                } else {
+                    alert("계정이 성공적으로 삭제되었습니다.");
+                    sessionStorage.removeItem('authToken'); // 세션 정보 제거
+                    window.location.href = '/signin.html'; // 로그인 페이지로 리다이렉트
+                }
+            });
         });
     });
+
 
     // Helper Function to Get Current Cognito User
     function getCurrentCognitoUser() {
