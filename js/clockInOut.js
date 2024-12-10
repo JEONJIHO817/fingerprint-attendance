@@ -28,7 +28,7 @@ WildRydes.clockInOut = WildRydes.clockInOut || {};
                 console.log("Token:", token);
                 const decoded = parseJwt(token);
                 console.log("Decoded token:", decoded);
-                studentId = decoded['custom:studentId'];
+                studentId = decoded['custom:employeeId'];
                 console.log("Extracted studentId:", studentId);
             } else {
                 window.location.href = '/signin.html';
