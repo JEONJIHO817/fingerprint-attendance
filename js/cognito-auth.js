@@ -121,25 +121,39 @@ var WildRydes = window.WildRydes || {};
     }
 
     function verify(email, code, onSuccess, onFailure) {
-        createCognitoUser(email).confirmRegistration(code, true, function confirmCallback(err, result) {
-            if (!err) {
-                onSuccess(result);
-            } else {
+        var cognitoUser = createCognitoUser(email);
+    
+        cognitoUser.getSession(function (err, session) {
+            if (err) {
                 onFailure(err);
+                return;
+            }
+    
+            // 기본 username 가져오기
+            var username = cognitoUser.getUsername();
+    
+            if (username) {
+                createCognitoUser(username).confirmRegistration(code, true, function confirmCallback(err, result) {
+                    if (!err) {
+                        onSuccess(result);
+                    } else {
+                        onFailure(err);
+                    }
+                });
+            } else {
+                onFailure(new Error('Username could not be retrieved for the provided email.'));
             }
         });
     }
-
-    function createCognitoUser(email) {
+    
+    function createCognitoUser(usernameOrEmail) {
         return new AmazonCognitoIdentity.CognitoUser({
-            Username: toUsername(email),
+            Username: usernameOrEmail, // 이메일이나 username 그대로 사용
             Pool: userPool
         });
     }
-
-    function toUsername(email) {
-        return email.replace('@', '-at-');
-    }
+    
+    
 
     /*
      *  Event Handlers
