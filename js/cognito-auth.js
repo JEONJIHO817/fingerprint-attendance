@@ -287,27 +287,6 @@ function updateStrength(score) {
         );
     }
     function handleRegister(event) {
-        /*
-        const togglePasswordButtons = document.querySelectorAll('.toggle-password');
-
-        togglePasswordButtons.forEach((button) => {
-            button.addEventListener('click', (e) => {
-                e.preventDefault(); // 클릭 기본 동작 방지
-                const input = button.previousElementSibling; // 비밀번호 입력 필드
-                const icon = button.querySelector('i');
-
-                if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-                } else {
-                input.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-                }
-            });
-        });*/
-
         // 비밀번호 확인 로직
         const passwordField = document.querySelector('#passwordInputRegister');
         const confirmPasswordField = document.querySelector('#password2InputRegister');
@@ -377,45 +356,44 @@ function updateStrength(score) {
     }   
 
     function handleVerify(event) {
-
-        const emailField = document.querySelector('#email');
+        const emailField = document.querySelector('#emailInputVerify');
         const emailErrorMessage = document.querySelector('#email-error-message');
 
-        const codeField = document.querySelector('#verification-code');
+        const codeField = document.querySelector('#codeInputVerify');
         const codeErrorMessage = document.querySelector('#code-error-message');
 
         // 이메일 유효성 검증
         emailField.addEventListener('input', () => {
-        const email = emailField.value;
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // 이메일 정규식
+            const email = emailField.value;
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // 이메일 정규식
 
-        if (email === '') {
-            emailErrorMessage.textContent = '';
-            emailErrorMessage.classList.remove('visible');
-        } else if (!emailPattern.test(email)) {
-            emailErrorMessage.textContent = '유효하지 않은 이메일 주소입니다.';
-            emailErrorMessage.classList.add('visible');
-        } else {
-            emailErrorMessage.textContent = '';
-            emailErrorMessage.classList.remove('visible');
-        }
-        })
+            if (email === '') {
+                emailErrorMessage.textContent = '';
+                emailErrorMessage.classList.remove('visible');
+            } else if (!emailPattern.test(email)) {
+                emailErrorMessage.textContent = '유효하지 않은 이메일 주소입니다.';
+                emailErrorMessage.classList.add('visible');
+            } else {
+                emailErrorMessage.textContent = '';
+                emailErrorMessage.classList.remove('visible');
+            }
+        });
 
         // 인증코드 유효성 검증
         codeField.addEventListener('input', () => {
-        const code = codeField.value;
+            const code = codeField.value;
 
-        if (code === '') {
-            codeErrorMessage.textContent = '';
-            codeErrorMessage.classList.remove('visible');
-        } else if (!/^\d{6}$/.test(code)) {
-            codeErrorMessage.textContent = '6자리 숫자를 입력하세요.';
-            codeErrorMessage.classList.add('visible');
-        } else {
-            codeErrorMessage.textContent = '';
-            codeErrorMessage.classList.remove('visible');
-        }
-        })
+            if (code === '') {
+                codeErrorMessage.textContent = '';
+                codeErrorMessage.classList.remove('visible');
+            } else if (!/^\d{6}$/.test(code)) {
+                codeErrorMessage.textContent = '6자리 숫자를 입력하세요.';
+                codeErrorMessage.classList.add('visible');
+            } else {
+                codeErrorMessage.textContent = '';
+                codeErrorMessage.classList.remove('visible');
+            }
+        });
 
         var email = $('#emailInputVerify').val();
         var code = $('#codeInputVerify').val();
