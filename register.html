@@ -26,10 +26,13 @@
         <img src="images/fingerprint.png" alt="Logo">
       </div>
       <h1>회원가입</h1>
-      <form id="registrationForm" class="login-form">
+      <form id="registrationForm" class="login-form">        
         <!-- 사용자 이름 -->
-        <input type="text" id="usernameInputRegister" placeholder="사용자 이름" class="form-control" required>
+        <input type="text" id="usernameInputRegister" placeholder="사용자 이름 입력" class="form-control" required>
   
+        <!-- 직원 ID -->
+        <input type="text" id="employeeIDInputRegister" placeholder="학번/사번 입력" class="form-control" required>
+
         <!-- 이메일 -->
         <input type="email" id="emailInputRegister" placeholder="name@example.com" class="form-control" required>
         <span id="email-error-message" class="email-message"></span>
@@ -82,12 +85,9 @@
           <button type="button" class="toggle-password"><i class="fas fa-eye"></i></button>
         </div>
         <span id="password-match-message" class="password-message"></span>
-        
-        <!-- 직원 ID -->
-        <input type="text" id="employeeIDInputRegister" placeholder="직원 ID" class="form-control" required>
   
         <!-- 회원가입 버튼 -->
-        <input type="submit" class="btn btn-primary btn-block" value="회원가입">
+        <input type="submit" class="login-btn" value="회원가입">
       </form>
     </div>
   </div>
