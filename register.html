@@ -19,18 +19,6 @@
 
 <body>
   <a href="/index.html" class="back-btn"><span class="arrow">&lt;</span> BACK</a>
-  <div id="noCognitoMessage" class="configMessage">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">No Cognito User Pool Configured</h3>
-      </div>
-      <div class="panel-body">
-        <p>
-          There is no user pool configured in <a href="/js/config.js">/js/config.js</a>. You'll configure this in Module 2 of the workshop.
-        </p>
-      </div>
-    </div>
-  </div>
 
   <div class="main-container">
     <div class="login-box">
@@ -89,9 +77,13 @@
           </div>
         </div>
   
-        <!-- 비밀번호 확인 -->
-        <input type="password" id="password2InputRegister" placeholder="비밀번호 확인" class="form-control" required>
-  
+        <!-- <label for="confirm-password">비밀번호 확인</label> -->
+        <div class="password-container">
+          <input type="password" id="password2InputRegister" placeholder="암호 재입력">
+          <button type="button" class="toggle-password"><i class="fas fa-eye"></i></button>
+        </div>
+        <span id="password-match-message" class="password-message"></span>
+        
         <!-- 직원 ID -->
         <input type="text" id="employeeIDInputRegister" placeholder="직원 ID" class="form-control" required>
   
