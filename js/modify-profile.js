@@ -1,5 +1,71 @@
 /*global WildRydes _config AmazonCognitoIdentity*/
 
+// 비밀번호 요구사항 로직
+function showTooltip() {
+    const tooltip = document.getElementById('tooltip');
+    tooltip.style.display = 'block';
+  }
+  
+  function hideTooltip() {
+    const tooltip = document.getElementById('tooltip');
+    tooltip.style.display = 'none';
+  }
+  
+  function validatePassword() {
+    const password = document.getElementById('new-password').value;
+    let score = 0;
+  
+    // 요구사항 검증
+    const length = password.length >= 8;
+    const number = /\d/.test(password);
+    const uppercase = /[A-Z]/.test(password);
+    const lowercase = /[a-z]/.test(password);
+    const special = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  
+    // 요구사항 업데이트
+    updateRequirement('length', length);
+    updateRequirement('number', number);
+    updateRequirement('uppercase', uppercase);
+    updateRequirement('lowercase', lowercase);
+    updateRequirement('special', special);
+  
+    // 점수 계산
+    score = [length, number, uppercase, lowercase, special].filter(Boolean).length * 20;
+    updateStrength(score);
+  }
+  
+  function updateRequirement(id, isValid) {
+    const element = document.getElementById(id);
+    const icon = element.querySelector('.icon');
+  
+    if (isValid) {
+      element.classList.add('valid');
+      element.classList.remove('invalid');
+      icon.textContent = '✔'; // 체크 표시
+    } else {
+      element.classList.add('invalid');
+      element.classList.remove('valid');
+      icon.textContent = '•'; // 기본 점
+    }
+  }
+  
+  function updateStrength(score) {
+    const progress = document.getElementById('progress');
+    const strengthScore = document.getElementById('strength-score');
+  
+    progress.style.width = `${score}%`;
+    strengthScore.textContent = `${score}%`;
+  
+    if (score < 40) {
+      progress.style.background = 'red';
+    } else if (score < 80) {
+      progress.style.background = 'orange';
+    } else {
+      progress.style.background = 'green';
+    }
+  }
+  
+
 var WildRydes = window.WildRydes || {};
 
 (function modifyProfileScopeWrapper($) {

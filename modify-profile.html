@@ -3,49 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modify Profile</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
-    <style>
-        body {
-            font-family: 'Noto Sans', sans-serif;
-            background-color: #f8f9fa;
-        }
-        .container {
-            max-width: 500px;
-            margin: 50px auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-    </style>
+    <title>회원정보 수정</title>
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/modifyprofile.css">
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <!-- FontAwesome 라이브러리 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">  
 </head>
 <body>
-    <div class="container">
-        <h1>Modify Profile</h1>
-        <form id="changePasswordForm">
-            <h4>Change Password</h4>
-            <div class="mb-3">
-                <input type="password" id="currentPassword" class="form-control" placeholder="Current Password" required>
+    <a href="/student.html" class="back-btn"><span class="arrow">&lt;</span> BACK</a>
+    <div class="main-container">
+        <div class="profile-box">
+            <!-- 로고 추가 -->
+            <div class="logo">
+                <img src="images/fingerprint.png" alt="Logo">
             </div>
-            <div class="mb-3">
-                <input type="password" id="newPassword" class="form-control" placeholder="New Password" required>
+            <h1>회원정보 수정</h1>
+    
+            <!-- 비밀번호 변경 섹션 -->
+            <div class="change-password">
+                <h2>비밀번호 변경</h2>
+                <form id="changePasswordForm">
+                    <div class="mb-3">
+                        <input type="password" id="currentPassword" class="form-control" placeholder="현재 비밀번호 입력" required>
+                    </div>
+    
+                    <div class="password-container mb-3">
+                        <input
+                            type="password"
+                            id="newPassword"
+                            class="form-control"
+                            placeholder="새 비밀번호 입력"
+                            onfocus="showTooltip()"
+                            onblur="hideTooltip()"
+                            oninput="validatePassword()"
+                            required
+                        />
+                        <div id="tooltip" class="password-tooltip">
+                            <div class="strength">
+                                <label>안전 정도: <span id="strength-score">0%</span></label>
+                                <div class="progress-bar">
+                                    <div id="progress" class="progress"></div>
+                                </div>
+                            </div>
+                            <p>암호 요구사항:</p>
+                            <ul>
+                                <li id="length" class="requirement">
+                                    <span class="icon">•</span> 8자 이상
+                                </li>
+                                <li id="number" class="requirement">
+                                    <span class="icon">•</span> 1개 이상의 숫자 포함
+                                </li>
+                                <li id="uppercase" class="requirement">
+                                    <span class="icon">•</span> 1개 이상의 대문자 포함
+                                </li>
+                                <li id="lowercase" class="requirement">
+                                    <span class="icon">•</span> 1개 이상의 소문자 포함
+                                </li>
+                                <li id="special" class="requirement">
+                                    <span class="icon">•</span> 1개 이상의 특수 문자 포함
+                                </li>
+                            </ul>
+                            <p>추측하기 쉽거나 다른 웹사이트에서 사용한 암호는 선택하지 마십시오.</p>
+                        </div>
+                    </div>
+                    <span id="password-match-message" class="password-message"></span>
+                    <button type="submit" class="submit-btn">비밀번호 변경</button>
+                </form>
             </div>
-            <button type="submit" class="btn btn-primary w-100">Change Password</button>
-        </form>
-
-        <hr>
-
-        <form id="deleteAccountForm">
-            <h4>Delete Account</h4>
-            <p>Warning: This action is irreversible.</p>
-            <button type="submit" class="btn btn-danger w-100">Delete Account</button>
-        </form>
+    
+            <hr>
+    
+            <!-- 계정 삭제 섹션 -->
+            <div class="delete-account">
+                <h2>계정 삭제</h2>
+                <p>이 작업은 되돌릴 수 없습니다.</p>
+                <form id="deleteAccountForm">
+                    <button type="submit" class="submit-btn">계정 삭제</button>
+                </form>
+            </div>
+        </div>
     </div>
+    
 
     <script src="js/vendor.js"></script>
     <script src="js/vendor/jquery-3.1.0.js"></script>
