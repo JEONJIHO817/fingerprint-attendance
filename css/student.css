@@ -1,77 +1,161 @@
 /* 기본 설정 */
 body {
   margin: 0;
-  font-family: 'Arial', sans-serif;
-  height: 100vh; /* 화면 전체 높이 */
+  font-family: 'Noto Sans KR', sans-serif;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  background-color: #f0f0f0;
   overflow: hidden; /* 스크롤 방지 */
   position: relative;
 }
 
-/* 배경 이미지 설정 */
-body::before {
-  content: "";
+  /* 상단 BACK 버튼 */
+  .back-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 18px;
+    color: #5942ff;
+    text-decoration: none;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+  }
+  
+  .back-btn .arrow {
+    font-size: 16px;
+    transition: transform 0.3s ease;
+  }
+  
+  .back-btn:hover .arrow {
+    transform: translateX(-3px);
+  }
+
+/* 상단 배경 */
+.background {
+  width: 100%;
+  height: 100vh; /* 상단 배경 높이 설정 */
+  background: url('../images/user_background.jpg') no-repeat center center/cover;
   position: absolute;
   top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url('../images/fp_bg.png') no-repeat center center;
-  background-size: cover; /* 화면에 꽉 차도록 설정 */
   z-index: -1;
-  filter: brightness(0.8); /* 배경 어두움 효과 */
 }
 
-/* 텍스트 및 버튼 컨테이너 */
-.container {
-  z-index: 1;
+/* 프로필 카드 */
+.profile-card {
+  width: 85%; /* 화면의 95%를 차지하도록 설정 */
+  background-color: rgb(255, 255, 255);
+  border-radius: 25px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   text-align: center;
-  color: white; /* 텍스트 색상 흰색 */
+  padding: 40px 20px;
+  position: relative;
+  z-index: 1;
+  margin-top: 350px; /* 배경 아래로 내려오도록 설정 */
+  min-height: calc(100vh - 200px); /* 화면 아래까지 덮기 */
+  margin-left: auto; /* 중앙 정렬 */
+  margin-right: auto; /* 중앙 정렬 */
 }
 
-.container h1 {
-  font-size: 50px; /* 제목 크기 */
-  margin-bottom: 20px;
+/* 프로필 이미지 */
+.profile-image {
+  position: absolute;
+  top: -80px; /* 카드와 배경 사이에 걸치도록 */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px; /* 크기를 키움 */
+  height: 200px; /* 크기를 키움 */
+  border-radius: 50%;
+
+  background-color: #f1f1f1;
+  background-image: url('../images/user_image.png'); /* 사용자 프로필 이미지 */
+  background-size: cover;
+  background-position: center;
+
+  box-shadow: 0 0 20px #313136; /* 빛나는 효과 */
 }
 
-.container p {
-  font-size: 20px; /* 서브텍스트 크기 */
-  margin-bottom: 40px;
+/* 프로필 정보 */
+.profile-info {
+  margin-top: 150px; /* 이미지 아래로 간격 추가 */
+  margin-bottom: 150px;
+}
+
+.profile-info h1 {
+  font-size: 40px;
+  margin: 10px 0;
+}
+
+.profile-info p {
+  font-size: 25px;
+  color: gray;
+  margin-top: 0px; /* 이름과 디자이너 간 간격 추가 */
 }
 
 /* 버튼 섹션 */
 .profile-buttons {
   display: flex;
-  justify-content: center;
-  gap: 20px; /* 버튼 간격 */
+  justify-content: center; /* 버튼을 중앙 정렬 */
+  gap: 30px; /* 버튼 간 간격 줄이기 */
+  margin-top: -40px; /* 프로필 카드와의 간격 */
 }
 
+/* 버튼 스타일 */
 .profile-buttons button {
-  width: 150px; /* 버튼 크기 */
-  height: 150px; /* 정사각형 */
-  background: #000; /* 검은색 배경 */
-  color: #fff; /* 흰색 텍스트 */
+  width: 250px; /* 정사각형 가로 크기 */
+  height: 100px; /* 정사각형 세로 크기 */
+  background: #000; /* 버튼 배경색 */
+  color: #fff; /* 텍스트 색상 */
   border: none;
-  border-radius: 10px;
-  font-size: 18px;
+  border-radius: 10px; /* 약간 둥근 모서리 */
+  font-size: 20px; /* 텍스트 크기 */
   font-weight: bold;
+  text-transform: uppercase; /* 대문자 처리 */
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 기본 그림자 */
+  display: flex;
+  justify-content: center;
+  align-items: center; /* 텍스트 정렬 */
+}
+
+/* 버튼 hover 효과 */
+.profile-buttons button:hover {
+  background: #5942ff; /* 네온 스타일 배경색 */
+  color: white;
+  transform: scale(1.1); /* 크기 약간 증가 */
+  box-shadow: 0 8px 16px rgba(89, 66, 255, 0.5); /* 더 강렬한 그림자 */
+}
+
+/* 로그아웃 버튼 */
+.logout-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 18px;
+  color: #ff4d4d;
+  text-decoration: none;
+  font-weight: bold;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 5px;
+  transition: all 0.3s ease;
 }
 
-.profile-buttons button:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+.logout-btn i {
+  font-size: 16px;
+  transition: transform 0.3s ease;
 }
 
-.profile-buttons button:active {
-  transform: translateY(2px);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+.logout-btn:hover i {
+  transform: rotate(20deg);
+}
+
+.logout-btn:hover {
+  color: #ff0000;
 }

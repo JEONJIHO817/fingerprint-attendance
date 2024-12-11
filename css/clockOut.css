@@ -1,0 +1,183 @@
+/* 기본 스타일 */
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  /* 상단 BACK 버튼 */
+  .back-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 18px; /* 버튼 크기를 키움 */
+    color: #333;
+    text-decoration: none;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+  }
+  
+  .back-btn .arrow {
+    font-size: 16px;
+    transition: transform 0.3s ease; /* 호버 시 부드러운 이동 효과 */
+  }
+  
+  .back-btn:hover .arrow {
+    transform: translateX(-3px); /* 화살표 이동 효과 */
+  }
+  
+  /* 중앙 정렬 컨테이너 */
+  .main-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+  }
+  
+  /* 로그인 박스 스타일 */
+  .login-box {
+    background: #fff;
+    padding: 40px 60px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25); /* 강한 그림자 */
+    text-align: center;
+    width: 100%; /* 가로 크기 비율 */
+    max-width: 900px; /* 최대 가로 크기 */
+    min-height: 400px; /* 최소 세로 크기 */
+  }
+  
+  /* 제목 */
+  h1 {
+    font-size: 25px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: #333;
+  }
+  
+  /* 입력 폼 */
+  .login-form, .attendance-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  /* 로고 */
+  .logo img {
+    max-width: 100px;
+    margin-bottom: 20px;
+  }
+  
+  label {
+    font-size: 18px;
+    font-weight: 500;
+    text-align: left;
+    color: #555;
+    margin-bottom: -10px; /* 간격을 줄이기 위해 값을 조정 */
+  }
+  
+  /* 입력 박스 스타일 */
+  input[type="email"], input[type="password"], input[type="text"], select, input[type="file"] {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box;
+    margin-bottom: 20px; /* 요소 간 간격 추가 */
+  }
+  
+  /* 드롭다운 메뉴 스타일 */
+  select {
+    -webkit-appearance: none; /* 기본 화살표 제거 (웹킷 브라우저) */
+    -moz-appearance: none; /* 기본 화살표 제거 (파이어폭스) */
+    appearance: none; /* 기본 화살표 제거 */
+    background: url('images/dropdown-arrow.png') no-repeat right 10px center; /* 사용자 정의 화살표 아이콘 */
+    background-color: #fff;
+    cursor: pointer;
+  }
+  
+  /* 파일 입력 필드 스타일 */
+  input[type="file"] {
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    background-color: #f5f5f5;
+    cursor: pointer;
+  }
+  
+  /* 파일 입력 필드 커스터마이징 */
+  .file-input-container {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    width: 100%;
+  }
+  
+  .file-input-container input[type="file"] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 100px;
+    cursor: pointer;
+    opacity: 0;
+  }
+  
+  .file-input-label {
+    display: block;
+    padding: 15px;
+    font-size: 18px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #f5f5f5;
+    text-align: center;
+    cursor: pointer;
+  }
+  
+  /* 폼 그룹 스타일 */
+  .form-group {
+    margin-bottom: -20px;
+    text-align: left;
+  }
+  
+  .form-group label {
+    font-size: 18px;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 10px;
+    display: block;
+  }
+  
+  
+  /* 로그인 버튼 스타일 */
+  .login-btn {
+    background-color: #333;
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .login-btn:hover {
+    background-color: #555;
+  }
+  
+
+  
