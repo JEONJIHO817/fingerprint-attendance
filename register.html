@@ -19,10 +19,6 @@
 
 <body>
   <a href="/index.html" class="back-btn"><span class="arrow">&lt;</span> BACK</a>
-  <header>
-    <img src="images/logo.png" alt="로고">
-  </header>
-
   <div id="noCognitoMessage" class="configMessage">
     <div class="panel panel-default">
       <div class="panel-heading">
@@ -36,27 +32,75 @@
     </div>
   </div>
 
-  <section class="form-wrap">
-    <h1>회원가입</h1>
-    <form id="registrationForm">
-      <div class="form-group">
-        <input type="text" id="usernameInputRegister" class="form-control" placeholder="사용자 이름" required>
+  <div class="main-container">
+    <div class="login-box">
+      <div class="logo">
+        <img src="images/fingerprint.png" alt="Logo">
       </div>
-      <div class="form-group">
-        <input type="email" id="emailInputRegister" class="form-control" placeholder="이메일" required>
-      </div>
-      <div class="form-group">
-        <input type="password" id="passwordInputRegister" class="form-control" placeholder="비밀번호" required>
-      </div>
-      <div class="form-group">
-        <input type="password" id="password2InputRegister" class="form-control" placeholder="비밀번호 확인" required>
-      </div>
-      <div class="form-group">
-        <input type="text" id="employeeIDInputRegister" class="form-control" placeholder="직원 ID" required>
-      </div>
-      <input type="submit" class="btn btn-primary btn-block" value="회원가입">
-    </form>
-  </section>
+      <h1>회원가입</h1>
+      <form id="registrationForm" class="login-form">
+        <!-- 사용자 이름 -->
+        <input type="text" id="usernameInputRegister" placeholder="사용자 이름" class="form-control" required>
+  
+        <!-- 이메일 -->
+        <input type="email" id="emailInputRegister" placeholder="name@example.com" class="form-control" required>
+        <span id="email-error-message" class="email-message"></span>
+        <p id="email-info-message" class="email-info">근로장학생 출퇴근 시스템의 새로운 계정으로 사용될 주소입니다.</p>
+  
+        <!-- 비밀번호 -->
+        <div class="password-container">
+          <input
+            type="password"
+            id="passwordInputRegister"
+            placeholder="암호"
+            onfocus="showTooltip()"
+            onblur="hideTooltip()"
+            oninput="validatePassword()"
+            class="form-control"
+            required
+          />
+          <button type="button" class="toggle-password"><i class="fas fa-eye"></i></button>
+          <div id="tooltip" class="password-tooltip">
+            <div class="strength">
+              <label>안전 정도: <span id="strength-score">0%</span></label>
+              <div class="progress-bar">
+                <div id="progress" class="progress"></div>
+              </div>
+            </div>
+            <p>암호 요구사항:</p>
+            <ul>
+              <li id="length" class="requirement">
+                <span class="icon">•</span> 8자 이상
+              </li>
+              <li id="number" class="requirement">
+                <span class="icon">•</span> 1개 이상의 숫자 포함
+              </li>
+              <li id="uppercase" class="requirement">
+                <span class="icon">•</span> 1개 이상의 대문자 포함
+              </li>
+              <li id="lowercase" class="requirement">
+                <span class="icon">•</span> 1개 이상의 소문자 포함
+              </li>
+              <li id="special" class="requirement">
+                <span class="icon">•</span> 1개 이상의 특수 문자 포함
+              </li>
+            </ul>
+            <p>추측하기 쉽거나 다른 웹사이트에서 사용한 암호는 선택하지 마십시오.</p>
+          </div>
+        </div>
+  
+        <!-- 비밀번호 확인 -->
+        <input type="password" id="password2InputRegister" placeholder="비밀번호 확인" class="form-control" required>
+  
+        <!-- 직원 ID -->
+        <input type="text" id="employeeIDInputRegister" placeholder="직원 ID" class="form-control" required>
+  
+        <!-- 회원가입 버튼 -->
+        <input type="submit" class="btn btn-primary btn-block" value="회원가입">
+      </form>
+    </div>
+  </div>
+  
 
   <!-- JavaScript -->
   <script src="js/vendor/jquery-3.1.0.js"></script>
