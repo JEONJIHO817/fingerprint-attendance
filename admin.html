@@ -3,43 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Portal</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f8f9fa;
-      padding: 20px;
-    }
-    header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    main {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-    }
-    .action-btn {
-      width: 200px;
-      padding: 20px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-  </style>
+  <title>Admin Main Page</title>
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+  <!-- FontAwesome 라이브러리 -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-  <header>
-    <h1>Admin Dashboard</h1>
-    <p>Manage student attendance and fingerprint records</p>
-  </header>
-  <main>
-    <button id="viewAllAttendanceBtn" class="btn btn-primary action-btn">학생 출근부 조회</button>
-    <button id="registerFingerprintBtn" class="btn btn-secondary action-btn">학생 지문 등록</button>
-    <a id="modify-profile" class="btn btn-third action-btn" href="/modify-profile.html">회원정보수정</a>
-
-  </main>
+  <a href="/signin.html" class="back-btn"><span class="arrow">&lt;</span> BACK</a>
+  <a id="signOut" class="logout-btn"><i class="fas fa-sign-out-alt"></i>LOGOUT</a>
+  <div class="background"></div>
+  <div class="profile-card">
+    <div class="profile-image"></div>
+    <div class="profile-info">
+      <h1>관리자님, 안녕하세요.</h1>
+      <p>lover4521@naver.com</p>
+    </div>
+    <div class="profile-buttons">
+      <button id="viewAllAttendanceBtn">학생 출근부 조회</button>
+      <button id="registerFingerprintBtn">학생 지문 등록</button>
+      <a id="modify-profile" href="/modify-profile.html">회원정보 수정</button>
+    </div>
+  </div>
 
   <!-- Modal for viewing attendance -->
   <div class="modal fade" id="attendanceModal" tabindex="-1" aria-labelledby="attendanceModalLabel" aria-hidden="true">

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>지문 등록</title>
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/adminRegisterFP.css">
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+  <!-- FontAwesome 라이브러리 -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+  <a href="#" class="back-btn"><span class="arrow">&lt;</span> BACK</a>
+  <div class="main-container">
+    <div class="login-box">
+      <!-- 로고 추가 -->
+      <div class="logo">
+        <img src="images/fingerprint.png" alt="Logo">
+      </div>
+      <h1>지문 등록</h1>
+      <form class="register-form">
+        <!-- 학번 입력 박스 -->
+        <div class="form-group">
+          <label for="student-id">학번</label>
+          <input type="text" id="student-id" placeholder="지문 등록을 진행할 학생의 학번을 입력하세요" required>
+        </div>
+
+        <!-- 지문 이미지 업로드 박스 1 -->
+        <div class="form-group">
+          <label for="fingerprint-upload-1">지문 이미지 업로드 ①</label>
+          <input type="file" id="fingerprint-upload-1" accept="image/*" required>
+        </div>
+
+        <!-- 지문 이미지 업로드 박스 2 -->
+        <div class="form-group">
+          <label for="fingerprint-upload-2">지문 이미지 업로드 ②</label>
+          <input type="file" id="fingerprint-upload-2" accept="image/*">
+        </div>
+
+        <!-- 지문 이미지 업로드 박스 3 -->
+        <div class="form-group">
+          <label for="fingerprint-upload-3">지문 이미지 업로드 ③</label>
+          <input type="file" id="fingerprint-upload-3" accept="image/*">
+        </div>
+
+        <!-- 등록 버튼 -->
+        <button type="submit" class="login-btn">등록</button>
+      </form>
+    </div>
+  </div>
+  <script src="js/adminRegisterFP.js"></script>
+</body>
+</html>
