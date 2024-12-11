@@ -223,6 +223,22 @@ function updateStrength(score) {
     });
     
     function handleSignin(event) {
+        const togglePassword = document.querySelector('.toggle-password');
+        const passwordField = document.querySelector('#password');
+
+        togglePassword.addEventListener('click', function () {
+        const icon = this.querySelector('i'); // 아이콘 선택
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text'; // 비밀번호 보이기
+            icon.classList.remove('fa-eye'); // 눈 아이콘 제거
+            icon.classList.add('fa-eye-slash'); // 눈 가림 아이콘 추가
+        } else {
+            passwordField.type = 'password'; // 비밀번호 숨기기
+            icon.classList.remove('fa-eye-slash'); // 눈 가림 아이콘 제거
+            icon.classList.add('fa-eye'); // 눈 아이콘 추가
+        }
+        });
+
         var email = $('#emailInputSignin').val();
         var password = $('#passwordInputSignin').val();
         var errorMessageDiv = $('#errorMessage'); // 오류 메시지를 보여줄 div
@@ -356,6 +372,46 @@ function updateStrength(score) {
     }   
 
     function handleVerify(event) {
+
+        const emailField = document.querySelector('#email');
+        const emailErrorMessage = document.querySelector('#email-error-message');
+
+        const codeField = document.querySelector('#verification-code');
+        const codeErrorMessage = document.querySelector('#code-error-message');
+
+        // 이메일 유효성 검증
+        emailField.addEventListener('input', () => {
+        const email = emailField.value;
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // 이메일 정규식
+
+        if (email === '') {
+            emailErrorMessage.textContent = '';
+            emailErrorMessage.classList.remove('visible');
+        } else if (!emailPattern.test(email)) {
+            emailErrorMessage.textContent = '유효하지 않은 이메일 주소입니다.';
+            emailErrorMessage.classList.add('visible');
+        } else {
+            emailErrorMessage.textContent = '';
+            emailErrorMessage.classList.remove('visible');
+        }
+        });
+
+        // 인증코드 유효성 검증
+        codeField.addEventListener('input', () => {
+        const code = codeField.value;
+
+        if (code === '') {
+            codeErrorMessage.textContent = '';
+            codeErrorMessage.classList.remove('visible');
+        } else if (!/^\d{6}$/.test(code)) {
+            codeErrorMessage.textContent = '6자리 숫자를 입력하세요.';
+            codeErrorMessage.classList.add('visible');
+        } else {
+            codeErrorMessage.textContent = '';
+            codeErrorMessage.classList.remove('visible');
+        }
+        });
+
         var email = $('#emailInputVerify').val();
         var code = $('#codeInputVerify').val();
         event.preventDefault();
