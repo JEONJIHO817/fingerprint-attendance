@@ -1,106 +1,77 @@
-/* Reset & Base Styles */
+/* 기본 설정 */
 body {
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f8f9fa;
-    color: #333;
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  height: 100vh; /* 화면 전체 높이 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* 스크롤 방지 */
+  position: relative;
 }
 
-h1 {
-    font-size: 36px;
-    font-weight: bold;
-    margin: 20px 0 10px;
-    color: #2c3e50;
+/* 배경 이미지 설정 */
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('../images/fp_bg.png') no-repeat center center;
+  background-size: cover; /* 화면에 꽉 차도록 설정 */
+  z-index: -1;
+  filter: brightness(0.8); /* 배경 어두움 효과 */
 }
 
-.subtitle {
-    font-size: 18px;
-    color: #7f8c8d;
-}
-
+/* 텍스트 및 버튼 컨테이너 */
 .container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+  text-align: center;
+  color: white; /* 텍스트 색상 흰색 */
 }
 
-/* Button Group */
-.button-group {
-    margin: 30px 0;
+.container h1 {
+  font-size: 50px; /* 제목 크기 */
+  margin-bottom: 20px;
 }
 
-.button-group .btn {
-    margin: 10px;
-    padding: 15px 30px;
-    font-size: 16px;
-    border-radius: 6px;
-    text-transform: uppercase;
+.container p {
+  font-size: 20px; /* 서브텍스트 크기 */
+  margin-bottom: 40px;
 }
 
-.btn-success {
-    background-color: #28a745;
-    border-color: #28a745;
-    color: white;
-    transition: background-color 0.3s, transform 0.2s;
+/* 버튼 섹션 */
+.profile-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px; /* 버튼 간격 */
 }
 
-.btn-success:hover {
-    background-color: #218838;
-    transform: scale(1.05);
+.profile-buttons button {
+  width: 150px; /* 버튼 크기 */
+  height: 150px; /* 정사각형 */
+  background: #000; /* 검은색 배경 */
+  color: #fff; /* 흰색 텍스트 */
+  border: none;
+  border-radius: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
-    color: white;
-    transition: background-color 0.3s, transform 0.2s;
+.profile-buttons button:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
 }
 
-.btn-primary:hover {
-    background-color: #0056b3;
-    transform: scale(1.05);
-}
-
-/* Footer */
-footer {
-    margin-top: 30px;
-}
-
-.dropdown-toggle {
-    font-size: 16px;
-    padding: 10px 15px;
-    border-radius: 6px;
-    color: #555;
-}
-
-.dropdown-menu {
-    font-size: 14px;
-}
-
-.dropdown-menu a {
-    padding: 10px 20px;
-    display: block;
-    color: #333;
-    text-decoration: none;
-}
-
-.dropdown-menu a:hover {
-    background-color: #f8f9fa;
-    color: #007bff;
-}
-
-/* Responsiveness */
-@media (max-width: 600px) {
-    h1 {
-        font-size: 28px;
-    }
-
-    .btn {
-        font-size: 14px;
-        padding: 10px 20px;
-    }
+.profile-buttons button:active {
+  transform: translateY(2px);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
 }

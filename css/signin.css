@@ -1,0 +1,156 @@
+/* 기본 스타일 */
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* 상단 BACK 버튼 */
+.back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 18px; /* 버튼 크기를 키움 */
+  color: #333;
+  text-decoration: none;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.3s ease;
+}
+
+.back-btn .arrow {
+  font-size: 16px;
+  transition: transform 0.3s ease; /* 호버 시 부드러운 이동 효과 */
+}
+
+.back-btn:hover .arrow {
+  transform: translateX(-3px); /* 화살표 이동 효과 */
+}
+
+/* 중앙 정렬 컨테이너 */
+.main-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+/* 로그인 박스 스타일 */
+.login-box {
+  background: #fff;
+  padding: 40px 60px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25); /* 강한 그림자 */
+  text-align: center;
+  width: 100%; /* 가로 크기 비율 */
+  max-width: 900px; /* 최대 가로 크기 */
+  min-height: 400px; /* 최소 세로 크기 */
+}
+
+/* 로고 */
+.logo img {
+  max-width: 100px;
+  margin-bottom: 20px;
+}
+
+/* 제목 */
+h1 {
+  font-size: 25x;
+  font-weight: 700;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+/* 입력 폼 */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+label {
+  font-size: 18px;
+  font-weight: 500;
+  text-align: left;
+  color: #555;
+  margin-bottom: -10px; /* 간격을 줄이기 위해 값을 조정 */
+}
+
+/* 입력 박스 스타일 */
+input[type="email"], input[type="password"], input[type="text"] {
+  width: 100%;
+  padding: 15px;
+  font-size: 18px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-sizing: border-box;
+  padding-right: 40px; /* 오른쪽 여백 추가 */
+}
+
+/* 비밀번호 입력창과 토글 버튼 컨테이너 */
+.password-container {
+  position: relative;
+  width: 100%; /* 컨테이너 너비를 입력 박스와 동일하게 */
+}
+
+/* 비밀번호 입력 박스 */
+input[type="password"] {
+  width: 100%; /* 입력 박스가 컨테이너를 꽉 채움 */
+  padding-right: 40px; /* 오른쪽 버튼 영역을 위한 여유 공간 */
+  box-sizing: border-box; /* 패딩과 테두리를 포함한 크기 계산 */
+}
+
+/* 눈 모양 토글 버튼 */
+.toggle-password {
+  background: none;
+  border: none;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  color: #555;
+}
+
+.toggle-password i {
+  font-size: 20px;
+}
+
+/* 로그인 버튼 스타일 */
+.login-btn {
+  background-color: #333;
+  width: 100%;
+  padding: 15px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-btn:hover {
+  background-color: #555;
+}
+
+/* 비밀번호 찾기 링크 */
+.forgot-password {
+  font-size: 14px;
+  color: #0073e6;
+  text-decoration: none;
+  text-align: center;
+  display: block;
+  margin-top: 10px;
+}

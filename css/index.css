@@ -1,172 +1,114 @@
-/*
- * Modified CSS for 근로징학생 출근부시스템
- * Optimized and tailored for improved readability, functionality, and responsiveness.
- */
-
-/* Base Styles */
-html, body, button, input, select, textarea {
-  color: #222;
-  font-family: "fairplex-wide", Arial, sans-serif;
+body {
   margin: 0;
-  padding: 0;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #000; /* 배경 색상 */
+  overflow: hidden;
+}
+
+.video-container {
+  position: relative;
+  width: 90%; /* 전체 너비의 90% */
+  max-width: 1200px; /* 최대 너비 설정 */
+  aspect-ratio: 16 / 9; /* 16:9 비율 고정 */
+  overflow: hidden;
+  border-radius: 10px; /* 살짝 둥근 테두리 추가 (선택 사항) */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* 그림자 효과 */
+}
+
+video {
   width: 100%;
   height: 100%;
+  display: block;
+  transition: filter 1s ease; /* 흐려지는 효과 */
 }
 
-body {
-  font-size: 16px;
-  line-height: 1.4;
-  background: url(../images/background.png) no-repeat center bottom;
-  background-size: cover;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+video.blurred {
+  filter: blur(5px) brightness(0.7); /* 흐림 + 어두움 */
 }
 
-/* Selection Highlight */
-::-moz-selection {
-  background: #b3d4fc;
-  text-shadow: none;
-}
-
-::selection {
-  background: #b3d4fc;
-  text-shadow: none;
-}
-
-/* Typography */
-h1 {
-  color: white;
-  font-size: 48px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+#buttons {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   text-align: center;
-  margin: 20px 0;
+  color: #fff; /* 텍스트 색상 */
 }
 
-@media screen and (max-width: 1200px) {
-  h1 {
-      font-size: 35px;
-      margin: 20px 0;
-  }
-}
-
-/* Header */
-header {
-  width: 100%;
-  padding: 30px 0 60px;
-  text-align: center;
-}
-
-header h1 {
+#buttons h1, #buttons h2 {
   margin: 0;
 }
 
-header .home-button {
-  display: inline-block;
-  padding: 10px 20px;
-  font-size: 16px;
-  font-weight: bold;
-  color: #f50856;
-  background: white;
-  border: none;
-  border-radius: 30px;
-  text-decoration: none;
-  cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease;
+#buttons h1 {
+  font-size: 2.5em; /* 제목 크기 */
+  font-weight: bold; /* 굵게 설정 */
+  color: #ffffff; /* 흰색 글씨 */
+  margin-bottom: 10px;
 }
 
-header .home-button:hover {
-  background-color: #f50856;
-  color: white;
+#buttons h2 {
+  font-size: 1.5em; /* 부제목 크기 */
+  font-weight: lighter; /* 얇게 설정 */
+  color: #e6e6e6; /* 밝은 회색 글씨 */
+  margin-bottom: 20px;
 }
 
-/* Forms */
-.form-wrap {
-  width: 40%;
-  margin: 0 auto;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 30px; /* 버튼 간격 */
 }
 
-input[type="text"], input[type="password"], input[type="email"] {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0 20px;
-  font-size: 18px;
-  color: #222;
-  background: none;
-  border: none;
-  border-bottom: 2px solid white;
-  outline: none;
-  transition: border-color 0.3s ease;
+button {
+  font-size: 1.5em; /* 텍스트 크기 */
+  padding: 15px 30px; /* 버튼 내부 여백 */
+  width: 200px; /* 버튼 너비 통일 */
+  border: none; /* 기본 테두리 제거 */
+  border-radius: 20px; /* 둥근 버튼 */
+  background-color: #fff; /* 버튼 배경색 */
+  color: #000; /* 버튼 텍스트 색상 */
+  cursor: pointer; /* 클릭 가능한 커서 */
+  transition: all 0.3s ease; /* 애니메이션 효과 */
 }
 
-input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus {
-  border-bottom: 2px solid #f50856;
+button:hover {
+  background-color: #858585; /* 호버 시 배경색 */
+  color: #f0f0f0; /* 호버 시 텍스트 색상 */
 }
 
-input[type="submit"] {
-  width: 100%;
-  padding: 12px;
-  background: #f50856;
-  color: white;
-  font-size: 18px;
-  font-weight: bold;
-  border: none;
-  border-radius: 30px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-input[type="submit"]:hover {
-  background-color: #bb0642;
-}
-
-/* Responsive Adjustments */
-@media screen and (max-width: 1200px) {
-  .form-wrap {
-      width: 90%;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  header {
-      padding: 20px 0;
-  }
-
-  h1 {
-      font-size: 28px;
-  }
-
-  header .home-button {
-      font-size: 14px;
-  }
-}
-
-/* Utility Classes */
 .hidden {
-  display: none !important;
+  display: none; /* 처음에는 숨김 */
 }
 
-.visuallyhidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  border: 0;
+.show-buttons {
+  display: block;
+  opacity: 1;
+  transform: scale(1);
+  transition: all 0.5s ease;
 }
 
-.clearfix:before,
-.clearfix:after {
-  content: " ";
-  display: table;
+/* SIGN IN 버튼 스타일 */
+.sign-in-button {
+  background-color: #fff; /* 버튼 흰색 */
+  color: #000; /* 폰트 검은색 */
 }
 
-.clearfix:after {
-  clear: both;
+.sign-in-button:hover {
+  background-color: #000; 
+  color: #fff; 
+}
+
+/* SIGN UP 버튼 스타일 */
+.sign-up-button {
+  background-color: #555555; 
+  color: #fff;
+}
+
+.sign-up-button:hover {
+  background-color: #000; 
+  color: #fff; 
 }

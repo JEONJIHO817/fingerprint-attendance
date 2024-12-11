@@ -1,0 +1,143 @@
+/* 기본 스타일 */
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  /* 상단 BACK 버튼 */
+  .back-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 18px;
+    color: #333;
+    text-decoration: none;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+  }
+  
+  .back-btn .arrow {
+    font-size: 16px;
+    transition: transform 0.3s ease;
+  }
+  
+  .back-btn:hover .arrow {
+    transform: translateX(-3px);
+  }
+  
+  /* 중앙 정렬 컨테이너 */
+  .main-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+  }
+  
+  /* 로그인 박스 스타일 */
+  .login-box {
+    background: #fff;
+    padding: 40px 60px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25); /* 강한 그림자 */
+    text-align: center;
+    width: 100%;
+    max-width: 900px;
+    min-height: 400px;
+  }
+  
+  /* 로고 */
+  .logo img {
+    max-width: 100px;
+    margin-bottom: 20px;
+  }
+  
+  /* 제목 */
+  h1 {
+    font-size: 25px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: #333;
+  }
+  
+  /* 입력 폼 */
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  label {
+    font-size: 18px;
+    font-weight: 500;
+    text-align: left;
+    color: #555;
+    margin-bottom: -10px;
+  }
+  
+  /* 입력 박스 스타일 */
+  input[type="email"], input[type="text"] {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box;
+    padding-right: 40px;
+  }
+
+
+  /* 인증코드 입력 컨테이너 */
+  .verification-code-container {
+    position: relative;
+    width: 100%;
+  }
+  
+  /* 로그인 버튼 스타일 */
+  .login-btn {
+    background-color: #333;
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .login-btn:hover {
+    background-color: #555;
+  }
+  
+  .error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: -15px;
+    display: none; /* 기본적으로 숨김 */
+    text-align: left; /* 왼쪽 정렬 */
+  }
+  
+  .error-message.visible {
+    display: block; /* 에러가 발생하면 표시 */
+  }
+
+  .info-message {
+    font-size: 14px; /* 글자 크기 */
+    color: #555; /* 회색 계열 텍스트 */
+    margin-top: -10px; /* 문구 위 여백 */
+    text-align: center; /* 가운데 정렬 */
+    line-height: 1.5; /* 줄 간격 */
+  }
