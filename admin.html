@@ -26,69 +26,7 @@
     <div class="profile-buttons">
       <button id="viewAllAttendanceBtn">학생 출근부 조회</button>
       <button id="registerFingerprintBtn">학생 지문 등록</button>
-      <a id="modify-profile" href="/modify-profile.html">회원정보 수정</button>
-    </div>
-  </div>
-
-  <!-- Modal for viewing attendance -->
-  <div class="modal fade" id="attendanceModal" tabindex="-1" aria-labelledby="attendanceModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="attendanceModalLabel">All Students' Attendance Records</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <th>Student Name</th>
-                <th>Date</th>
-                <th>Clock In</th>
-                <th>Clock Out</th>
-                <th>Total Hours</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="attendanceTableBody">
-              <!-- Records will be dynamically populated -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal for fingerprint registration -->
-  <div class="modal fade" id="fingerprintModal" tabindex="-1" aria-labelledby="fingerprintModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="fingerprintModalLabel">Register Fingerprint</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="fingerprintForm">
-            <div class="mb-3">
-              <label for="studentId" class="form-label">Student ID</label>
-              <input type="text" class="form-control" id="studentId" placeholder="Enter Student ID">
-            </div>
-            <div class="mb-3">
-              <label for="fingerprintFile1" class="form-label">Upload Fingerprint File 1</label>
-              <input type="file" class="form-control" id="fingerprintFile1">
-            </div>
-            <div class="mb-3">
-              <label for="fingerprintFile2" class="form-label">Upload Fingerprint File 2</label>
-              <input type="file" class="form-control" id="fingerprintFile2">
-            </div>
-            <div class="mb-3">
-              <label for="fingerprintFile3" class="form-label">Upload Fingerprint File 3</label>
-              <input type="file" class="form-control" id="fingerprintFile3">
-            </div>
-            <button type="submit" class="btn btn-primary">Register</button>
-          </form>
-        </div>
-      </div>
+      <button id="modify-profile" href="/modify-profile.html">회원정보 수정</button>
     </div>
   </div>
 
