@@ -67,14 +67,17 @@ WildRydes.map = WildRydes.map || {};
         $('#checkAttendance').click(function () {
           console.log('출근부 조회 버튼 클릭됨');
           window.location.href = '/attendance.html';
-      });
+        });
       
-      $('#clockInOut').click(function () {
-          console.log('출/퇴근 버튼 클릭됨');
-          window.location.href = '/clockInOut.html';
-      });
-      
+        $('#clockInOut').click(function () {
+            console.log('출/퇴근 버튼 클릭됨');
+            window.location.href = '/clockInOut.html';
+        });
 
+        $('#modify-profile').click(function () {
+            console.log('회원정보 수정 버튼 클릭됨');
+            window.location.href = '/modify-profile.html';
+        });
         // 로그아웃 버튼 클릭 시
         $('#signOut').click(function () {
             WildRydes.signOut();
