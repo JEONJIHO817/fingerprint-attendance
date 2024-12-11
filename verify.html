@@ -2,85 +2,18 @@
 <html lang="ko">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>이메일 인증</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Verification</title>
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/verify.css">
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+  <!-- FontAwesome 라이브러리 -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
-  <!-- 외부 스타일시트 -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/font.css">
-  <style>
-    body {
-      font-family: 'Noto Sans KR', sans-serif;
-      background-color: #f8f9fa;
-      margin: 0;
-      padding: 0;
-      color: #333;
-    }
-
-    header {
-      text-align: center;
-      margin: 20px 0;
-    }
-
-    header img {
-      max-width: 150px;
-    }
-
-    .form-wrap {
-      max-width: 400px;
-      margin: 50px auto;
-      padding: 30px;
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .form-wrap h1 {
-      font-size: 24px;
-      font-weight: bold;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .form-wrap input {
-      margin-bottom: 15px;
-    }
-
-    .form-wrap input[type="submit"] {
-      background-color: #007bff;
-      color: #fff;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .form-wrap input[type="submit"]:hover {
-      background-color: #0056b3;
-    }
-
-    .configMessage {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      z-index: 9999;
-      text-align: center;
-      color: white;
-      padding-top: 100px;
-    }
-
-    .configMessage .panel {
-      display: inline-block;
-      background: white;
-      color: black;
-      padding: 20px;
-      border-radius: 8px;
-    }
-  </style>
 </head>
 
 <body>

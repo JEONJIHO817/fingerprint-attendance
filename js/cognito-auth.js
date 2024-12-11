@@ -2,6 +2,27 @@
 
 var WildRydes = window.WildRydes || {};
 
+// 모든 .toggle-password 버튼에 이벤트 리스너 추가
+document.addEventListener('DOMContentLoaded', () => {
+    const toggleButtons = document.querySelectorAll('.toggle-password'); // 모든 toggle-password 버튼 선택
+
+    toggleButtons.forEach((toggleButton) => {
+        toggleButton.addEventListener('click', function () {
+            const passwordField = this.previousElementSibling; // 이전 형제 요소가 비밀번호 필드
+            const icon = this.querySelector('i'); // 아이콘 선택
+            
+            if (passwordField && passwordField.type === 'password') {
+                passwordField.type = 'text'; // 비밀번호 보이기
+                icon.classList.remove('fa-eye'); // 눈 아이콘 제거
+                icon.classList.add('fa-eye-slash'); // 눈 가림 아이콘 추가
+            } else if (passwordField) {
+                passwordField.type = 'password'; // 비밀번호 숨기기
+                icon.classList.remove('fa-eye-slash'); // 눈 가림 아이콘 제거
+                icon.classList.add('fa-eye'); // 눈 아이콘 추가
+            }
+        });
+    });
+});
 
 // 비밀번호 요구사항 로직
 function showTooltip() {
@@ -223,22 +244,6 @@ function updateStrength(score) {
     });
     
     function handleSignin(event) {
-        const togglePassword = document.querySelector('.toggle-password');
-        const passwordField = document.querySelector('#password');
-
-        togglePassword.addEventListener('click', function () {
-        const icon = this.querySelector('i'); // 아이콘 선택
-        if (passwordField.type === 'password') {
-            passwordField.type = 'text'; // 비밀번호 보이기
-            icon.classList.remove('fa-eye'); // 눈 아이콘 제거
-            icon.classList.add('fa-eye-slash'); // 눈 가림 아이콘 추가
-        } else {
-            passwordField.type = 'password'; // 비밀번호 숨기기
-            icon.classList.remove('fa-eye-slash'); // 눈 가림 아이콘 제거
-            icon.classList.add('fa-eye'); // 눈 아이콘 추가
-        }
-        });
-
         var email = $('#emailInputSignin').val();
         var password = $('#passwordInputSignin').val();
         var errorMessageDiv = $('#errorMessage'); // 오류 메시지를 보여줄 div
@@ -282,26 +287,26 @@ function updateStrength(score) {
         );
     }
     function handleRegister(event) {
-        // 비밀번호 토글 버튼 기능
+        /*
         const togglePasswordButtons = document.querySelectorAll('.toggle-password');
 
         togglePasswordButtons.forEach((button) => {
-        button.addEventListener('click', (e) => {
-            e.preventDefault(); // 클릭 기본 동작 방지
-            const input = button.previousElementSibling; // 비밀번호 입력 필드
-            const icon = button.querySelector('i');
+            button.addEventListener('click', (e) => {
+                e.preventDefault(); // 클릭 기본 동작 방지
+                const input = button.previousElementSibling; // 비밀번호 입력 필드
+                const icon = button.querySelector('i');
 
-            if (input.type === 'password') {
-            input.type = 'text';
-            icon.classList.remove('fa-eye');
-            icon.classList.add('fa-eye-slash');
-            } else {
-            input.type = 'password';
-            icon.classList.remove('fa-eye-slash');
-            icon.classList.add('fa-eye');
-            }
-        });
-        });
+                if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+                } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+                }
+            });
+        });*/
 
         // 비밀번호 확인 로직
         const passwordField = document.querySelector('#passwordInputRegister');
@@ -309,18 +314,18 @@ function updateStrength(score) {
         const passwordMatchMessage = document.querySelector('#password-match-message');
 
         confirmPasswordField.addEventListener('input', () => {
-        if (confirmPasswordField.value === '') {
-            passwordMatchMessage.textContent = '';
-            passwordMatchMessage.classList.remove('visible');
-        } else if (passwordField.value === confirmPasswordField.value) {
-            passwordMatchMessage.textContent = '비밀번호가 일치합니다.';
-            passwordMatchMessage.style.color = 'green';
-            passwordMatchMessage.classList.add('visible');
-        } else {
-            passwordMatchMessage.textContent = '비밀번호가 일치하지 않습니다.';
-            passwordMatchMessage.style.color = 'red';
-            passwordMatchMessage.classList.add('visible');
-        }
+            if (confirmPasswordField.value === '') {
+                passwordMatchMessage.textContent = '';
+                passwordMatchMessage.classList.remove('visible');
+            } else if (passwordField.value === confirmPasswordField.value) {
+                passwordMatchMessage.textContent = '비밀번호가 일치합니다.';
+                passwordMatchMessage.style.color = 'green';
+                passwordMatchMessage.classList.add('visible');
+            } else {
+                passwordMatchMessage.textContent = '비밀번호가 일치하지 않습니다.';
+                passwordMatchMessage.style.color = 'red';
+                passwordMatchMessage.classList.add('visible');
+            }
         });
 
         // 이메일 유효성 검증 로직
@@ -394,7 +399,7 @@ function updateStrength(score) {
             emailErrorMessage.textContent = '';
             emailErrorMessage.classList.remove('visible');
         }
-        });
+        })
 
         // 인증코드 유효성 검증
         codeField.addEventListener('input', () => {
@@ -410,7 +415,7 @@ function updateStrength(score) {
             codeErrorMessage.textContent = '';
             codeErrorMessage.classList.remove('visible');
         }
-        });
+        })
 
         var email = $('#emailInputVerify').val();
         var code = $('#codeInputVerify').val();
