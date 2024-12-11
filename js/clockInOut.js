@@ -90,8 +90,16 @@ WildRydes.clockInOut = WildRydes.clockInOut || {};
                     contentType: 'application/json'
                 });
             
-                $('#status-message').text(`${action} 처리가 완료되었습니다: ${currentTime}`);
-                alert(`${action} 성공!`);
+                // Action에 따른 메시지 출력
+                let statusMessage = '';
+                if (action === 'Clock In') {
+                    statusMessage = `${currentTime}부로 출근 처리가 완료되었습니다.`;
+                } else if (action === 'Clock Out') {
+                    statusMessage = `${currentTime}부로 퇴근 처리가 완료되었습니다.`;
+                }
+
+                $('#status-message').text(statusMessage);
+                alert(statusMessage);
             }
         } catch (error) {
             console.error('Error:', error);
