@@ -8,69 +8,21 @@
   <title>근로장학생 출근부 시스템</title>
 
   <!-- 외부 스타일시트 -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.2/css/bootstrap.min.css">
-  <style>
-    body {
-      font-family: 'Noto Sans KR', sans-serif;
-      background-color: #f8f9fa;
-      color: #333;
-      margin: 0;
-      padding: 0;
-    }
-
-    .site-header {
-      text-align: center;
-      padding: 50px 15px;
-      background-color: #007bff;
-      color: #fff;
-    }
-
-    .site-header .title {
-      font-size: 2.5rem;
-      font-weight: bold;
-      margin-bottom: 20px;
-    }
-
-    .button-group {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-    }
-
-    .home-button {
-      display: inline-block;
-      padding: 15px 30px;
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: #fff;
-      background-color: #28a745;
-      border: none;
-      border-radius: 5px;
-      text-decoration: none;
-      transition: all 0.3s ease;
-    }
-
-    .home-button:hover {
-      background-color: #218838;
-    }
-
-    .home-button:last-child {
-      background-color: #007bff;
-    }
-
-    .home-button:last-child:hover {
-      background-color: #0056b3;
-    }
-  </style>
-</head>
-
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/index.css">
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
 <body class="page-home">
+  <video id="myVideo" autoplay muted>
+    <source src="images/background.mp4" type="video/mp4">
+    동영상 재생이 지원되지 않는 브라우저입니다.
+  </video>
   <!-- 헤더 -->
   <header class="site-header">
-    <h1 class="title">근로장학생 출근부 시스템</h1>
+    <h1>JBNU Attendance System</h1>
+    <h2>@cloud computing team project.</h2>
     <div class="button-group">
-      <a class="home-button" href="/register.html">회원가입</a>
-      <a class="home-button" href="/signin.html">로그인</a>
+      <button class="home-button" href="/signin.html">SIGN IN</button>
+      <button class="home-button" href="/register.html">SIGN UP</button>
     </div>
   </header>
 
