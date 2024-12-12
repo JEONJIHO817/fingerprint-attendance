@@ -1,196 +1,222 @@
-/*global WildRydes _config */
-
-var WildRydes = window.WildRydes || {};
-WildRydes.attendance = WildRydes.attendance || {};
-
-(function attendanceScopeWrapper($) {
-    var authToken;
-
-    WildRydes.authToken.then(function setAuthToken(token) {
-        if (token) {
-            authToken = token;
-            fetchStudentList();
-        } else {
-            window.location.href = '/signin.html';
-        }
-    }).catch(function handleTokenError(error) {
-        console.error('Error retrieving auth token:', error);
-        window.location.href = '/signin.html';
-    });
-
-    const studentDropdown = document.getElementById('studentDropdown');
-    const fetchAttendanceButton = document.getElementById('fetchAttendanceButton');
-    const addRecordButton = document.getElementById('addRecordButton');
-    const calendarEl = document.getElementById('calendar');
-    const editModal = document.getElementById('editModal');
-    const closeModal = document.getElementById('closeModal');
-    const deleteEvent = document.getElementById('deleteEvent');
-    const eventInfo = document.getElementById('eventInfo');
-
-    let currentEmployeeId;
-    let selectedDate;
-    let selectedEvent;
-
-    const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        locale: 'ko',
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay'
-        },
-        events: [],
-        eventClick: function (info) {
-            selectedEvent = info.event;
-            selectedDate = info.event.startStr;
-            eventInfo.textContent = `날짜: ${selectedDate}, 액션: ${selectedEvent.extendedProps.action}`;
-            editModal.classList.add('active');
-        }
-    });
-
-    calendar.render();
-
-    function fetchStudentList() {
-        $.ajax({
-            method: 'GET',
-            url: _config.api.invokeUrl + '/admin/students',
-            headers: { Authorization: authToken },
-            success: function (response) {
-                const students = JSON.parse(response.body);
-                populateStudentDropdown(students);
-            },
-            error: function () {
-                alert('학생 목록을 가져오는 중 문제가 발생했습니다.');
-            }
-        });
+class AdminCalendar {
+    constructor(authToken) {
+        this.authToken = authToken;
+        this.init();
     }
 
-    function populateStudentDropdown(students) {
-        studentDropdown.innerHTML = '<option value="">학생을 선택하세요</option>';
-        students.forEach(student => {
+    init() {
+        this.date = new Date();
+        this.currentYear = this.date.getFullYear();
+        this.currentMonth = this.date.getMonth();
+        this.selectedStudent = null;
+        this.calendar = null;
+
+        this.students = [];
+
+        this.initCalendar();
+        this.addEventListeners();
+        this.fetchStudents();
+    }
+
+    initCalendar() {
+        const calendarEl = document.getElementById('calendar');
+        this.calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'ko',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            events: [],
+            eventClick: (info) => this.handleEventClick(info)
+        });
+        this.calendar.render();
+    }
+
+    fetchStudents() {
+        fetch(_config.api.invokeUrl + '/admin/students', {
+            headers: { Authorization: this.authToken }
+        })
+            .then(response => response.json())
+            .then(data => {
+                this.students = data.body;
+                this.renderStudentDropdown();
+            })
+            .catch(error => {
+                console.error('Failed to fetch students:', error);
+            });
+    }
+
+    renderStudentDropdown() {
+        const dropdown = document.getElementById('studentSelect');
+        dropdown.innerHTML = '<option value="">학생을 선택하세요</option>';
+        this.students.forEach(student => {
             const option = document.createElement('option');
             option.value = student.employeeId;
-            option.textContent = `${student.employeeId} - ${student.id}`;
-            studentDropdown.appendChild(option);
+            option.textContent = `${student.employeeId} - ${student.name}`;
+            dropdown.appendChild(option);
         });
     }
 
-    fetchAttendanceButton.addEventListener('click', function () {
-        currentEmployeeId = studentDropdown.value;
-        if (!currentEmployeeId) {
-            alert('학생을 선택하세요.');
-            return;
-        }
-
-        fetchAttendanceRecords(currentEmployeeId);
-    });
-
-    function fetchAttendanceRecords(employeeId) {
-        $.ajax({
-            method: 'POST',
-            url: _config.api.invokeUrl + '/admin/get-attendance',
-            headers: { Authorization: authToken },
-            data: JSON.stringify({ employeeId }),
-            success: updateCalendarWithAttendance,
-            error: function () {
-                alert('출근부를 가져오는 중 문제가 발생했습니다.');
-            }
+    addEventListeners() {
+        document.querySelector('.student-select-btn').addEventListener('click', () => {
+            this.showModal('studentModal');
         });
-    }
 
-    function updateCalendarWithAttendance(records) {
-        calendar.removeAllEvents();
-        records.forEach(record => {
-            // DB 형식 -> ISO 형식 변환
-            const timestampRegex = /(\d{4})\.\s*(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{1,2})시\s*(\d{1,2})분\s*(\d{1,2})초/;
-            const match = record.timestamp.match(timestampRegex);
+        document.querySelector('.record-add-btn').addEventListener('click', () => {
+            this.showModal('recordModal');
+        });
 
-            let parsedDate;
-            if (match) {
-                const [_, year, month, day, hour, minute, second] = match.map(Number);
-                parsedDate = new Date(year, month - 1, day, hour, minute, second);
-            } else {
-                console.error('Invalid timestamp format:', record.timestamp);
+        document.querySelectorAll('.close-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.hideModals();
+            });
+        });
+
+        document.querySelector('.view-btn').addEventListener('click', () => {
+            const studentId = document.getElementById('studentSelect').value;
+            if (!studentId) {
+                alert('학생을 선택하세요.');
                 return;
             }
+            this.selectedStudent = this.students.find(s => s.employeeId === studentId);
+            this.loadAttendanceRecords(studentId);
+            this.hideModals();
+        });
 
-            calendar.addEvent({
-                title: record.action === 'Clock In' ? '출근' : '퇴근',
-                start: parsedDate.toISOString(),
-                color: record.action === 'Clock In' ? '#4caf50' : '#f44336',
-                extendedProps: { action: record.action }
+        document.querySelector('.save-btn').addEventListener('click', () => {
+            this.addAttendanceRecord();
+            this.hideModals();
+        });
+    }
+
+    showModal(modalId) {
+        document.getElementById(modalId).style.display = 'block';
+    }
+
+    hideModals() {
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.style.display = 'none';
+        });
+    }
+
+    loadAttendanceRecords(employeeId) {
+        fetch(_config.api.invokeUrl + '/admin/get-attendance', {
+            method: 'POST',
+            headers: {
+                Authorization: this.authToken,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ employeeId })
+        })
+            .then(response => response.json())
+            .then(data => {
+                this.updateCalendar(data.body);
+            })
+            .catch(error => {
+                console.error('Failed to fetch attendance records:', error);
+            });
+    }
+
+    updateCalendar(records) {
+        this.calendar.removeAllEvents();
+        records.forEach(record => {
+            const { timestamp, action } = record;
+            const date = new Date(timestamp);
+
+            this.calendar.addEvent({
+                title: action === 'Clock In' ? '출근' : '퇴근',
+                start: date.toISOString(),
+                color: action === 'Clock In' ? '#4caf50' : '#f44336',
+                extendedProps: { action }
             });
         });
     }
 
-    deleteEvent.addEventListener('click', function () {
-        if (!selectedEvent) {
-            alert('삭제할 출근 기록이 선택되지 않았습니다.');
+    addAttendanceRecord() {
+        const studentId = document.getElementById('studentSelect').value;
+        const date = document.getElementById('recordDate').value;
+        const timeIn = document.getElementById('timeIn').value;
+        const timeOut = document.getElementById('timeOut').value;
+
+        if (!studentId || !date || !timeIn || !timeOut) {
+            alert('모든 필드를 입력하세요.');
             return;
         }
 
-        const selectedTimestamp = selectedEvent.start;
+        const recordData = {
+            employeeId: studentId,
+            records: [
+                { timestamp: `${date}T${timeIn}:00`, action: 'Clock In' },
+                { timestamp: `${date}T${timeOut}:00`, action: 'Clock Out' }
+            ]
+        };
 
-        // ISO 형식 -> DB 형식 변환
-        const kstDate = new Date(selectedTimestamp.getTime()); // UTC+9 시간 추가
-        const timestampToDelete = `${kstDate.getFullYear()}. ${kstDate.getMonth() + 1}. ${kstDate.getDate()}. ${kstDate.getHours()}시 ${kstDate.getMinutes()}분 ${kstDate.getSeconds()}초`;
-
-        console.log("삭제 요청 타임스탬프:", timestampToDelete);
-
-        $.ajax({
-            method: 'DELETE',
-            url: _config.api.invokeUrl + '/admin/mod-attendance',
-            headers: { Authorization: authToken },
-            data: JSON.stringify({
-                employeeId: currentEmployeeId,
-                timestamp: timestampToDelete
-            }),
-            success: function () {
-                alert('출근 기록이 삭제되었습니다.');
-                fetchAttendanceRecords(currentEmployeeId);
-                editModal.classList.remove('active');
-            },
-            error: function () {
-                alert('출근 기록 삭제 중 문제가 발생했습니다.');
-            }
-        });
-    });
-
-    addRecordButton.addEventListener('click', function () {
-        const dateToAdd = prompt('추가할 날짜를 입력하세요 (YYYY-MM-DD):');
-        const timeToAdd = prompt('추가할 시간을 입력하세요 (HH:mm):');
-        const action = prompt('추가할 액션을 입력하세요 (Clock In/Clock Out):');
-
-        if (!dateToAdd || !timeToAdd || !action || (action !== 'Clock In' && action !== 'Clock Out')) {
-            alert('올바른 날짜, 시간 및 액션을 입력하세요.');
-            return;
-        }
-
-        // ISO 형식 -> DB 형식 변환
-        const newDate = new Date(`${dateToAdd}T${timeToAdd}:00`);
-        const kstDate = new Date(newDate.getTime()); // UTC+9 시간 추가
-        const timestampToAdd = `${kstDate.getFullYear()}. ${kstDate.getMonth() + 1}. ${kstDate.getDate()}. ${kstDate.getHours()}시 ${kstDate.getMinutes()}분 ${kstDate.getSeconds()}초`;
-
-        $.ajax({
+        fetch(_config.api.invokeUrl + '/admin/mod-attendance', {
             method: 'POST',
-            url: _config.api.invokeUrl + '/admin/mod-attendance',
-            headers: { Authorization: authToken },
-            data: JSON.stringify({
-                employeeId: currentEmployeeId,
-                timestamp: timestampToAdd,
-                action: action
-            }),
-            success: function () {
-                alert('출근 기록이 추가되었습니다.');
-                fetchAttendanceRecords(currentEmployeeId);
+            headers: {
+                Authorization: this.authToken,
+                'Content-Type': 'application/json'
             },
-            error: function () {
-                alert('출근 기록 추가 중 문제가 발생했습니다.');
-            }
-        });
-    });
+            body: JSON.stringify(recordData)
+        })
+            .then(() => {
+                alert('출근 기록이 추가되었습니다.');
+                this.loadAttendanceRecords(studentId);
+            })
+            .catch(error => {
+                console.error('Failed to add attendance record:', error);
+            });
+    }
 
-    closeModal.addEventListener('click', function () {
-        editModal.classList.remove('active');
-    });
-}(jQuery));
+    handleEventClick(info) {
+        const { event } = info;
+        const modal = document.getElementById('editModal');
+        const eventInfo = document.getElementById('eventInfo');
+
+        eventInfo.textContent = `날짜: ${event.start.toISOString().split('T')[0]}, 액션: ${event.extendedProps.action}`;
+        modal.style.display = 'block';
+
+        document.getElementById('deleteEvent').addEventListener('click', () => {
+            this.deleteAttendanceRecord(event);
+            modal.style.display = 'none';
+        });
+    }
+
+    deleteAttendanceRecord(event) {
+        const employeeId = this.selectedStudent.employeeId;
+        const timestamp = event.start.toISOString();
+
+        fetch(_config.api.invokeUrl + '/admin/mod-attendance', {
+            method: 'DELETE',
+            headers: {
+                Authorization: this.authToken,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ employeeId, timestamp })
+        })
+            .then(() => {
+                alert('출근 기록이 삭제되었습니다.');
+                this.loadAttendanceRecords(employeeId);
+            })
+            .catch(error => {
+                console.error('Failed to delete attendance record:', error);
+            });
+    }
+}
+
+// 초기화
+document.addEventListener('DOMContentLoaded', () => {
+    WildRydes.authToken
+        .then(token => {
+            if (!token) {
+                window.location.href = '/signin.html';
+            } else {
+                new AdminCalendar(token);
+            }
+        })
+        .catch(() => {
+            window.location.href = '/signin.html';
+        });
+});

@@ -73,7 +73,7 @@ body {
     border-radius: 50%;
   
     background-color: #f1f1f1;
-    background-image: url('../images/user_image.png'); /* 사용자 프로필 이미지 */
+    background-image: url('../images/admin_img.png'); /* 사용자 프로필 이미지 */
     background-size: cover;
     background-position: center;
   
