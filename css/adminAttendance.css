@@ -260,3 +260,9 @@ body {
     margin-top: 2rem;
     text-align: right;
 }
+
+#studentDropdown {
+    min-width: 200px;
+    text-align: left;
+    padding-right: 2rem;
+}

@@ -58,17 +58,12 @@
 
     <!-- 모달 -->
     <div class="modal" id="studentModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>학생 선택</h3>
-                <button class="close-btn">×</button>
-            </div>
-            <div class="student-list">
-                <!-- 학생 목록은 JavaScript로 생성됨 -->
-            </div>
-            <div class="modal-footer">
-                <button class="control-btn" id="viewBtn">조회</button>
-            </div>
+        <div class="control-area">
+            <button class="control-btn" id="todayBtn">Today</button>
+            <select id="studentDropdown" class="control-btn">
+                <option value="">학생 선택</option>
+            </select>
+            <button class="control-btn" id="fetchAttendanceButton">조회</button>
         </div>
     </div>
 

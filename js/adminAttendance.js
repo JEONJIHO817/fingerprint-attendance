@@ -4,7 +4,7 @@ WildRydes.attendance = WildRydes.attendance || {};
 
 (function attendanceScopeWrapper($) {
     var authToken;
-    let selectedStudent = null;
+    let currentEmployeeId;
     let currentDate = new Date();
 
     // 인증 토큰 확인
@@ -44,19 +44,32 @@ WildRydes.attendance = WildRydes.attendance || {};
             renderCalendar();
         });
 
-        // 모달 관련
+        // 조회 버튼
+        document.getElementById('fetchAttendanceButton').addEventListener('click', () => {
+            currentEmployeeId = document.getElementById('studentDropdown').value;
+            if (!currentEmployeeId) {
+                alert('학생을 선택하세요.');
+                return;
+            }
+            fetchAttendanceRecords(currentEmployeeId);
+        });
+
+        // 기록 추가 버튼과 모달
+        document.querySelector('.record-add-btn').addEventListener('click', () => {
+            if (!currentEmployeeId) {
+                alert('먼저 학생을 선택해주세요.');
+                return;
+            }
+            document.getElementById('recordModal').classList.add('active');
+        });
+
+        // 모달 닫기 버튼
         document.querySelectorAll('.close-btn').forEach(btn => {
             btn.addEventListener('click', closeModals);
         });
 
-        document.querySelector('.student-select-btn').addEventListener('click', () => {
-            document.getElementById('studentModal').classList.add('active');
-        });
-
-        document.querySelector('.record-add-btn').addEventListener('click', showAddRecordModal);
-
+        // 기록 저장 버튼
         document.getElementById('saveBtn').addEventListener('click', saveRecord);
-        document.getElementById('viewBtn').addEventListener('click', viewStudentRecords);
 
         // BACK 버튼
         document.querySelector('.back-btn').addEventListener('click', (e) => {
@@ -109,24 +122,7 @@ WildRydes.attendance = WildRydes.attendance || {};
         dateNumber.textContent = day;
         dateDiv.appendChild(dateNumber);
 
-        if (!isOtherMonth && selectedStudent) {
-            // 출퇴근 기록 표시 로직
-            const currentDateStr = formatDateString(
-                currentDate.getFullYear(),
-                currentDate.getMonth() + 1,
-                day
-            );
-            if (selectedStudent.records && selectedStudent.records[currentDateStr]) {
-                const record = selectedStudent.records[currentDateStr];
-                dateDiv.classList.add(record.type.toLowerCase().replace(' ', ''));
-            }
-        }
-
         return dateDiv;
-    }
-
-    function formatDateString(year, month, day) {
-        return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     }
 
     function fetchStudentList() {
@@ -136,7 +132,7 @@ WildRydes.attendance = WildRydes.attendance || {};
             headers: { Authorization: authToken },
             success: function(response) {
                 const students = JSON.parse(response.body);
-                renderStudentList(students);
+                populateStudentDropdown(students);
             },
             error: function() {
                 alert('학생 목록을 가져오는 중 문제가 발생했습니다.');
@@ -144,42 +140,25 @@ WildRydes.attendance = WildRydes.attendance || {};
         });
     }
 
-    function renderStudentList(students) {
-        const studentList = document.querySelector('.student-list');
-        studentList.innerHTML = '';
-        
+    function populateStudentDropdown(students) {
+        const dropdown = document.getElementById('studentDropdown');
+        dropdown.innerHTML = '<option value="">학생 선택</option>';
         students.forEach(student => {
-            const studentItem = document.createElement('div');
-            studentItem.className = 'student-item';
-            studentItem.textContent = `${student.employeeId} - ${student.id}`;
-            
-            studentItem.addEventListener('click', () => {
-                document.querySelectorAll('.student-item').forEach(item => {
-                    item.classList.remove('selected');
-                });
-                studentItem.classList.add('selected');
-                selectedStudent = student;
-            });
-            
-            studentList.appendChild(studentItem);
+            const option = document.createElement('option');
+            option.value = student.employeeId;
+            option.textContent = `${student.employeeId} - ${student.id}`;
+            dropdown.appendChild(option);
         });
     }
 
-    function viewStudentRecords() {
-        if (!selectedStudent) {
-            alert('학생을 선택해주세요.');
-            return;
-        }
-
+    function fetchAttendanceRecords(employeeId) {
         $.ajax({
             method: 'POST',
             url: _config.api.invokeUrl + '/admin/get-attendance',
             headers: { Authorization: authToken },
-            data: JSON.stringify({ employeeId: selectedStudent.employeeId }),
+            data: JSON.stringify({ employeeId }),
             success: function(records) {
-                selectedStudent.records = formatRecords(records);
-                closeModals();
-                renderCalendar();
+                updateCalendarWithRecords(records);
             },
             error: function() {
                 alert('출근부를 가져오는 중 문제가 발생했습니다.');
@@ -187,29 +166,48 @@ WildRydes.attendance = WildRydes.attendance || {};
         });
     }
 
-    function formatRecords(records) {
-        const formatted = {};
-        records.forEach(record => {
-            const date = new Date(record.timestamp);
-            const dateKey = formatDateString(
-                date.getFullYear(),
-                date.getMonth() + 1,
-                date.getDate()
-            );
-            formatted[dateKey] = {
-                type: record.action,
-                timestamp: record.timestamp
-            };
+    function updateCalendarWithRecords(records) {
+        document.querySelectorAll('.date').forEach(dateDiv => {
+            dateDiv.classList.remove('clockin', 'clockout');
+            dateDiv.querySelector('.work-time')?.remove();
         });
-        return formatted;
+
+        records.forEach(record => {
+            const timestampRegex = /(\d{4})\.\s*(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{1,2})시\s*(\d{1,2})분\s*(\d{1,2})초/;
+            const match = record.timestamp.match(timestampRegex);
+
+            if (match) {
+                const [_, year, month, day, hour, minute] = match.map(Number);
+                const dateKey = formatDateString(year, month, day);
+                const dateDiv = findDateElement(day);
+
+                if (dateDiv && !dateDiv.classList.contains('other-month')) {
+                    dateDiv.classList.add(record.action.toLowerCase().replace(' ', ''));
+                    
+                    let workTimeDiv = dateDiv.querySelector('.work-time');
+                    if (!workTimeDiv) {
+                        workTimeDiv = document.createElement('div');
+                        workTimeDiv.className = 'work-time';
+                        dateDiv.appendChild(workTimeDiv);
+                    }
+                    
+                    const timeStr = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+                    workTimeDiv.textContent = record.action === 'Clock In' ? 
+                        `${timeStr} 출근` : `${timeStr} 퇴근`;
+                }
+            }
+        });
     }
 
-    function showAddRecordModal() {
-        if (!selectedStudent) {
-            alert('먼저 학생을 선택해주세요.');
-            return;
-        }
-        document.getElementById('recordModal').classList.add('active');
+    function formatDateString(year, month, day) {
+        return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    }
+
+    function findDateElement(day) {
+        return Array.from(document.querySelectorAll('.date')).find(
+            dateDiv => !dateDiv.classList.contains('other-month') && 
+                      dateDiv.querySelector('.date-number').textContent === String(day)
+        );
     }
 
     function saveRecord() {
@@ -234,14 +232,14 @@ WildRydes.attendance = WildRydes.attendance || {};
             url: _config.api.invokeUrl + '/admin/mod-attendance',
             headers: { Authorization: authToken },
             data: JSON.stringify({
-                employeeId: selectedStudent.employeeId,
+                employeeId: currentEmployeeId,
                 timestamp: formattedTimestamp,
                 action: type
             }),
             success: function() {
                 alert('기록이 저장되었습니다.');
                 closeModals();
-                viewStudentRecords();
+                fetchAttendanceRecords(currentEmployeeId);
             },
             error: function() {
                 alert('기록 저장 중 문제가 발생했습니다.');
