@@ -1,10 +1,11 @@
+/*global WildRydes _config */
+
 var WildRydes = window.WildRydes || {};
 WildRydes.attendance = WildRydes.attendance || {};
 
 (function attendanceScopeWrapper($) {
     var authToken;
     let currentDate = new Date();
-    let selectedDate = null;
 
     WildRydes.authToken.then(function setAuthToken(token) {
         if (token) {
@@ -14,13 +15,12 @@ WildRydes.attendance = WildRydes.attendance || {};
             window.location.href = '/signin.html';
         }
     }).catch(function handleTokenError(error) {
-        console.error('Error retrieving auth token:', error);
+        console.error('Error retrieving auth token: ', error);
         window.location.href = '/signin.html';
     });
 
     function init() {
         renderCalendar();
-        fetchStudentInfo();
         fetchAttendanceRecords();
         addEventListeners();
     }
@@ -49,7 +49,7 @@ WildRydes.attendance = WildRydes.attendance || {};
         // BACK 버튼
         document.querySelector('.back-btn').addEventListener('click', (e) => {
             e.preventDefault();
-            window.history.back();
+            window.location.href = '/student.html';
         });
     }
 
@@ -109,46 +109,26 @@ WildRydes.attendance = WildRydes.attendance || {};
         return dateDiv;
     }
 
-    function fetchStudentInfo() {
-        $.ajax({
-            method: 'GET',
-            url: _config.api.invokeUrl + '/user-info',
-            headers: { Authorization: authToken },
-            success: function(response) {
-                const studentInfo = JSON.parse(response.body);
-                document.getElementById('studentInfo').textContent = 
-                    `${studentInfo.id} 학생`;
-            },
-            error: function() {
-                alert('학생 정보를 가져오는 중 문제가 발생했습니다.');
-            }
-        });
-    }
-
     function fetchAttendanceRecords() {
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth() + 1;
-
         $.ajax({
             method: 'GET',
-            url: _config.api.invokeUrl + '/attendance',
-            headers: { Authorization: authToken },
-            data: {
-                year: year,
-                month: month
+            url: _config.api.invokeUrl + '/ride',
+            headers: {
+                Authorization: authToken
             },
-            success: function(response) {
-                const records = JSON.parse(response.body);
+            success: function(records) {
                 updateCalendarWithRecords(records);
                 calculateMonthlyHours(records);
             },
-            error: function() {
+            error: function ajaxError(jqXHR, textStatus, errorThrown) {
+                console.error('Error fetching attendance records: ', textStatus, ', Details: ', errorThrown);
                 alert('출근부를 가져오는 중 문제가 발생했습니다.');
             }
         });
     }
 
     function updateCalendarWithRecords(records) {
+        // 기존 기록 초기화
         document.querySelectorAll('.date').forEach(dateDiv => {
             dateDiv.querySelectorAll('.work-record').forEach(record => record.remove());
         });
@@ -242,7 +222,7 @@ WildRydes.attendance = WildRydes.attendance || {};
             });
         });
 
-        // 시간으로 변환하여 표시
+        // 시간으로 변환하여 표시 (소수점 1자리까지)
         const totalHours = Math.round(totalMinutes / 60 * 10) / 10;
         document.getElementById('monthlyHours').textContent = totalHours;
     }
