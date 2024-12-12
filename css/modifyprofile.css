@@ -34,6 +34,13 @@ body {
   transform: translateX(-3px);
 }
 
+/* 로고 */
+.logo img {
+  max-width: 100px;
+  margin-bottom: 20px;
+}
+
+
 /* 중앙 정렬 컨테이너 */
 .main-container {
   display: flex;
@@ -55,6 +62,7 @@ body {
   min-height: 400px;
   margin: 0 auto; /* 화면 가운데 정렬 */
 }
+
 
 /* 제목 스타일 */
 h1 {
