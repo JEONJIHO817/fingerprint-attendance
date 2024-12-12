@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (err || !session.isValid()) {
                 console.error('세션이 유효하지 않습니다.');
                 return;
-            }
+            }   
 
             // 사용자 속성 가져오기
             cognitoUser.getUserAttributes((err, attributes) => {
