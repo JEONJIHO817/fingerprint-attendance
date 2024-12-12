@@ -336,14 +336,14 @@ function updateStrength(score) {
         var onSuccess = function registerSuccess(result) {
             var cognitoUser = result.user;
             console.log('user name is ' + cognitoUser.getUsername());
-            var confirmation = ('Registration successful. Please check your email inbox or spam folder for your verification code.');
+            var confirmation = ('회원가입에 성공하였습니다. 가입 확인을 위해 이메일 인증 페이지로 이동합니다.');
             if (confirmation) {
                 window.location.href = 'verify.html';
             }
         };
     
         var onFailure = function registerFailure(err) {
-            alert(err);
+            alert('회원가입에 실패하였습니다. detail: ', err);
         };
     
         event.preventDefault();
@@ -351,7 +351,7 @@ function updateStrength(score) {
         if (password === password2) {
             register(email, password, username, employeeId, onSuccess, onFailure); // Username 전달
         } else {
-            alert('Passwords do not match');
+            alert('비밀번호가 일치하지 않습니다.');
         }
     }   
 
@@ -400,11 +400,11 @@ function updateStrength(score) {
         event.preventDefault();
         verify(email, code,
             function verifySuccess(result) {
-                alert('Verification successful. You will now be redirected to the login page.');
+                alert('이메일 인증이 완료되었습니다. 로그인 페이지로 이동합니다.');
                 window.location.href = signinUrl;
             },
             function verifyError(err) {
-                alert(err);
+                alert('이메일 인증에 실패하였습니다. 다시 시도해주세요');
             }
         );
     }
