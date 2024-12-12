@@ -104,8 +104,22 @@ body {
   }
 
   /* 버튼 스타일 */
-  .submit-btn, .delete-btn {
+  .delete-btn {
     background-color: #333;
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .submit-btn {
+    background-color: red;
     width: 100%;
     padding: 15px;
     font-size: 18px;
