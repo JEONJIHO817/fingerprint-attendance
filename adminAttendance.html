@@ -4,8 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>근로장학생 출근부 관리</title>
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/adminAttendance.css">
-    <link href='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.8/main.min.css' rel='stylesheet' />
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <!-- FontAwesome 라이브러리 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="calendar-wrapper">
@@ -28,7 +34,34 @@
         </div>
 
         <!-- 달력 영역 -->
-        <div id="calendar" class="custom-calendar"></div>
+        <div class="calendar-container">
+            <!-- 달력 헤더 -->
+            <header class="calendar-header">
+                <div class="year">2 0 2 4</div>
+                <div class="month-nav">
+                    <button class="nav-button prev">&lt;</button>
+                    <div class="month-display">
+                        <div class="month-number">12</div>
+                        <div class="month-name">December</div>
+                    </div>
+                    <button class="nav-button next">&gt;</button>
+                </div>
+            </header>
+
+            <!-- 요일 표시 영역 -->
+            <div class="weekdays">
+                <div class="weekday sunday">SUN</div>
+                <div class="weekday">MON</div>
+                <div class="weekday">TUE</div>
+                <div class="weekday">WED</div>
+                <div class="weekday">THU</div>
+                <div class="weekday">FRI</div>
+                <div class="weekday saturday">SAT</div>
+            </div>
+
+            <!-- 달력 그리드 영역 -->
+            <div class="calendar-grid" id="calendar"></div>
+        </div>
 
         <!-- 수정 모달 -->
         <div class="modal" id="editModal">
@@ -48,8 +81,6 @@
     </div>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.8/index.global.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.8/index.global.min.js"></script>
     <script src="js/vendor.js"></script>
     <script src="js/vendor/jquery-3.1.0.js"></script>
     <script src="js/vendor/bootstrap.min.js"></script>
