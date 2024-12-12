@@ -195,36 +195,66 @@ WildRydes.attendance = WildRydes.attendance || {};
     function calculateMonthlyHours(records) {
         let totalMinutes = 0;
         const recordsByDate = {};
-
-        // 날짜별로 기록 그룹화
+    
+        // 현재 보고 있는 년월 구하기
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth() + 1;
+    
+        // 날짜별로 기록 그룹화 (현재 달의 기록만)
         records.forEach(record => {
-            const date = record.timestamp.split('.').slice(0, 3).join('.');
-            if (!recordsByDate[date]) {
-                recordsByDate[date] = [];
+            const timestampRegex = /(\d{4})\.\s*(\d{1,2})\.\s*(\d{1,2})/;
+            const match = record.timestamp.match(timestampRegex);
+            
+            if (match) {
+                const [_, year, month, day] = match.map(Number);
+                
+                // 현재 보고 있는 달의 기록만 필터링
+                if (year === currentYear && month === currentMonth) {
+                    const date = `${year}.${month}.${day}`;
+                    if (!recordsByDate[date]) {
+                        recordsByDate[date] = [];
+                    }
+                    recordsByDate[date].push(record);
+                }
             }
-            recordsByDate[date].push(record);
         });
-
+    
         // 각 날짜별로 근무시간 계산
         Object.values(recordsByDate).forEach(dayRecords => {
             // 시간순으로 정렬
-            dayRecords.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-
+            dayRecords.sort((a, b) => {
+                const timeA = parseTimestamp(a.timestamp);
+                const timeB = parseTimestamp(b.timestamp);
+                return timeA - timeB;
+            });
+    
             let clockIn = null;
             dayRecords.forEach(record => {
                 if (record.action === 'Clock In') {
-                    clockIn = new Date(record.timestamp);
+                    clockIn = parseTimestamp(record.timestamp);
                 } else if (record.action === 'Clock Out' && clockIn) {
-                    const clockOut = new Date(record.timestamp);
+                    const clockOut = parseTimestamp(record.timestamp);
                     totalMinutes += (clockOut - clockIn) / (1000 * 60);
                     clockIn = null;
                 }
             });
         });
-
+    
         // 시간으로 변환하여 표시 (소수점 1자리까지)
         const totalHours = Math.round(totalMinutes / 60 * 10) / 10;
         document.getElementById('monthlyHours').textContent = totalHours;
+    }
+    
+    // 타임스탬프 문자열을 Date 객체로 변환하는 헬퍼 함수
+    function parseTimestamp(timestamp) {
+        const regex = /(\d{4})\.\s*(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{1,2})시\s*(\d{1,2})분\s*(\d{1,2})초/;
+        const match = timestamp.match(regex);
+        
+        if (match) {
+            const [_, year, month, day, hour, minute, second] = match.map(Number);
+            return new Date(year, month - 1, day, hour, minute, second);
+        }
+        return null;
     }
 
     function formatDateString(year, month, day) {
