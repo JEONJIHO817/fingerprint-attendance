@@ -181,52 +181,86 @@ WildRydes.attendance = WildRydes.attendance || {};
     }
 
     function updateCalendarWithRecords(records) {
+        // 기존 기록 초기화
         document.querySelectorAll('.date').forEach(dateDiv => {
-            dateDiv.classList.remove('clockin', 'clockout');
-            dateDiv.querySelector('.work-time')?.remove();
+            dateDiv.querySelectorAll('.work-record').forEach(record => record.remove());
             
             // 클릭 이벤트 리스너 제거
             const newDateDiv = dateDiv.cloneNode(true);
             dateDiv.parentNode.replaceChild(newDateDiv, dateDiv);
         });
 
-        records.forEach(record => {
+        // 날짜별로 기록 그룹화
+        const recordsByDate = records.reduce((acc, record) => {
             const timestampRegex = /(\d{4})\.\s*(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{1,2})시\s*(\d{1,2})분\s*(\d{1,2})초/;
             const match = record.timestamp.match(timestampRegex);
 
             if (match) {
                 const [_, year, month, day, hour, minute] = match.map(Number);
                 const dateKey = formatDateString(year, month, day);
-                const dateDiv = document.querySelector(`[data-date="${dateKey}"]`);
+                
+                if (!acc[dateKey]) {
+                    acc[dateKey] = [];
+                }
+                acc[dateKey].push({
+                    ...record,
+                    hour,
+                    minute
+                });
+            }
+            return acc;
+        }, {});
 
-                if (dateDiv && !dateDiv.classList.contains('other-month')) {
-                    dateDiv.classList.add(record.action.toLowerCase().replace(' ', ''));
+        // 그룹화된 기록을 캘린더에 표시
+        Object.entries(recordsByDate).forEach(([dateKey, dayRecords]) => {
+            const dateDiv = document.querySelector(`[data-date="${dateKey}"]`);
+            
+            if (dateDiv && !dateDiv.classList.contains('other-month')) {
+                const recordsContainer = document.createElement('div');
+                recordsContainer.className = 'records-container';
+                
+                // 시간 순으로 정렬
+                dayRecords.sort((a, b) => {
+                    if (a.hour !== b.hour) return a.hour - b.hour;
+                    return a.minute - b.minute;
+                });
+
+                dayRecords.forEach(record => {
+                    const recordDiv = document.createElement('div');
+                    recordDiv.className = `work-record ${record.action.toLowerCase().replace(' ', '')}`;
                     
-                    let workTimeDiv = dateDiv.querySelector('.work-time');
-                    if (!workTimeDiv) {
-                        workTimeDiv = document.createElement('div');
-                        workTimeDiv.className = 'work-time';
-                        dateDiv.appendChild(workTimeDiv);
-                    }
-                    
-                    const timeStr = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
-                    workTimeDiv.textContent = record.action === 'Clock In' ? 
+                    const timeStr = `${String(record.hour).padStart(2, '0')}:${String(record.minute).padStart(2, '0')}`;
+                    recordDiv.textContent = record.action === 'Clock In' ? 
                         `${timeStr} 출근` : `${timeStr} 퇴근`;
 
-                    // 클릭 이벤트 추가
-                    dateDiv.addEventListener('click', () => {
+                    // 개별 기록 클릭 이벤트
+                    recordDiv.addEventListener('click', (e) => {
+                        e.stopPropagation();
                         selectedRecord = record;
-                        showDeleteModal(dateKey);
+                        showDeleteModal(dateKey, timeStr, record.action);
                     });
+
+                    recordsContainer.appendChild(recordDiv);
+                });
+
+                dateDiv.appendChild(recordsContainer);
+                
+                // 출/퇴근 기록이 있는 날짜 스타일링
+                if (dayRecords.some(r => r.action === 'Clock In')) {
+                    dateDiv.classList.add('has-clockin');
+                }
+                if (dayRecords.some(r => r.action === 'Clock Out')) {
+                    dateDiv.classList.add('has-clockout');
                 }
             }
         });
     }
 
-    function showDeleteModal(dateStr) {
+    function showDeleteModal(dateStr, timeStr, actionType) {
         const deleteModal = document.getElementById('deleteModal');
+        const actionText = actionType === 'Clock In' ? '출근' : '퇴근';
         document.getElementById('deleteInfo').textContent = 
-            `${dateStr} 의 출/퇴근 기록을 삭제하시겠습니까?`;
+            `${dateStr} ${timeStr} ${actionText} 기록을 삭제하시겠습니까?`;
         deleteModal.classList.add('active');
     }
 
