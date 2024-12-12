@@ -208,15 +208,17 @@ class AdminCalendar {
 
 // 초기화
 document.addEventListener('DOMContentLoaded', () => {
-    WildRydes.authToken
-        .then(token => {
-            if (!token) {
-                window.location.href = '/signin.html';
-            } else {
-                new AdminCalendar(token);
-            }
-        })
-        .catch(() => {
+    WildRydes.authToken.then(function setAuthToken(token) {
+        console.log('Auth Token:', token);
+        if (token) {
+            authToken = token;
+            fetchStudentList();
+        } else {
             window.location.href = '/signin.html';
-        });
+        }
+    }).catch(function handleTokenError(error) {
+        console.error('Error retrieving auth token:', error);
+        window.location.href = '/signin.html';
+    });
+    
 });
