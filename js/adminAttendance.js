@@ -156,4 +156,40 @@ WildRydes.attendance = WildRydes.attendance || {};
     document.getElementById('addRecordButton').addEventListener('click', function() {
         const dateToAdd = prompt('추가할 날짜를 입력하세요 (YYYY-MM-DD):');
         const timeToAdd = prompt('추가할 시간을 입력하세요 (HH:mm):');
-        const action = prompt('추가할 액션을 입력하세요 (Clock In/Clock
+        const action = prompt('추가할 액션을 입력하세요 (Clock In/Clock Out):');
+
+        if (!dateToAdd || !timeToAdd || !action || (action !== 'Clock In' && action !== 'Clock Out')) {
+            alert('올바른 날짜, 시간 및 액션을 입력하세요.');
+            return;
+        }
+
+        const newDate = new Date(`${dateToAdd}T${timeToAdd}:00`);
+        const kstDate = new Date(newDate.getTime());
+        const timestampToAdd = `${kstDate.getFullYear()}. ${kstDate.getMonth() + 1}. ${kstDate.getDate()}. ${kstDate.getHours()}시 ${kstDate.getMinutes()}분 ${kstDate.getSeconds()}초`;
+
+        $.ajax({
+            method: 'POST',
+            url: _config.api.invokeUrl + '/admin/mod-attendance',
+            headers: { Authorization: authToken },
+            data: JSON.stringify({
+                employeeId: currentEmployeeId,
+                timestamp: timestampToAdd,
+                action: action
+            }),
+            success: function() {
+                alert('출근 기록이 추가되었습니다.');
+                fetchAttendanceRecords(currentEmployeeId);
+            },
+            error: function() {
+                alert('출근 기록 추가 중 문제가 발생했습니다.');
+            }
+        });
+    });
+
+    // BACK 버튼 이벤트 리스너
+    document.querySelector('.back-btn').addEventListener('click', function(e) {
+        e.preventDefault();
+        window.history.back();
+    });
+
+}(jQuery));
