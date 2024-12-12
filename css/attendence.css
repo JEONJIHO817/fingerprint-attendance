@@ -2,235 +2,73 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Noto Sans KR', sans-serif;
 }
 
 body {
     background-color: #0a0d14;
     color: white;
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     min-height: 100vh;
-    padding: 0.5rem;
-}
-
-  /* 상단 BACK 버튼 */
-  .back-btn {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    font-size: 18px; /* 버튼 크기를 키움 */
-    color: #333;
-    text-decoration: none;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    transition: all 0.3s ease;
-  }
-  
-  .back-btn .arrow {
-    font-size: 16px;
-    transition: transform 0.3s ease; /* 호버 시 부드러운 이동 효과 */
-  }
-  
-  .back-btn:hover .arrow {
-    transform: translateX(-3px); /* 화살표 이동 효과 */
-  }
-
-  
-.calendar-wrapper {
-    width: 88vw;
-    height: 85vh;
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
-.header-container {
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 2rem auto;
+}
+
+/* 상단 네비게이션 */
+.nav-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    padding: 0 1rem;
-    margin-bottom: 1rem;
+    padding: 1rem 0;
 }
 
-.btn {
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
-    color: rgba(255, 255, 255, 0.8);
-    padding: 8px 16px;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+.back-btn {
+    color: #666;
+    text-decoration: none;
     font-size: 0.9rem;
+    transition: color 0.3s;
 }
 
-.btn:hover {
-    background: rgba(255, 255, 255, 0.15);
+.back-btn:hover {
+    color: #fff;
 }
 
-/* 해당 부분만 수정 */
-.today-btn, .user-info {
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
-    color: rgba(255, 255, 255, 0.8);
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-}
-
-.today-btn {
-    cursor: pointer;
-}
-
-.today-btn:hover {
-    background: rgba(255, 255, 255, 0.15);
+.title {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #fff;
 }
 
 .user-info {
-    cursor: default;
-}
-
-.calendar-title {
     font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.7);
-    text-align: center;
+    color: #666;
 }
 
-.calendar-header {
-    text-align: center;
-    margin-bottom: 0.3rem;
-}
-
-.year {
-    font-size: 0.9rem;
-    letter-spacing: 0.5em;
-    opacity: 0.7;
-    margin-bottom: 0.5rem;
-}
-
-.month-nav {
+/* 컨트롤 영역 */
+.control-area {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 1.5rem;
+    gap: 2rem;
+    margin: 2rem 0;
 }
 
-.month-display {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.3rem;
-}
-
-.month-number {
-    font-size: 2.8rem;
-    font-weight: bold;
-}
-
-.month-name {
-    font-size: 1rem;
-    opacity: 0.7;
-}
-
-.nav-button {
-    background: rgba(255, 255, 255, 0.08);
+.control-btn {
+    background: rgba(255, 255, 255, 0.1);
     border: none;
-    color: rgba(255, 255, 255, 0.8);
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
+    color: #fff;
+    padding: 0.7rem 1.5rem;
+    border-radius: 25px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-}
-
-.nav-button:hover {
-    background: rgba(255, 255, 255, 0.15);
-}
-
-.weekdays {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    text-align: center;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    font-weight: bold;
     font-size: 0.9rem;
-    margin: 0 0.5rem;
+    transition: all 0.3s;
 }
 
-.calendar-grid {
-    flex: 1;
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 0.4rem;
-    padding: 0.4rem;
-}
-
-.date {
-    aspect-ratio: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    padding: 8px;
-    font-size: 0.9rem;
-    background: rgba(255, 255, 255, 0.04);
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.date:hover {
-    background: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
-}
-
-.date.today {
-    background: #ff6b6b;
-    box-shadow: 0 0 25px rgba(255, 107, 107, 0.6);
-    animation: todayNeonPulse 1.5s infinite;
-}
-
-.date.selected {
-    background: #90EE90;
-    box-shadow: 0 0 25px rgba(144, 238, 144, 0.6);
-    animation: selectedNeonPulse 1.5s infinite;
-}
-
-@keyframes todayNeonPulse {
-    0% { box-shadow: 0 0 25px rgba(255, 107, 107, 0.6); }
-    50% { box-shadow: 0 0 35px rgba(255, 107, 107, 0.8); }
-    100% { box-shadow: 0 0 25px rgba(255, 107, 107, 0.6); }
-}
-
-@keyframes selectedNeonPulse {
-    0% { box-shadow: 0 0 25px rgba(144, 238, 144, 0.6); }
-    50% { box-shadow: 0 0 35px rgba(144, 238, 144, 0.8); }
-    100% { box-shadow: 0 0 25px rgba(144, 238, 144, 0.6); }
-}
-
-.date.other-month {
-    opacity: 0.2;
-}
-
-.sunday { color: #ff8f8f; }
-.saturday { color: #7fb5ff; }
-
-.date-number {
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-}
-
-.work-time {
-    font-size: 0.8rem;
-    text-align: center;
-    width: 100%;
-    white-space: pre-line;
-    color: rgba(255, 255, 255, 0.9);
-}
+.control-btn

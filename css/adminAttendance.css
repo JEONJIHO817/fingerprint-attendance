@@ -278,6 +278,29 @@ body {
     color: #fff;
 }
 
+/* select와 option 스타일 수정 */
+select,
+option {
+    background: #1a1f2e;
+    color: #fff;
+}
+
+/* 모달 내의 select/option 스타일도 함께 수정 */
+.form-group select,
+.form-group option {
+    background: #1a1f2e;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* hover 효과 추가 */
+option:hover,
+option:focus,
+option:active,
+option:checked {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
 .modal-footer {
     margin-top: 2rem;
     text-align: right;
