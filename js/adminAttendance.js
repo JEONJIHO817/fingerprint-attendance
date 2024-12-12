@@ -6,6 +6,8 @@ WildRydes.attendance = WildRydes.attendance || {};
     var authToken;
     let currentEmployeeId;
     let currentDate = new Date();
+    let selectedDate = null;
+    let selectedRecord = null;
 
     // 인증 토큰 확인
     WildRydes.authToken.then(function setAuthToken(token) {
@@ -54,7 +56,7 @@ WildRydes.attendance = WildRydes.attendance || {};
             fetchAttendanceRecords(currentEmployeeId);
         });
 
-        // 기록 추가 버튼과 모달
+        // 기록 추가 버튼
         document.querySelector('.record-add-btn').addEventListener('click', () => {
             if (!currentEmployeeId) {
                 alert('먼저 학생을 선택해주세요.');
@@ -63,13 +65,16 @@ WildRydes.attendance = WildRydes.attendance || {};
             document.getElementById('recordModal').classList.add('active');
         });
 
-        // 모달 닫기 버튼
+        // 모달 닫기 버튼들
         document.querySelectorAll('.close-btn').forEach(btn => {
             btn.addEventListener('click', closeModals);
         });
 
         // 기록 저장 버튼
         document.getElementById('saveBtn').addEventListener('click', saveRecord);
+
+        // 기록 삭제 버튼
+        document.getElementById('deleteBtn').addEventListener('click', deleteRecord);
 
         // BACK 버튼
         document.querySelector('.back-btn').addEventListener('click', (e) => {
@@ -122,6 +127,15 @@ WildRydes.attendance = WildRydes.attendance || {};
         dateNumber.textContent = day;
         dateDiv.appendChild(dateNumber);
 
+        if (!isOtherMonth) {
+            const dateStr = formatDateString(
+                currentDate.getFullYear(),
+                currentDate.getMonth() + 1,
+                day
+            );
+            dateDiv.setAttribute('data-date', dateStr);
+        }
+
         return dateDiv;
     }
 
@@ -170,6 +184,10 @@ WildRydes.attendance = WildRydes.attendance || {};
         document.querySelectorAll('.date').forEach(dateDiv => {
             dateDiv.classList.remove('clockin', 'clockout');
             dateDiv.querySelector('.work-time')?.remove();
+            
+            // 클릭 이벤트 리스너 제거
+            const newDateDiv = dateDiv.cloneNode(true);
+            dateDiv.parentNode.replaceChild(newDateDiv, dateDiv);
         });
 
         records.forEach(record => {
@@ -179,7 +197,7 @@ WildRydes.attendance = WildRydes.attendance || {};
             if (match) {
                 const [_, year, month, day, hour, minute] = match.map(Number);
                 const dateKey = formatDateString(year, month, day);
-                const dateDiv = findDateElement(day);
+                const dateDiv = document.querySelector(`[data-date="${dateKey}"]`);
 
                 if (dateDiv && !dateDiv.classList.contains('other-month')) {
                     dateDiv.classList.add(record.action.toLowerCase().replace(' ', ''));
@@ -194,20 +212,48 @@ WildRydes.attendance = WildRydes.attendance || {};
                     const timeStr = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
                     workTimeDiv.textContent = record.action === 'Clock In' ? 
                         `${timeStr} 출근` : `${timeStr} 퇴근`;
+
+                    // 클릭 이벤트 추가
+                    dateDiv.addEventListener('click', () => {
+                        selectedRecord = record;
+                        showDeleteModal(dateKey);
+                    });
                 }
+            }
+        });
+    }
+
+    function showDeleteModal(dateStr) {
+        const deleteModal = document.getElementById('deleteModal');
+        document.getElementById('deleteInfo').textContent = 
+            `${dateStr} 의 출/퇴근 기록을 삭제하시겠습니까?`;
+        deleteModal.classList.add('active');
+    }
+
+    function deleteRecord() {
+        if (!selectedRecord || !currentEmployeeId) return;
+
+        $.ajax({
+            method: 'DELETE',
+            url: _config.api.invokeUrl + '/admin/mod-attendance',
+            headers: { Authorization: authToken },
+            data: JSON.stringify({
+                employeeId: currentEmployeeId,
+                timestamp: selectedRecord.timestamp
+            }),
+            success: function() {
+                alert('출근 기록이 삭제되었습니다.');
+                closeModals();
+                fetchAttendanceRecords(currentEmployeeId);
+            },
+            error: function() {
+                alert('출근 기록 삭제 중 문제가 발생했습니다.');
             }
         });
     }
 
     function formatDateString(year, month, day) {
         return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    }
-
-    function findDateElement(day) {
-        return Array.from(document.querySelectorAll('.date')).find(
-            dateDiv => !dateDiv.classList.contains('other-month') && 
-                      dateDiv.querySelector('.date-number').textContent === String(day)
-        );
     }
 
     function saveRecord() {
