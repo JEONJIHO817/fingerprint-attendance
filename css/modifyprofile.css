@@ -122,6 +122,26 @@ body {
     background-color: #555;
   }
 
+  /* 비밀번호 변경 버튼 (검정색) */
+.change-password-btn {
+  background-color: #333;
+  color: #fff;
+}
+
+.change-password-btn:hover {
+  background-color: #555;
+}
+
+/* 계정 삭제 버튼 (빨간색) */
+.delete-account-btn {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+.delete-account-btn:hover {
+  background-color: #c0392b;
+}
+
   .delete-btn {
     background-color: #e74c3c;
   }
