@@ -1,4 +1,3 @@
-
 /* global _config */
 (function adminPortalScopeWrapper($) {
     let authToken;
