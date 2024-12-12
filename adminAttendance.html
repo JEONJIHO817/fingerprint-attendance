@@ -21,7 +21,10 @@
 
         <div class="control-area">
             <button class="control-btn" id="todayBtn">Today</button>
-            <button class="control-btn student-select-btn">학생 조회</button>
+            <select id="studentDropdown" class="control-btn">
+                <option value="">학생 선택</option>
+            </select>
+            <button class="control-btn" id="fetchAttendanceButton">조회</button>
             <button class="control-btn record-add-btn">출/퇴근 기록 추가</button>
         </div>
 
@@ -56,17 +59,7 @@
         </div>
     </div>
 
-    <!-- 모달 -->
-    <div class="modal" id="studentModal">
-        <div class="control-area">
-            <button class="control-btn" id="todayBtn">Today</button>
-            <select id="studentDropdown" class="control-btn">
-                <option value="">학생 선택</option>
-            </select>
-            <button class="control-btn" id="fetchAttendanceButton">조회</button>
-        </div>
-    </div>
-
+    <!-- 출퇴근 기록 추가 모달 -->
     <div class="modal" id="recordModal">
         <div class="modal-content">
             <div class="modal-header">
