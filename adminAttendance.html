@@ -10,52 +10,95 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/adminAttendance.css">
     <link rel="icon" href="images/favicon.ico" type="image/x-icon">
-    <!-- FullCalendar CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.8/index.global.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.8/index.global.min.js"></script>
-    <!-- FontAwesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <a href="#" class="back-btn"><span class="arrow">&lt;</span> BACK</a>
-    <div class="calendar-wrapper">
-        <div class="header-container">
-            <div class="calendar-title">근로장학생 출근부 관리</div>
-            <div class="user-info">관리자님</div>
+    <div class="container">
+        <nav class="nav-top">
+            <a href="#" class="back-btn">← BACK</a>
+            <h1 class="title">근로장학생 출근부 관리</h1>
+            <span class="admin-info">관리자님</span>
+        </nav>
+
+        <div class="control-area">
+            <button class="control-btn" id="todayBtn">Today</button>
+            <button class="control-btn student-select-btn">학생 조회</button>
+            <button class="control-btn record-add-btn">출/퇴근 기록 추가</button>
         </div>
 
-        <div class="control-buttons">
-            <select id="studentDropdown" class="admin-btn">
-                <option value="">학생 선택</option>
-            </select>
-            <button id="fetchAttendanceButton" class="admin-btn">조회</button>
-            <button id="addRecordButton" class="admin-btn">출/퇴근 기록 추가</button>
+        <div class="calendar-header">
+            <div class="year-display">2 0 2 4</div>
+            <div class="month-display">
+                <div class="nav-arrows">
+                    <button class="nav-arrow prev">←</button>
+                </div>
+                <div>
+                    <div class="month-number">12</div>
+                    <div class="month-name">December</div>
+                </div>
+                <div class="nav-arrows">
+                    <button class="nav-arrow next">→</button>
+                </div>
+            </div>
         </div>
 
-        <div id="calendar"></div>
+        <div class="weekdays">
+            <div class="weekday sun">SUN</div>
+            <div class="weekday">MON</div>
+            <div class="weekday">TUE</div>
+            <div class="weekday">WED</div>
+            <div class="weekday">THU</div>
+            <div class="weekday">FRI</div>
+            <div class="weekday sat">SAT</div>
+        </div>
 
-        <div id="editModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2>출근부 관리</h2>
-                    <button class="close-btn" id="closeModal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <p id="eventInfo">출근 기록 정보</p>
-                </div>
-                <div class="modal-footer">
-                    <button id="deleteEvent" class="admin-btn">삭제</button>
-                </div>
+        <div class="calendar-grid" id="calendar">
+            <!-- 달력 내용은 JavaScript로 생성됨 -->
+        </div>
+    </div>
+
+    <!-- 모달 -->
+    <div class="modal" id="studentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>학생 선택</h3>
+                <button class="close-btn">×</button>
+            </div>
+            <div class="student-list">
+                <!-- 학생 목록은 JavaScript로 생성됨 -->
+            </div>
+            <div class="modal-footer">
+                <button class="control-btn" id="viewBtn">조회</button>
             </div>
         </div>
     </div>
 
-    <script src="js/vendor/jquery-3.1.0.js"></script>
-    <script src="js/vendor/bootstrap.min.js"></script>
-    <script src="js/vendor/aws-cognito-sdk.min.js"></script>
-    <script src="js/vendor/amazon-cognito-identity.min.js"></script>
-    <script src="js/config.js"></script>
-    <script src="js/cognito-auth.js"></script>
+    <div class="modal" id="recordModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>출/퇴근 기록 추가</h3>
+                <button class="close-btn">×</button>
+            </div>
+            <div class="form-group">
+                <label>날짜</label>
+                <input type="date" id="recordDate">
+            </div>
+            <div class="form-group">
+                <label>시간</label>
+                <input type="time" id="recordTime">
+            </div>
+            <div class="form-group">
+                <label>구분</label>
+                <select id="recordType">
+                    <option value="Clock In">출근</option>
+                    <option value="Clock Out">퇴근</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button class="control-btn" id="saveBtn">저장</button>
+            </div>
+        </div>
+    </div>
+
     <script src="js/adminAttendance.js"></script>
 </body>
 </html>
