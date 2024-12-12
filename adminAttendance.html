@@ -1,25 +1,13 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>학생 출근부 조회 및 수정</title>
-        <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>근로장학생 출근부</title>
-    <!-- Google Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/attendence.css">
-    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
-    <!-- FontAwesome 라이브러리 -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <title>근로장학생 출근부 관리</title>
+    <link rel="stylesheet" href="css/adminAttendance.css">
+    <link href='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.8/main.min.css' rel='stylesheet' />
 </head>
-
 <body>
-    <a href="/admin.html" class="back-btn"><span class="arrow">&lt;</span> BACK</a>
     <div class="calendar-wrapper">
         <!-- 헤더 영역 -->
         <div class="header-container">
@@ -27,119 +15,48 @@
             <div class="calendar-title">근로장학생 출근부 관리</div>
             <div class="user-info">관리자님</div>
         </div>
-    
-        <!-- 관리 버튼 영역 -->
-        <div class="control-buttons">
-            <button class="admin-btn student-select-btn">학생 조회</button>
-            <button class="admin-btn record-add-btn">출/퇴근 기록 추가</button>
-        </div>
-    
-        <!-- 학생 선택 모달 -->
-        <div class="student-modal" id="studentModal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>학생 선택</h3>
-                    <button class="close-btn">&times;</button>
-                </div>
-                <div class="student-list">
-                    <label for="studentDropdown" class="form-label">학생 선택</label>
-                    <select id="studentDropdown" class="form-select">
-                        <option value="">학생을 선택하세요</option>
-                        <!-- JavaScript로 학생 목록 생성 -->
-                    </select>
-                </div>
-                <div class="modal-footer">
-                    <button class="admin-btn view-btn" id="fetchAttendanceButton">조회</button>
-                </div>
+
+        <!-- 학생 선택 및 관리 버튼 영역 -->
+        <div class="control-section">
+            <div class="student-select-container">
+                <select id="studentDropdown" class="student-select">
+                    <option value="">학생을 선택하세요</option>
+                </select>
+                <button id="fetchAttendanceButton" class="admin-btn">조회</button>
             </div>
+            <button id="addRecordButton" class="admin-btn">출/퇴근 기록 추가</button>
         </div>
-    
-        <!-- 출퇴근 기록 추가 모달 -->
-        <div class="record-modal" id="recordModal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>출/퇴근 기록 추가</h3>
-                    <button class="close-btn">&times;</button>
-                </div>
-                <div class="record-form">
-                    <div class="form-group">
-                        <label for="studentSelect">학생 선택</label>
-                        <select id="studentSelect" class="form-select">
-                            <!-- JavaScript로 동적 생성 -->
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="recordDate">날짜</label>
-                        <input type="date" id="recordDate" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="timeIn">출근 시간</label>
-                        <input type="time" id="timeIn" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="timeOut">퇴근 시간</label>
-                        <input type="time" id="timeOut" class="form-control">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="admin-btn save-btn">저장</button>
-                </div>
-            </div>
-        </div>
-    
-        <!-- 달력 헤더 -->
-        <header class="calendar-header">
-            <div class="year">2 0 2 4</div>
-            <div class="month-nav">
-                <button class="nav-button prev">&lt;</button>
-                <div class="month-display">
-                    <div class="month-number">12</div>
-                    <div class="month-name">December</div>
-                </div>
-                <button class="nav-button next">&gt;</button>
-            </div>
-        </header>
-    
-        <!-- 요일 표시 영역 -->
-        <div class="weekdays">
-            <div class="weekday sunday">SUN</div>
-            <div class="weekday">MON</div>
-            <div class="weekday">TUE</div>
-            <div class="weekday">WED</div>
-            <div class="weekday">THU</div>
-            <div class="weekday">FRI</div>
-            <div class="weekday saturday">SAT</div>
-        </div>
-    
-        <!-- 달력 그리드 영역 -->
-        <div class="calendar-grid" id="calendar">
-            <!-- JavaScript로 동적 생성 -->
-        </div>
-    
-        <!-- 출근부 수정 모달 -->
+
+        <!-- 달력 영역 -->
+        <div id="calendar" class="custom-calendar"></div>
+
+        <!-- 수정 모달 -->
         <div class="modal" id="editModal">
-            <div class="modal-header">
-                <h2>출근부 관리</h2>
-                <button id="closeModal" class="close-btn">닫기</button>
-            </div>
-            <div class="modal-body">
-                <p id="eventInfo">출근 기록 정보</p>
-            </div>
-            <div class="modal-footer">
-                <button id="deleteEvent" class="admin-btn delete-btn">삭제</button>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>출근부 관리</h3>
+                    <button class="close-btn" id="closeModal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p id="eventInfo" class="event-info">출근 기록 정보</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="admin-btn delete-btn" id="deleteEvent">삭제</button>
+                </div>
             </div>
         </div>
     </div>
-    
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.8/index.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.8/index.global.min.js"></script>
     <script src="js/vendor.js"></script>
     <script src="js/vendor/jquery-3.1.0.js"></script>
     <script src="js/vendor/bootstrap.min.js"></script>
     <script src="js/vendor/aws-cognito-sdk.min.js"></script>
     <script src="js/vendor/amazon-cognito-identity.min.js"></script>
-    <script src="https://js.arcgis.com/4.6/"></script>
     <script src="js/config.js"></script>
     <script src="js/cognito-auth.js"></script>
     <script src="js/adminAttendance.js"></script>
 </body>
-
 </html>
