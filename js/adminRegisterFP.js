@@ -14,11 +14,6 @@
         window.location.href = '/signin.html';
     });
 
-    // 지문 등록 버튼 클릭 이벤트
-    $('#registerFingerprintBtn').on('click', function () {
-        $('#fingerprintModal').modal('show'); // 모달 표시
-    });
-
     // 지문 등록 폼 제출 이벤트
     const convertFileToBase64 = (file) => {
         return new Promise((resolve, reject) => {
@@ -29,13 +24,13 @@
         });
     };
     
-    $('#fingerprintForm').on('submit', async function (event) {
+    $('#register').click(async function (event) {
         event.preventDefault();
     
-        const studentId = $('#studentId').val();
-        const file1 = $('#fingerprintFile1')[0].files[0];
-        const file2 = $('#fingerprintFile2')[0].files[0];
-        const file3 = $('#fingerprintFile3')[0].files[0];
+        const studentId = $('#student-id').val();
+        const file1 = $('#fingerprint-upload-1')[0].files[0];
+        const file2 = $('#fingerprint-upload-2')[0].files[0];
+        const file3 = $('#fingerprint-upload-3')[0].files[0];
     
         if (!studentId || !file1 || !file2 || !file3) {
             alert('모든 필드를 입력하고 파일을 업로드하세요.');

@@ -22,13 +22,13 @@ WildRydes.admin = WildRydes.admin || {};
     $(function onDocReady() {
         // 출근부 조회 버튼 클릭 시
         $('#viewAllAttendanceBtn').click(function () {
-          console.log('출근부 조회 버튼 클릭됨');
-          window.location.href = '/attendance.html';
+          console.log('전체 출근부 조회 버튼 클릭됨');
+          window.location.href = '/adminAttendance.html';
         });
       
         $('#registerFingerprintBtn').click(function () {
-            console.log('출/퇴근 버튼 클릭됨');
-            window.location.href = '/clockInOut.html';
+            console.log('지문 등록 버튼 클릭됨');
+            window.location.href = '/adminRegisterFP.html';
         });
 
         $('#modify-profile').click(function () {
