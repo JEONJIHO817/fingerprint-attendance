@@ -20,6 +20,42 @@ WildRydes.clockInOut = WildRydes.clockInOut || {};
         });
     }
 
+    // [새로 추가] 보안 강화를 위한 민감한 데이터 초기화 함수
+    function clearSensitiveData(fileInput, base64Data, fingerprintResult) {
+        console.log('=== 데이터 초기화 시작 ===');
+        console.log('초기화 전 상태:');
+        console.log('파일 입력값:', fileInput ? fileInput.value : 'undefined');
+        console.log('Base64 데이터 존재 여부:', base64Data ? 'Yes' : 'No');
+        console.log('지문 인증 결과 존재 여부:', fingerprintResult ? 'Yes' : 'No');
+        
+        if (fileInput) {
+            fileInput.value = '';  // 파일 입력 초기화
+        }
+        if (base64Data) {
+            base64Data = null;  // base64 데이터 초기화
+        }
+        if (fingerprintResult) {
+            fingerprintResult = null;  // 지문 결과 초기화
+        }
+
+        console.log('\n초기화 후 상태:');
+        console.log('파일 입력값:', fileInput ? fileInput.value : 'undefined');
+        console.log('Base64 데이터 존재 여부:', base64Data ? 'Yes' : 'No');
+        console.log('지문 인증 결과 존재 여부:', fingerprintResult ? 'Yes' : 'No');
+        
+        // 가비지 컬렉션 유도
+        if (typeof window.gc === 'function') {
+            try {
+                window.gc();
+                console.log('가비지 컬렉션 호출 성공');
+            } catch (e) {
+                console.log('Manual garbage collection not available');
+            }
+        }
+        
+        console.log('=== 데이터 초기화 완료 ===\n');
+    }
+
     // 인증 토큰 설정
     WildRydes.authToken
         .then(function setAuthToken(token) {
@@ -39,28 +75,32 @@ WildRydes.clockInOut = WildRydes.clockInOut || {};
             window.location.href = '/signin.html';
         });
         
-    // 출/퇴근 제출 버튼 클릭 이벤트
+    // [수정] 출/퇴근 제출 버튼 클릭 이벤트 - 보안 강화 버전
     $('#submit-clockinout').click(async function () {
+        // [새로 추가] 민감한 데이터를 위한 변수 선언
+        let fingerprintBase64 = null;
+        let fingerprintResult = null;
+        const fileInput = $('#fingerprint-upload')[0];
+        
         try {
-            console.log("Current studentId:", studentId);
-
-            // 입력 검증
             const action = $('#action-select').val();
-            const fileInput = $('#fingerprint-upload')[0].files[0];
-    
-            if (!action || !fileInput) {
+            
+            if (!action || !fileInput.files[0]) {
                 alert('출근/퇴근 선택과 지문 파일을 확인하세요.');
                 return;
             }
-    
-            // 지문 파일을 Base64로 변환
-            const fingerprintBase64 = await convertFileToBase64(fileInput);
-    
-            // 지문 인증 요청
-            const fingerprintResult = await $.ajax({
+            
+            // [기존 코드] 지문 파일을 Base64로 변환
+            fingerprintBase64 = await convertFileToBase64(fileInput.files[0]);
+            
+            // [수정] 지문 인증 요청 - 캐시 방지 헤더 추가
+            fingerprintResult = await $.ajax({
                 method: 'POST',
                 url: _config.api.invokeUrl + '/compare_fp',
-                headers: { Authorization: authToken },
+                headers: { 
+                    Authorization: authToken,
+                    'Cache-Control': 'no-store'  // [새로 추가] 캐시 방지
+                },
                 data: JSON.stringify({
                     studentId: studentId,
                     fingerprint: fingerprintBase64
@@ -68,20 +108,21 @@ WildRydes.clockInOut = WildRydes.clockInOut || {};
                 contentType: 'application/json'
             });
             
-            // 응답이 JSON 문자열이므로 파싱
-            console.log('Received response:', fingerprintResult); // 응답 데이터 확인용
-            
-            // 지문 인증 성공 시 출퇴근 기록
+            // [기존 코드] 지문 인증 성공 시 출퇴근 기록
             if (fingerprintResult.verified) {
                 const currentTime = new Date().toLocaleString('ko-KR', { 
                     timeZone: 'Asia/Seoul', 
                     hour12: false 
                 });
             
+                // [수정] 출퇴근 기록 요청 - 캐시 방지 헤더 추가
                 await $.ajax({
                     method: 'POST',
                     url: _config.api.invokeUrl + '/ride',
-                    headers: { Authorization: authToken },
+                    headers: { 
+                        Authorization: authToken,
+                        'Cache-Control': 'no-store'  // [새로 추가] 캐시 방지
+                    },
                     data: JSON.stringify({
                         studentId: studentId,
                         timestamp: currentTime,
@@ -90,21 +131,16 @@ WildRydes.clockInOut = WildRydes.clockInOut || {};
                     contentType: 'application/json'
                 });
             
-                // Action에 따른 메시지 출력
-                let statusMessage = '';
-                if (action === 'Clock In') {
-                    statusMessage = `${currentTime}부로 출근 처리가 완료되었습니다.`;
-                } else if (action === 'Clock Out') {
-                    statusMessage = `${currentTime}부로 퇴근 처리가 완료되었습니다.`;
-                }
-
-                $('#status-message').text(statusMessage);
-                alert(statusMessage);
+                $('#status-message').text(`${action} 처리가 완료되었습니다: ${currentTime}`);
+                alert(`${action} 성공!`);
             }
         } catch (error) {
             console.error('Error:', error);
             $('#status-message').text('처리 중 오류가 발생했습니다.');
             alert('오류가 발생했습니다.');
+        } finally {
+            // [새로 추가] 민감한 데이터 초기화
+            clearSensitiveData(fileInput, fingerprintBase64, fingerprintResult);
         }
     });
 
