@@ -2,6 +2,45 @@
 (function adminPortalScopeWrapper($) {
     let authToken;
 
+    // 민감한 데이터 초기화 함수
+    function clearSensitiveData(files, base64Data) {
+        console.log('=== 데이터 초기화 시작 ===');
+        
+        console.log('초기화 전 상태:');
+        console.log('파일 입력값 존재 여부:', files.map(f => f ? 'Yes' : 'No'));
+        console.log('Base64 데이터 존재 여부:', base64Data.map(d => d ? 'Yes' : 'No'));
+
+        // 파일 입력 초기화
+        files.forEach(fileInput => {
+            if (fileInput) {
+                fileInput.value = '';
+            }
+        });
+
+        // Base64 데이터 초기화
+        base64Data.forEach((data, index) => {
+            if (data) {
+                base64Data[index] = null;
+            }
+        });
+
+        console.log('\n초기화 후 상태:');
+        console.log('파일 입력값 존재 여부:', files.map(f => f ? 'Yes' : 'No'));
+        console.log('Base64 데이터 존재 여부:', base64Data.map(d => d ? 'Yes' : 'No'));
+
+        // 가비지 컬렉션 유도
+        if (typeof window.gc === 'function') {
+            try {
+                window.gc();
+                console.log('가비지 컬렉션 호출 성공');
+            } catch (e) {
+                console.log('Manual garbage collection not available');
+            }
+        }
+
+        console.log('=== 데이터 초기화 완료 ===\n');
+    }
+
     // AWS Cognito 인증 토큰 설정
     WildRydes.authToken.then(function setAuthToken(token) {
         if (token) {
@@ -14,7 +53,7 @@
         window.location.href = '/signin.html';
     });
 
-    // 지문 등록 폼 제출 이벤트
+    // Base64 변환 함수
     const convertFileToBase64 = (file) => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -24,39 +63,44 @@
         });
     };
     
+    // 지문 등록 폼 제출 이벤트
     $('#register').click(async function (event) {
         event.preventDefault();
     
         const studentId = $('#student-id').val();
-        const file1 = $('#fingerprint-upload-1')[0].files[0];
-        const file2 = $('#fingerprint-upload-2')[0].files[0];
-        const file3 = $('#fingerprint-upload-3')[0].files[0];
+        const fileInputs = [
+            $('#fingerprint-upload-1')[0],
+            $('#fingerprint-upload-2')[0],
+            $('#fingerprint-upload-3')[0]
+        ];
+        const files = fileInputs.map(input => input.files[0]);
+        let fingerprintBase64Data = [null, null, null];
     
-        if (!studentId || !file1 || !file2 || !file3) {
+        if (!studentId || !files[0] || !files[1] || !files[2]) {
             alert('모든 필드를 입력하고 파일을 업로드하세요.');
             return;
         }
     
         try {
-            const fingerprintFile1 = await convertFileToBase64(file1);
-            const fingerprintFile2 = await convertFileToBase64(file2);
-            const fingerprintFile3 = await convertFileToBase64(file3);
+            // Base64 변환
+            fingerprintBase64Data = await Promise.all(files.map(file => convertFileToBase64(file)));
     
             const payload = {
                 studentId,
-                fingerprintFile1,
-                fingerprintFile2,
-                fingerprintFile3,
+                fingerprintFile1: fingerprintBase64Data[0],
+                fingerprintFile2: fingerprintBase64Data[1],
+                fingerprintFile3: fingerprintBase64Data[2],
             };
     
-            $.ajax({
+            await $.ajax({
                 method: 'POST',
                 url: _config.api.invokeUrl + '/admin/registerFingerprint',
                 headers: {
                     Authorization: authToken,
+                    'Cache-Control': 'no-store'  // 캐시 방지
                 },
                 contentType: 'application/json',
-                data: JSON.stringify(payload), // JSON 형태로 전송
+                data: JSON.stringify(payload),
                 success: function () {
                     alert('Fingerprint registered successfully!');
                     $('#fingerprintModal').modal('hide');
@@ -69,6 +113,12 @@
         } catch (error) {
             console.error('Error processing files:', error);
             alert('파일 처리 중 오류가 발생했습니다.');
+        } finally {
+            // 민감한 데이터 초기화
+            clearSensitiveData(fileInputs, fingerprintBase64Data);
+            
+            // 입력 필드 초기화
+            $('#student-id').val('');
         }
     });
 })(jQuery);
