@@ -99,7 +99,6 @@ WildRydes.clockInOut = WildRydes.clockInOut || {};
                 url: _config.api.invokeUrl + '/compare_fp',
                 headers: { 
                     Authorization: authToken,
-                    'Cache-Control': 'no-store'  // [새로 추가] 캐시 방지
                 },
                 data: JSON.stringify({
                     studentId: studentId,
@@ -121,7 +120,6 @@ WildRydes.clockInOut = WildRydes.clockInOut || {};
                     url: _config.api.invokeUrl + '/ride',
                     headers: { 
                         Authorization: authToken,
-                        'Cache-Control': 'no-store'  // [새로 추가] 캐시 방지
                     },
                     data: JSON.stringify({
                         studentId: studentId,

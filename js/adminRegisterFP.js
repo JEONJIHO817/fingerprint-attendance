@@ -97,7 +97,6 @@
                 url: _config.api.invokeUrl + '/admin/registerFingerprint',
                 headers: {
                     Authorization: authToken,
-                    'Cache-Control': 'no-store'  // 캐시 방지
                 },
                 contentType: 'application/json',
                 data: JSON.stringify(payload),
