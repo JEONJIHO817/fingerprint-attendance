@@ -2,11 +2,6 @@
 (function adminPortalScopeWrapper($) {
     let authToken;
 
-       // 암호화 함수 추가
-   function encryptData(data) {
-    return CryptoJS.AES.encrypt(data, _config.encryption.key).toString();
-    }
-
     // 민감한 데이터 초기화 함수
     function clearSensitiveData(files, base64Data) {
         console.log('=== 데이터 초기화 시작 ===');
@@ -68,10 +63,10 @@
         });
     };
     
-   // 지문 등록 폼 제출 이벤트 수정
-   $('#register').click(async function (event) {
+    // 지문 등록 폼 제출 이벤트
+    $('#register').click(async function (event) {
         event.preventDefault();
-
+    
         const studentId = $('#student-id').val();
         const fileInputs = [
             $('#fingerprint-upload-1')[0],
@@ -80,28 +75,23 @@
         ];
         const files = fileInputs.map(input => input.files[0]);
         let fingerprintBase64Data = [null, null, null];
-
+    
         if (!studentId || !files[0] || !files[1] || !files[2]) {
             alert('모든 필드를 입력하고 파일을 업로드하세요.');
             return;
         }
-
+    
         try {
-            // 1. Base64 변환
+            // Base64 변환
             fingerprintBase64Data = await Promise.all(files.map(file => convertFileToBase64(file)));
-            
-            // 2. Base64 데이터 암호화
-            const encryptedData = fingerprintBase64Data.map(base64 => encryptData(base64));
-
-            // 3. API Gateway로 전송할 암호화된 페이로드
+    
             const payload = {
                 studentId,
-                fingerprintFile1: encryptedData[0],
-                fingerprintFile2: encryptedData[1],
-                fingerprintFile3: encryptedData[2],
-                isEncrypted: true  // 암호화 여부 표시
+                fingerprintFile1: fingerprintBase64Data[0],
+                fingerprintFile2: fingerprintBase64Data[1],
+                fingerprintFile3: fingerprintBase64Data[2],
             };
-
+    
             await $.ajax({
                 method: 'POST',
                 url: _config.api.invokeUrl + '/admin/registerFingerprint',
@@ -125,6 +115,8 @@
         } finally {
             // 민감한 데이터 초기화
             clearSensitiveData(fileInputs, fingerprintBase64Data);
+            
+            // 입력 필드 초기화
             $('#student-id').val('');
         }
     });
