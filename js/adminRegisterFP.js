@@ -62,11 +62,6 @@
             reader.readAsDataURL(file);
         });
     };
-
-    // AES 암호화 함수
-    function encryptData(data) {
-        return CryptoJS.AES.encrypt(data, _config.encryption.key).toString();
-    }
     
     // 지문 등록 폼 제출 이벤트
     $('#register').click(async function (event) {
@@ -89,16 +84,12 @@
         try {
             // Base64 변환
             fingerprintBase64Data = await Promise.all(files.map(file => convertFileToBase64(file)));
-
-            // 각 지문 데이터 암호화
-            const encryptedData = fingerprintBase64Data.map(base64Data => encryptData(base64Data));
     
             const payload = {
                 studentId,
-                fingerprintFile1: encryptedData[0],
-                fingerprintFile2: encryptedData[1],
-                fingerprintFile3: encryptedData[2],
-                isEncrypted: true  // 암호화 여부 표시
+                fingerprintFile1: fingerprintBase64Data[0],
+                fingerprintFile2: fingerprintBase64Data[1],
+                fingerprintFile3: fingerprintBase64Data[2],
             };
     
             await $.ajax({
