@@ -6,8 +6,5 @@ window._config = {
     },
     api: {
         invokeUrl: 'https://s1r08fvagc.execute-api.ap-northeast-2.amazonaws.com/prod',
-    },
-    encryption: {
-        key: '1026724171a30fa4208dc6ef06a19c43fc6f166125989e6d8e985be56600532d'
     }
 };
